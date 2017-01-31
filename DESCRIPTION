@@ -1,6 +1,6 @@
 Package: sensR
 Type: Package
-Title: Thurstonian Models for Sensory Discrimination
+Title: Thurstonian Models for Sensory Discrimination (Devlopment)
 Version: 1.4-8
 Date: 2017-01-31
 Authors@R: c(person(given="Rune Haubo Bojesen", family="Christensen",
