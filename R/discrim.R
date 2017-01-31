@@ -41,7 +41,7 @@ AnotA <-
 discrim <-
   function(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"),
+             "triangle"), double = FALSE,
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 {
@@ -49,6 +49,8 @@ discrim <-
             length(total) == 1L, is.numeric(total),
             length(conf.level) == 1L, is.numeric(conf.level),
             conf.level >= 0, conf.level <= 1)
+  if(double == TRUE && method == "tetrad")
+    stop("There double method for the tetrat test is not implementet. Choose double=FALSE")
   m <- match.call(expand.dots=FALSE)
   method <- match.arg(method)
   test <- match.arg(test)
@@ -67,7 +69,10 @@ discrim <-
   n <- as.integer(round(n))
   if(x > n)
     stop("'correct' cannot be larger than 'total'")
-  Pguess <- pc0 <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  if(double)
+    Pguess <- pc0 <- ifelse(method %in% c("duotrio", "twoAFC"), 1/4, 1/9)
+  else
+    Pguess <- pc0 <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
   pd0 <- 0 ## Initial default value.
   ## Check value of null hypothesis (pd0/d.prime0):
   null.args <- c("pd0", "d.prime0")
@@ -111,12 +116,12 @@ discrim <-
   rownames(table) <- c("pc", "pd", "d-prime")
   colnames(table) <- c("Estimate", "Std. Error", "Lower", "Upper")
   ## Fill in estimates:
-  obj <- rescale(pc = mu, method = method)
+  obj <- rescale(pc = mu, method = method, double = double)
   table[,1] <- unlist(obj$coefficients)
   pc.hat <- table[1,1]
   ## Fill in standard errors:
   if(mu < 1 && mu > Pguess) {
-    obj <- rescale(pc = mu, std.err = se.mu, method = method)
+    obj <- rescale(pc = mu, std.err = se.mu, method = method, double = double)
     table[,2] <- unlist(obj$std.err)
   }
   ## Get p-value, CI and test statistic:
@@ -167,7 +172,7 @@ discrim <-
   }
   if(sum(is.na(ci)) == 0) {
     ci <- delimit(x = ci, lower = 0, upper = 1)
-    intervals <- rescale(pc = ci, method = method)$coefficients
+    intervals <- rescale(pc = ci, method = method, double = double)$coefficients
     table[,3] <- unlist(intervals[1,])
     table[,4] <- unlist(intervals[2,])
   }

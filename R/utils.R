@@ -1,7 +1,7 @@
 rescale <-
   function(pc, pd, d.prime, std.err, 
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle"), double = FALSE) 
 {
   m <- match.call(expand.dots = FALSE)
   m[[1]] <- as.name("list")
@@ -11,7 +11,10 @@ rescale <-
   if(sum(isPresent) != 1)
     stop("One and only one of pc, pd and d.prime should be given")
   method <- match.arg(method)
-  Pguess <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  if(double)
+    Pguess <- pc0 <- ifelse(method %in% c("duotrio", "twoAFC"), 1/4, 1/9)
+  else
+    Pguess <- pc0 <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
   par <- arg[isPresent]
   if(!is.null(se <- m$std.err)) {
     stopifnot(is.numeric(se) && length(se) == length(m[[par]]))
@@ -23,33 +26,33 @@ rescale <-
     tooSmall <- pc < Pguess
     pc[tooSmall] <- Pguess
     pd <- pc2pd(pc, Pguess)
-    d.prime <- psyinv(pc, method = method)
+    d.prime <- psyinv(pc, method = method, double = double)
     if(!is.null(se)) {
       se.pc <- se
       se.pc[tooSmall] <- NA
       se.pd <- se.pc / (1 - Pguess)
-      se.d.prime <- se.pc / psyderiv(d.prime, method = method)
+      se.d.prime <- se.pc / psyderiv(d.prime, method = method, double = double)
     }
   }
   if(par == "pd") {
     pd <- m[[par]]
     stopifnot(is.numeric(pd) && all(pd >= 0) && all(pd <= 1))
     pc <- pd2pc(pd, Pguess)
-    d.prime <- psyinv(pc, method = method)
+    d.prime <- psyinv(pc, method = method, double = double)
     if(!is.null(se)) {
       se.pd <- se
       se.pc <- se.pd * (1 - Pguess)
-      se.d.prime <- se.pc / psyderiv(d.prime, method = method)
+      se.d.prime <- se.pc / psyderiv(d.prime, method = method, double = double)
     }
   }
   if(par == "d.prime") {
     stopifnot(is.numeric(d.prime) && all(d.prime >= 0))
     d.prime <- m[[par]]
-    pc <- psyfun(d.prime, method = method)
+    pc <- psyfun(d.prime, method = method, double = double)
     pd <- pc2pd(pc, Pguess)
     if(!is.null(se)) {
       se.d.prime <- se
-      se.pc <- se * psyderiv(d.prime, method = method)
+      se.pc <- se * psyderiv(d.prime, method = method, double = double)
       se.pd <- se.pc / (1 - Pguess)
     } 
   }
@@ -109,7 +112,7 @@ pd2pc <- function(pd, Pguess) {
 psyfun <-
   function(d.prime,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle"), double = FALSE) 
 ### Maps d.prime to pc for sensory discrimination protocols
   
 ### arg: d.prime: non-negative numeric vector
@@ -117,12 +120,21 @@ psyfun <-
 {
   method <- match.arg(method)
   stopifnot(all(is.numeric(d.prime)) && all(d.prime >= 0))
-  psyFun <- switch(method,
-                   duotrio = duotrio()$linkinv,
-                   tetrad = tetrad()$linkinv,
-                   triangle = triangle()$linkinv,
-                   twoAFC = twoAFC()$linkinv,
-                   threeAFC = threeAFC()$linkinv)
+  if(double){
+    psyFun <- switch(method,
+                     duotrio = doubleduotrio()$linkinv,
+                     triangle = doubletriangle()$linkinv,
+                     twoAFC = doubletwoAFC()$linkinv,
+                     threeAFC = doublethreeAFC()$linkinv)
+  }else{
+    psyFun <- switch(method,
+                     duotrio = duotrio()$linkinv,
+                     tetrad = tetrad()$linkinv,
+                     triangle = triangle()$linkinv,
+                     twoAFC = twoAFC()$linkinv,
+                     threeAFC = threeAFC()$linkinv)
+  }
+  
   pc <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need: 
   OK <- d.prime < Inf
@@ -135,7 +147,7 @@ psyfun <-
 
 psyinv <- function(pc, 
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle"), double = FALSE)  
 ### Maps pc to d.prime for sensory discrimination protocols
 
 ### arg: pc: numeric vector; 0 <= pc <= 1
@@ -143,12 +155,20 @@ psyinv <- function(pc,
 {
   method <- match.arg(method)
   stopifnot(all(is.numeric(pc)) && all(pc >= 0) && all(pc <= 1))
-  psyInv <- switch(method,
-                   duotrio = duotrio()$linkfun,
-                   tetrad = tetrad()$linkfun,
-                   triangle = triangle()$linkfun,
-                   twoAFC = twoAFC()$linkfun,
-                   threeAFC = threeAFC()$linkfun)
+  if(double){
+    psyInv <- switch(method,
+                     duotrio = doubleduotrio()$linkfun,
+                     triangle = doubletriangle()$linkfun,
+                     twoAFC = doubletwoAFC()$linkfun,
+                     threeAFC = doublethreeAFC()$linkfun)
+  }else{
+    psyInv <- switch(method,
+                     duotrio = duotrio()$linkfun,
+                     tetrad = tetrad()$linkfun,
+                     triangle = triangle()$linkfun,
+                     twoAFC = twoAFC()$linkfun,
+                     threeAFC = threeAFC()$linkfun)
+  }
   d.prime <- numeric(length(pc))
 ### Extreme cases are not handled well in the links, so we need: 
   OK <- pc < 1
@@ -162,7 +182,7 @@ psyinv <- function(pc,
 psyderiv <-
   function(d.prime, 
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle"), double = FALSE) 
 ### Computes the derivative of the psychometric functions at some
 ### d.prime for sensory discrimination protocols.
   
@@ -171,12 +191,20 @@ psyderiv <-
 {
   method <- match.arg(method)
   stopifnot(all(is.numeric(d.prime)) && all(d.prime >= 0))
-  psyDeriv <- switch(method,
-                     duotrio = duotrio()$mu.eta,
-                     tetrad = tetrad()$mu.eta,
-                     triangle = triangle()$mu.eta,
-                     twoAFC = twoAFC()$mu.eta,
-                     threeAFC = threeAFC()$mu.eta)
+  if(double){
+    psyDeriv <- switch(method,
+                       duotrio = doubleduotrio()$mu.eta,
+                       triangle = doubletriangle()$mu.eta,
+                       twoAFC = doubletwoAFC()$mu.eta,
+                       threeAFC = doublethreeAFC()$mu.eta)
+  }else{
+    psyDeriv <- switch(method,
+                       duotrio = duotrio()$mu.eta,
+                       tetrad = tetrad()$mu.eta,
+                       triangle = triangle()$mu.eta,
+                       twoAFC = twoAFC()$mu.eta,
+                       threeAFC = threeAFC()$mu.eta)}
+  
   Deriv <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need: 
   OK <- d.prime > 0 && d.prime < Inf
