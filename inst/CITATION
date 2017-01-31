@@ -1,0 +1,18 @@
+citHeader("To cite the sensR-package in publications use:")
+
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers <- paste0("R package version ", meta$Version,
+              ". http://www.cran.r-project.org/package=sensR/")
+
+citEntry(entry="misc",
+         title = "sensR---An R-package for sensory discrimination",
+         author = personList(as.person("R. H. B. Christensen"),
+                             as.person("P. B. Brockhoff")),
+         year         = year,
+	 note	      = vers,
+
+         textVersion =
+         paste("Christensen, R. H. B. & P. B. Brockhoff (", year,
+ 		"). sensR - An R-package for sensory discrimination. ",
+		vers, ".", sep="")
+)

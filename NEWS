@@ -1,0 +1,228 @@
+This file documents updates and changes in package sensR since version
+1.0.0
+
+Oct. 9. 2009:
+
+- betabin has been completely rewritten with option to choose the
+  chance corrected beta-binomial model as well as the ordinary
+  beta-binomial model.
+- discrim, discrimPwr, discrimSS and findcr have been updated to allow
+  for difference as well as similarity tests and have grown an
+  argument 'pd0 = 0' to indicate the proportion of discriminators in
+  the population. All help pages have been updated.
+- references updated in help files to published same-diff paper and
+  in-press GLIM paper
+
+June 17. 2010: version 1.2.0:
+
+- the twoAC() function and its print method is introduced for
+  estimation of d-prime and tau in the 2-AC protocol
+- the clls function and its methods are no longer supported.
+  The user is adviced to use clm() from package ordinal instead.
+
+July 20. 2010: version 1.2.1:
+
+- the following methods for twoAC objects are now available: confint,
+  profile, confint.profile and plot.profile.
+
+October 13. 2010: version 1.2.2:
+
+- rescale function and additional auxiliary (psyfun, psyinv, psyderiv,
+  pc2pd, pd2pc) functions included
+- major revision of betabin: argument Pguess has been removed and the
+  method argument is now the sensory discrimination protocol rather
+  than the parameterization of the beta-binomial model. The summary
+  method has gained the argument level instead of alpha. The results
+  of the summary method are much more extensive with results in terms
+  of Pc, Pd and d-prime.
+- revision of findcr function. It is now faster and more reliable
+  since it is using uniroot rather than a simple while loop and an
+  explicit test that the return value is in fact the critical value is
+  conducted.
+- Error in discrimSim for the threeAFC method corrected.
+
+October 28. 2010: version 1.2.3:
+
+- major revision of discrim, discrimPwr and discrimSS including
+  confint.discrim, profile.discrim, print.discrim and
+  plot.profile.discrim.
+
+November 25. 2010: version 1.2.4:
+
+- Vignette 'Methodology' describes the statistical methodology of
+  sensory discrimination tests.
+- Added the convenience functions d.primePwr and d.primeSS.
+
+November 26. 2010: version 1.2.5:
+
+- print.anota is fixed.
+- confint.anota and plot.anota functions added and documented in the
+  AnotA help file. Examples added to help page.
+
+December 9. 2010: version 1.2.6:
+
+- corrections made to Statistical Methodology vignette.
+
+March 3. 2011: version 1.2.7:
+
+- major update of twoAC implementation
+- added exact power computations for the 2-AC protocol in function
+  twoACpwr
+
+March 8. 2011: version 1.2.8:
+
+- added clm2twoAC function for extracting 2-AC parameters etc. from
+  cumulative link models (clm[m]s from package ordinal)
+- including "Examples for 2-AC paper" as vignette
+
+April 8. 2011: version 1.2.9:
+
+- correcting t and f as logicals in sweave vignettes to TRUE and FALSE
+  (mail from Brian Ripley 11-04-08)
+
+May 10. 2011: version 1.2.10:
+
+- completing partially matched arguments.
+
+August 12. 2011: version 1.2.11:
+
+- updating clm2twoAC() to accomodate change to ordinal::clm
+
+August 19. 2011: version 1.2.12:
+
+- interchanging the second and third arguments of AUC.default
+
+September 23. 2011: version 1.2.13:
+
+- bug in plot.discrim (mean separation of perceptual curves was wrong)
+  corrected.
+
+November 14. 2011: version 1.2.14:
+
+- completing partially matched argument lower -> lower.tail in pnorm.
+
+January 26-27. 2012: version 1.2.15:
+
+- formatting coefficient table and p-values from print.summary.betabin
+  with printCoefmat and format.pval.
+- updating the description of the data argument to the twoAC
+  function.
+- printing coef table in print.twoAC with more reasonable no. digits.
+- printing coef table in print.summary.samediff with printCoefmat.
+- moving vignettes to vignette subdirectory.
+- considerable improvements to the triangle family object using the
+  non-central F distribution for the inverse link function.
+- introducing links.R file in tests subdirectory currently only
+  testing the triangle link.
+- introducing .Rout.save files for examples and tests.
+- profile.discrim now returns a data.frame in which only finite
+  d.prime values are kept.
+- major update of the threeAFC link function: it now gives reasonable
+  answers in boundary cases (linkinv, linkfun and mu.eta).
+
+February 6. 2012: version 1.2.16:
+
+- triangle()$mu.eta() now using a direct expression rather than
+  numDeriv::grad.
+- major update of duotrio and twoAFC family objects; they now work in
+  boundary cases and use effecient computations.
+
+June 7. 2012: version 1.2-17:
+
+- tetrad() family object uncluded.
+- Full support for tetrad tests in discrim, d.primePwr, d.primeSS,
+  discrimSim, rescale, psyfun, psyinv, psyderiv, betabin.
+
+October 30. 2012: version 1.2-18:
+
+- power functions singled out in R/power.R
+- minor adjustments to print.discrim
+
+March 15. 2013: version 1.2-19:
+
+- Major update of power and sample size computations for the binomial
+  methods. Now stable exact sample sizes and continuity adjusted
+  normal approximate sample sizes are provided.
+- print.discrim now says that the p-value is one-sided and that the
+  confidence interval is two-sided.
+
+July 24. 2013: version 1.2-20:
+
+- Documentation bug reported by Mike Allerhand (2013-07-09) in SDT
+  fixed.
+
+September 5. 2013: version 1.2-22:
+
+- Adding support for ANOVA-type tests of d-primes using the functions
+  dprime_compare, dprime_test, dprime_table and
+  posthoc.dprime_compare/posthoc.dprime_test.
+
+September 10. 2013:
+
+- updating various man-pages with 'tetrad' information and links.
+
+October 1. 2013:
+
+- Removing calls to '::' and ':::' in R codebase.
+- Moving 'ordinal' from Depends to Suggests, 'numDeriv' from Depends
+  to Imports, 'MASS' from Suggests to Imports.
+- Adding ByteCompile: yes to Description file.
+- Now using import(MASS) to fetch the confint.glm method from MASS and
+  adding test for confing.anota to check that the right confint method
+  is actually used.
+- Deprecating function 'clls'.
+- Using if(require(ordinal)) in examples, tests and vignettes where
+  needed.
+- Adding 'ordinal' to vignetteDepends for the twoACexamples vignette.
+- Adding \dontshow{} tests to examples in .Rd files rather than having
+  an .Rout.save file in ./tests/Examples to avoid problems with
+  minor numerical differences across platforms and architectures.
+
+October 20. 2013:
+
+- Ensuring that the package will work under R-2.15.3 (and older?) by
+  modifying tests in discrimSim.Rd and ./inst/tests/test-links.R.
+
+May 7th 2014 (version 1.4-0):
+
+- Implementing support for the Degree-of-Difference method: dod,
+  dod_fit, dodSim, dodPwr, dodControl, optimal_tau.
+
+June 25th 2014 (version 1.4-1):
+
+- Allowing negative d-primes in AUC.default (reported by Andreas
+  Melzer June 25th 2014)
+
+July 8th 2014 (version 1.4-1)
+
+- Correcting formulae for beta-binomial and chance-corrected
+  beta-binomial models in documentation (Thanks to Peter Nowee for
+  reporting).
+- Adding d.prime0 (value of d-prime under the null hypothesis) as an
+  argument to discrim.
+
+December 23rd 2014 (version 1.4-4)
+
+- Coercing package title to title-case.
+- Editing dodPwr() example to reduce computation time
+
+January 21st 2015 (version 1.4-5)
+
+- Updating Citation information per CRAN request.
+
+March 2nd 2015 (version 1.4-6)
+
+- Changing package maintainer from Rune H B Christensen to Per B
+  Brockhoff.
+  
+July 16th 2015 (version 1.4-6)
+
+-  submition to CRAN
+-  cosmetic changes in NAMESPACE file: 
+             fixing warnings:  no visible global function definition
+- in descrim.R and discrimR.R changed probit to "probit" in order to fix NOTES 
+  issues in CRAN check
+  
+
+March 14th 2016 (version 1.4-7)
+-  cosmetic changes in test-disrim_pd0.R due to new version of testthat package

@@ -1,0 +1,517 @@
+
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## Examples from Brockhoff, P.B. (2003). The statistical power of
+> ## replications in difference tests.
+> ## Food Quality and Preference, 14, pp. 405--417.
+> library(sensR)
+> 
+> ## Data hunter 2, tab1, dataset 1:
+> x <- c(0, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4,
++ 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 9, 9)
+> X <- matrix(c(x,rep(12,24)),ncol=2,byrow=F)
+> summary(bbc <- betabin(X, corr = TRUE, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.11750    0.05039 0.01874 0.21626
+gamma    0.21466    0.15780 0.00000 0.52394
+pc       0.41167    0.03359 0.34583 0.47751
+pd       0.11750    0.05039 0.01874 0.21626
+d-prime  0.95852    0.22174 0.37086 1.34646
+
+log-likelihood:  -53.3124 
+LR-test of over-dispersion, G^2: 3.031 df: 1 p-value: 0.08169 
+LR-test of association, G^2: 9.7077 df: 2 p-value: 0.007798 
+> 
+> target <- c(0.1175015, 0.2146566)
+> stopifnot(all(abs(coef(bbc)[1:2] - target) < 1e-5))
+> ## Methods:
+> logLik(bbc)
+'log Lik.' -53.31242 (df=2)
+> vcov(bbc)
+              [,1]          [,2]
+[1,]  0.0025389877 -0.0003300296
+[2,] -0.0003300296  0.0249008550
+> AIC(bbc)
+[1] 110.6248
+> bbc
+
+Call:
+betabin(data = X, method = "triangle", corrected = TRUE)
+
+Coefficients:
+    mu   gamma  
+0.1175  0.2147  
+
+> 
+> sb <- summary(betabin(X, corr = TRUE, method = "twoAFC"))
+Warning message:
+Parameters at boundary occurred 
+> b <- as.vector(coef(sb)[, 1])
+> b.expected <- c(0, 1, .5, 0, 0)
+> stopifnot(isTRUE(
++     all.equal(b, b.expected, tol=1e-4)
++     ))
+> 
+> ## summary(betabin(X, corr = FALSE, pGuess = 1/3,
+> ##                 method = "alpha-beta"))
+> ## summary(betabin(X, corr = TRUE, pGuess = 1/3,
+> ##                 method = "alpha-beta"))
+> sb <- summary(betabin(X, corr = TRUE, method = "threeAFC"))
+> print(coef(sb), digits=3)
+        Estimate Std. Error  Lower Upper
+mu         0.118     0.0504 0.0187 0.216
+gamma      0.215     0.1578 0.0000 0.524
+pc         0.412     0.0336 0.3458 0.478
+pd         0.118     0.0504 0.0187 0.216
+d-prime    0.268     0.1115 0.0440 0.483
+> 
+> ## Hunter experiment 3, data set 2.
+> x <- c(2, 2, 3, 4, 5, 5, 5, 5, 6, 6, 6, 7,
++        7, 7, 7, 7, 7, 8, 8, 8, 9, 11, 12)
+> X2 <- cbind(x, 12)
+> summary(betabin(X2, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.30008    0.06396 0.17471 0.42544
+gamma    0.24407    0.11584 0.01702 0.47112
+pc       0.53338    0.04264 0.44981 0.61696
+pd       0.30008    0.06396 0.17471 0.42544
+d-prime  1.63857    0.21733 1.19209 2.06198
+
+log-likelihood:  -52.8263 
+LR-test of over-dispersion, G^2: 8.387 df: 1 p-value: 0.003779 
+LR-test of association, G^2: 54.5465 df: 2 p-value: 1.43e-12 
+> summary(betabin(X2, cor = 0, method = "triangle"))
+
+Beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.53409    0.04248 0.45083 0.61735
+gamma    0.09094    0.04758 0.00000 0.18420
+pc       0.53409    0.04248 0.45083 0.61735
+pd       0.30114    0.06372 0.17625 0.42603
+d-prime  1.64219    0.21642 1.19799 2.06399
+
+log-likelihood:  -53.2017 
+LR-test of over-dispersion, G^2: 7.6361 df: 1 p-value: 0.005721 
+LR-test of association, G^2: 53.7956 df: 2 p-value: 2.082e-12 
+> ## summary(betabin(X2, pGuess=1/3, method = "a"))
+> ## summary(betabin(X2, cor = 0, pGuess=1/3, method = "a"))
+> ## Correspond to the estimates in Brockhoff(2003)
+> 
+> ## Data set no. 3:
+> x <- c(33, 35, 36, 36, 98, 99)
+> X3 <- cbind(x, 100)
+> summary(betabin(X3, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error  Lower  Upper
+mu        0.2594     0.1547 0.0000 0.5626
+gamma     0.7844     0.1268 0.5357 1.0000
+pc        0.5062     0.1032 0.3333 0.7084
+pd        0.2594     0.1547 0.0000 0.5626
+d-prime   1.4989     0.5373 0.0000 2.5513
+
+log-likelihood:  -20.1708 
+LR-test of over-dispersion, G^2: 258.2373 df: 1 p-value: < 2.2e-16 
+LR-test of association, G^2: 389.35 df: 2 p-value: < 2.2e-16 
+> summary(betabin(X3, cor = 0, method = "triangle"))
+
+Beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error  Lower  Upper
+mu        0.6262     0.1172 0.3964 0.8560
+gamma     0.3890     0.1208 0.1522 0.6258
+pc        0.6262     0.1172 0.3964 0.8560
+pd        0.4393     0.1759 0.0946 0.7840
+d-prime   2.1093     0.6035 0.8535 3.5746
+
+log-likelihood:  -26.8059 
+LR-test of over-dispersion, G^2: 244.9672 df: 1 p-value: < 2.2e-16 
+LR-test of association, G^2: 376.0799 df: 2 p-value: < 2.2e-16 
+> ## summary(betabin(X3, pGuess=1/3, method = "a"))
+> ## summary(betabin(X3, cor = 0, pGuess=1/3, method = "a"))
+> ## The uncorrected estimates correspond to those in Brockhoff(2003),
+> ## but the corrected ones do not.
+> 
+> ## Hard example at the boundary:
+> ## Data set no. 4:
+> x <- c(0, 1,1,1, 2,2,2, 3,3,3,3,3)
+> X4 <- cbind(x, 4)
+> sum(x)/(12*4) # 5
+[1] 0.5
+> b <- coef(summary(betabin(X4, method = "triangle")))
+Warning message:
+Parameters at boundary occurred 
+> stopifnot(isTRUE(
++     all.equal(as.vector(b)[1:2], c(.25, 0), tol=1e-2)
++     ))
+> b <- coef(summary(betabin(X4, cor = 0, method = "triangle")))
+Warning message:
+Parameters at boundary occurred 
+> stopifnot(isTRUE(
++     all.equal(as.vector(b)[1:2], c(.5, 0), tol=1e-4)
++     ))
+> ## summary(betabin(X4, pGuess=1/3, method = "a"))
+> ## summary(betabin(X4, cor = 0, pGuess=1/3, method = "a"))
+> 
+> x <- c(0,0,1,1, 2,2, 3,3,3,3,3,3)
+> (X6 <- cbind(x, 4))
+      x  
+ [1,] 0 4
+ [2,] 0 4
+ [3,] 1 4
+ [4,] 1 4
+ [5,] 2 4
+ [6,] 2 4
+ [7,] 3 4
+ [8,] 3 4
+ [9,] 3 4
+[10,] 3 4
+[11,] 3 4
+[12,] 3 4
+> sum(x)/(12*4) # 5
+[1] 0.5
+> summary(betabin(X6, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.25496    0.11411 0.03132 0.47861
+gamma    0.12832    0.24033 0.00000 0.59936
+pc       0.50331    0.07607 0.35421 0.65241
+pd       0.25496    0.11411 0.03132 0.47861
+d-prime  1.48359    0.39747 0.48125 2.24572
+
+log-likelihood:  -18.4368 
+LR-test of over-dispersion, G^2: 0.3207 df: 1 p-value: 0.5712 
+LR-test of association, G^2: 5.9743 df: 2 p-value: 0.05043 
+> summary(betabin(X6, cor = 0, method = "triangle"))
+
+Beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error    Lower    Upper
+mu      0.497210   0.083268 0.334008 0.660413
+gamma   0.108483   0.136412 0.000000 0.375846
+pc      0.497210   0.083268 0.334008 0.660413
+pd      0.245815   0.124902 0.001011 0.490620
+d-prime 1.451606   0.438221 0.085705 2.288036
+
+log-likelihood:  -18.2111 
+LR-test of over-dispersion, G^2: 0.7722 df: 1 p-value: 0.3795 
+LR-test of association, G^2: 6.4258 df: 2 p-value: 0.04024 
+> ## summary(betabin(X6, pGuess=1/3, method = "a"))
+> ## summary(betabin(X6, cor = 0, pGuess=1/3, method = "a"))
+> ## Correspond to the estimates in Brockhoff(2003)
+> 
+> ## Data set no. 7:
+> x <- c(0,0,1,1, 2,2,2,2, 3,3,4,4)
+> (X7 <- cbind(x, 4))
+      x  
+ [1,] 0 4
+ [2,] 0 4
+ [3,] 1 4
+ [4,] 1 4
+ [5,] 2 4
+ [6,] 2 4
+ [7,] 2 4
+ [8,] 2 4
+ [9,] 3 4
+[10,] 3 4
+[11,] 4 4
+[12,] 4 4
+> sum(x)/(12*4) # 5
+[1] 0.5
+> summary(betabin(X7, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.25472    0.13448 0.00000 0.51830
+gamma    0.56705    0.36996 0.00000 1.00000
+pc       0.50315    0.08965 0.33333 0.67886
+pd       0.25472    0.13448 0.00000 0.51830
+d-prime  1.48275    0.46852 0.00000 2.38710
+
+log-likelihood:  -19.2089 
+LR-test of over-dispersion, G^2: 2.6999 df: 1 p-value: 0.1004 
+LR-test of association, G^2: 8.3535 df: 2 p-value: 0.01535 
+> summary(betabin(X7, cor = 0, method = "triangle"))
+
+Beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.50000    0.09363 0.31649 0.68351
+gamma    0.22821    0.15687 0.00000 0.53567
+pc       0.50000    0.09363 0.33333 0.68351
+pd       0.25000    0.14045 0.00000 0.52527
+d-prime  1.46626    0.49109 0.00000 2.41243
+
+log-likelihood:  -19.1032 
+LR-test of over-dispersion, G^2: 2.9113 df: 1 p-value: 0.08796 
+LR-test of association, G^2: 8.5649 df: 2 p-value: 0.01381 
+> ## summary(betabin(X7, pGuess=1/3, method = "a"))
+> ## summary(betabin(X7, cor = 0, pGuess=1/3, method = "a"))
+> ## The uncorrected estimates correspond to those in Brockhoff(2003),
+> ## but the corrected ones do not.
+> 
+> 
+> ## Data set no. 8:
+> x <- c(0,0,0,1, 2,2,2, 3,3,3,4,4)
+> (X8 <- cbind(x, 4))
+      x  
+ [1,] 0 4
+ [2,] 0 4
+ [3,] 0 4
+ [4,] 1 4
+ [5,] 2 4
+ [6,] 2 4
+ [7,] 2 4
+ [8,] 3 4
+ [9,] 3 4
+[10,] 3 4
+[11,] 4 4
+[12,] 4 4
+> sum(x)/(12*4) # 5
+[1] 0.5
+> summary(betabin(X8, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.27911    0.13072 0.02290 0.53531
+gamma    0.54019    0.29401 0.00000 1.00000
+pc       0.51940    0.08715 0.34860 0.69021
+pd       0.27911    0.13072 0.02290 0.53531
+d-prime  1.56698    0.44839 0.41046 2.44927
+
+log-likelihood:  -20.4328 
+LR-test of over-dispersion, G^2: 3.8357 df: 1 p-value: 0.05017 
+LR-test of association, G^2: 9.4893 df: 2 p-value: 0.008698 
+> summary(betabin(X8, method = "triangle", cor = 0))
+
+Beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.49110    0.10247 0.29027 0.69193
+gamma    0.33998    0.16296 0.02058 0.65937
+pc       0.49110    0.10247 0.33333 0.69193
+pd       0.23665    0.15370 0.00000 0.53790
+d-prime  1.41933    0.54362 0.00000 2.45880
+
+log-likelihood:  -19.3088 
+LR-test of over-dispersion, G^2: 6.0836 df: 1 p-value: 0.01364 
+LR-test of association, G^2: 11.7372 df: 2 p-value: 0.002827 
+> ## summary(betabin(X8, pGuess=1/3, method = "a"))
+> ## summary(betabin(X8, cor = 0, pGuess=1/3, method = "a"))
+> ## The uncorrected estimates correspond to those in Brockhoff(2003),
+> ## but the corrected ones do not.
+> 
+> 
+> ## Data set no. 9:
+> x <- c(0,0,0,1,1, 2,2, 3,3,4,4,4)
+> (X9 <- cbind(x, 4))
+      x  
+ [1,] 0 4
+ [2,] 0 4
+ [3,] 0 4
+ [4,] 1 4
+ [5,] 1 4
+ [6,] 2 4
+ [7,] 2 4
+ [8,] 3 4
+ [9,] 3 4
+[10,] 4 4
+[11,] 4 4
+[12,] 4 4
+> sum(x)/(12*4) # 5
+[1] 0.5
+> summary(betabin(X9, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.29440    0.14033 0.01936 0.56945
+gamma    0.80089    0.26286 0.28569 1.00000
+pc       0.52960    0.09356 0.34624 0.71297
+pd       0.29440    0.14033 0.01936 0.56945
+d-prime  1.61928    0.47788 0.37696 2.57721
+
+log-likelihood:  -20.0974 
+LR-test of over-dispersion, G^2: 8.09 df: 1 p-value: 0.004451 
+LR-test of association, G^2: 13.7436 df: 2 p-value: 0.001037 
+> summary(betabin(X9, cor = 0, method = "triangle"))
+
+Beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error  Lower  Upper
+mu        0.5000     0.1096 0.2851 0.7149
+gamma     0.4457     0.1624 0.1274 0.7639
+pc        0.5000     0.1096 0.3333 0.7149
+pd        0.2500     0.1645 0.0000 0.5723
+d-prime   1.4663     0.5750 0.0000 2.5882
+
+log-likelihood:  -19.0721 
+LR-test of over-dispersion, G^2: 10.1406 df: 1 p-value: 0.00145 
+LR-test of association, G^2: 15.7942 df: 2 p-value: 0.0003718 
+> ## summary(betabin(X9, pGuess=1/3, method = "a"))
+> ## summary(betabin(X9, cor = 0, pGuess=1/3, method = "a"))
+> ## The uncorrected estimates correspond to those in Brockhoff(2003),
+> ## but the corrected ones do not.
+> 
+> #################################
+> ## Testing data sets from Bi(2006):
+> 
+> ## Table 7.3, 2AFC, n=2, k=30
+> x <- c(0, 0, rep(1, 6), rep(2, 30-8))
+> X <- cbind(x, 2); X
+      x  
+ [1,] 0 2
+ [2,] 0 2
+ [3,] 1 2
+ [4,] 1 2
+ [5,] 1 2
+ [6,] 1 2
+ [7,] 1 2
+ [8,] 1 2
+ [9,] 2 2
+[10,] 2 2
+[11,] 2 2
+[12,] 2 2
+[13,] 2 2
+[14,] 2 2
+[15,] 2 2
+[16,] 2 2
+[17,] 2 2
+[18,] 2 2
+[19,] 2 2
+[20,] 2 2
+[21,] 2 2
+[22,] 2 2
+[23,] 2 2
+[24,] 2 2
+[25,] 2 2
+[26,] 2 2
+[27,] 2 2
+[28,] 2 2
+[29,] 2 2
+[30,] 2 2
+> summary(bbc <- betabin(X))
+
+Chance-corrected beta-binomial model for the duotrio protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.66667    0.10887 0.45329 0.88004
+gamma    0.70001    0.57132 0.00000 1.00000
+pc       0.83333    0.05443 0.72665 0.94002
+pd       0.66667    0.10887 0.45329 0.88004
+d-prime  2.60855    0.44229 1.87529 3.86683
+
+log-likelihood:  -21.8961 
+LR-test of over-dispersion, G^2: 1.9573 df: 1 p-value: 0.1618 
+LR-test of association, G^2: 31.0676 df: 2 p-value: 1.794e-07 
+> ## Moment estimates: (mu, gamma) = (0.667, 0.700) (Bi, 2006)
+> ## These ML estimates correspond to the ML
+> ## estimates reported by Bi.
+> bbc$vcov
+            [,1]        [,2]
+[1,]  0.01185193 -0.01866716
+[2,] -0.01866716  0.32640211
+> ## The variance covariance matrix differs from the one reported by Bi,
+> ## however.
+> 
+> ## Table 7.4, 3AFC, n=4, k=30
+> x <- c(0, rep(2, 4), rep(3, 6), rep(4, 30-11))
+> X <- cbind(x, 4); X
+      x  
+ [1,] 0 4
+ [2,] 2 4
+ [3,] 2 4
+ [4,] 2 4
+ [5,] 2 4
+ [6,] 3 4
+ [7,] 3 4
+ [8,] 3 4
+ [9,] 3 4
+[10,] 3 4
+[11,] 3 4
+[12,] 4 4
+[13,] 4 4
+[14,] 4 4
+[15,] 4 4
+[16,] 4 4
+[17,] 4 4
+[18,] 4 4
+[19,] 4 4
+[20,] 4 4
+[21,] 4 4
+[22,] 4 4
+[23,] 4 4
+[24,] 4 4
+[25,] 4 4
+[26,] 4 4
+[27,] 4 4
+[28,] 4 4
+[29,] 4 4
+[30,] 4 4
+> summary(bbc <- betabin(X, method = "triangle"))
+
+Chance-corrected beta-binomial model for the triangle protocol
+with 95 percent confidence intervals
+
+        Estimate Std. Error   Lower   Upper
+mu       0.77598    0.06332 0.65188 0.90008
+gamma    0.38055    0.18507 0.01783 0.74328
+pc       0.85065    0.04221 0.76792 0.93339
+pd       0.77598    0.06332 0.65188 0.90008
+d-prime  3.52725    0.37015 2.91085 4.49264
+
+log-likelihood:  -31.7292 
+LR-test of over-dispersion, G^2: 7.0221 df: 1 p-value: 0.008051 
+LR-test of association, G^2: 144.2856 df: 2 p-value: < 2.2e-16 
+> ## Moment estimates: (mu, gamma) = (0.775, 0.4265) (Bi, 2006)
+> ## ML and moment estimates are not far from each other
+> ## These ML estimates correspond exactly to those by Bi(2006)
+> vcov(bbc)
+             [,1]         [,2]
+[1,]  0.004009391 -0.003492225
+[2,] -0.003492225  0.034249758
+> ## The variance-covariance matrix is not exactly the same however.
+> 
+> proc.time()
+   user  system elapsed 
+  1.012   0.040   1.041 
