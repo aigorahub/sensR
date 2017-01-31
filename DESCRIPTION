@@ -1,8 +1,8 @@
 Package: sensR
 Type: Package
 Title: Thurstonian Models for Sensory Discrimination
-Version: 1.4-7
-Date: 2016-04-04
+Version: 1.4-8
+Date: 2017-01-31
 Authors@R: c(person(given="Rune Haubo Bojesen", family="Christensen",
 	   email="rhbc@dtu.dk", role=c("aut")),
 	   person(given="Per Bruun", family="Brockhoff",
