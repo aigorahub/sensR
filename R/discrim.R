@@ -67,7 +67,7 @@ discrim <-
   n <- as.integer(round(n))
   if(x > n)
     stop("'correct' cannot be larger than 'total'")
-  Pguess <- getPguess(method)
+  Pguess <- pc0 <- getPguess(method)
   pd0 <- 0 ## Initial default value.
   ## Check value of null hypothesis (pd0/d.prime0):
   null.args <- c("pd0", "d.prime0")
@@ -306,7 +306,7 @@ print.discrim <-
             "% two-sided confidence\nintervals are based on the",
             text1, "\n\n"))
   print(x$coefficients, digits = digits)
-  Pguess <- getPguess(method)
+  Pguess <- getPguess(x$method)
   d.prime0 <- psyinv(pd2pc(x$pd0, Pguess), method = x$method)
   null.value <- switch(x$alt.scale,
                        "pd" = x$pd0,

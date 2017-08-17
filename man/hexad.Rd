@@ -19,9 +19,9 @@ hexad()
   \code{linkfun}.
 }
 \references{
-  Eberhardt, K., Aubry, V., & Robinson, K. (2008). 
+  Eberhardt, K., Aubry, V., & Robinson, K. (2008).
   A thurstonian model for the unspecified hexad test.
-  In 2008 Sensometrics Meeting ’Discover a New World of Data’ (E-5). 
+  In 2008 Sensometrics Meeting 'Discover a New World of Data' (E-5).
   Kraft Foods.
 
 %%   Brockhoff, P.B. and Christensen, R.H.B. (2010). Thurstonian
