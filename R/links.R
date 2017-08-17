@@ -341,3 +341,124 @@ twoAFC <- function() {
   }
   twoAFC
 }
+
+hexad <- function()
+{
+  hexad <- binomial()
+  hexad$link <- "Link for the hexad test"
+  hexad$linkinv <- function(eta) {
+    ok <- eta > 0 & eta < 5.368
+    eta[eta <= 0] <- 1/10
+    eta[eta >= 5.368] <- 1
+    if(sum(ok))
+      eta[ok] <-
+      sapply( eta[ok], function(x) x^c(0:7) %*% c(0.0977646147, 0.0319804414, 0.0656128284, 0.1454153496, 
+                                              -0.0994639381, 0.0246960778, -0.0027806267, 0.0001198169) )
+    pmin(pmax(eta, 1/10), 1) ## restrict to [1/10, 1] - just to be sure
+  }
+  hexad$mu.eta <- function(eta) {
+    ok <- eta > 0 & eta < 5.368
+    eta[eta <= 0] <- 0
+    eta[eta >= 5.368] <- 0
+    if(sum(ok)) {
+      d <- eta[ok]
+      eta[ok] <- sapply( d, function(x) x^c(0:6) %*% c(0.0319804414, 0.1312256568, 0.4362460488, 
+                                                       -0.3978557524, 0.1234803890, -0.0166837602, 0.0008387183) )
+    }
+    pmax(eta, 0) ## gradient cannot be negative.
+  }
+  hexad$linkfun <- function(mu) {
+    eps <- 1e-8
+    ok <- mu > 1/10 & mu < 1 - eps
+    mu[mu <= 1/10] <- 0
+    mu[mu >= 1 - eps] <- Inf
+    if(sum(ok)) {
+      hexadg2 <- function(d, p) hexad$linkinv(d) - p
+      mu[ok] <- sapply(mu[ok], function(mu)
+        uniroot(hexadg2, c(0, 5.368), p = mu)$root)
+    }
+    mu
+  }
+  hexad
+}
+
+twofive <- function()
+{
+  twofive <- binomial()
+  twofive$link <- "Link for the Two-Out-of-Five test"
+  twofive$linkinv <- function(eta) {
+    ok <- eta > 0 & eta < 9.28
+    eta[eta <= 0] <- 1/10
+    eta[eta >= 9.28] <- 1
+    if(sum(ok))
+      eta[ok] <-
+      sapply( eta[ok], function(x) x^c(0:9) %*% c(0.0988496065454, 0.0146108899965, 0.0708075379445, 
+                                              0.0568876949069, -0.0424936635277, 0.0114595626175, 
+                                              -0.0016573180506, 0.0001372413489, -0.0000061598395, 0.0000001166556) )
+    pmin(pmax(eta, 1/10), 1) ## restrict to [1/10, 1] - just to be sure
+  }
+  twofive$mu.eta <- function(eta) {
+    ok <- eta > 0 & eta < 9.28
+    eta[eta <= 0] <- 0
+    eta[eta >= 9.28] <- 0
+    if(sum(ok)) {
+      d <- eta[ok]
+      eta[ok] <- sapply( d, function(x) x^c(0:8) %*% c(0.01461089000, 0.14161507589, 0.17066308472, -0.16997465411, 
+                                                       0.05729781309, -0.00994390830, 0.00096068944, -0.00004927872, 0.00000104990) )
+    }
+    pmax(eta, 0) ## gradient cannot be negative.
+  }
+  twofive$linkfun <- function(mu) {
+    eps <- 1e-8
+    ok <- mu > 1/10 & mu < 1 - eps
+    mu[mu <= 1/10] <- 0
+    mu[mu >= 1 - eps] <- Inf
+    if(sum(ok)) {
+      twofiveg2 <- function(d, p) twofive$linkinv(d) - p
+      mu[ok] <- sapply(mu[ok], function(mu)
+        uniroot(twofiveg2, c(0, 9.28), p = mu)$root)
+    }
+    mu
+  }
+  twofive
+}
+
+twofiveF <- function()
+{
+  twofiveF <- binomial()
+  twofiveF$link <- "Link for the Two-Out-of-Five with forgiveness test"
+  twofiveF$linkinv <- function(eta) {
+    ok <- eta > 0 & eta < 4.333
+    eta[eta <= 0] <- 2/5
+    eta[eta >= 4.333] <- 1
+    if(sum(ok))
+      eta[ok] <-
+      sapply( eta[ok], function(x) x^c(0:10) %*% c(0.399966014, 0.001859461, 0.194649607, 0.021530254, -0.053426287, 0.004419745,
+                        0.007685677, -0.003152163, 0.000550084, -0.000047046, 0.000001618) )
+    pmin(pmax(eta, 2/5), 1) ## restrict to [2/5, 1] - just to be sure
+  }
+  twofiveF$mu.eta <- function(eta) {
+    ok <- eta > 0 & eta < 4.333
+    eta[eta <= 0] <- 0
+    eta[eta >= 4.333] <- 0
+    if(sum(ok)) {
+      d <- eta[ok]
+      eta[ok] <- sapply( d, function(x) x^c(0:9) %*% c(0.001859461, 0.389299214, 0.064590762, -0.213705148, 0.022098725,
+                                0.046114062, -0.022065141, 0.004400672, -0.000423414, 0.000016180) )
+    }
+    pmax(eta, 0) ## gradient cannot be negative.
+  }
+  twofiveF$linkfun <- function(mu) {
+    eps <- 1e-8
+    ok <- mu > 2/5 & mu < 1 - eps
+    mu[mu <= 2/5] <- 0
+    mu[mu >= 1 - eps] <- Inf
+    if(sum(ok)) {
+      twofiveFg2 <- function(d, p) twofiveF$linkinv(d) - p
+      mu[ok] <- sapply(mu[ok], function(mu)
+        uniroot(twofiveFg2, c(0, 4.333), p = mu)$root)
+    }
+    mu
+  }
+  twofiveF
+}

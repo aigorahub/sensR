@@ -4,14 +4,15 @@
 \title{Simulates replicated difference tests}
 \description{
   Simulates the outcome of \code{sample.size} replicated sensory
-  difference tests (for any one of four protocols: 2-AFC, 3-AFC,
-  duotrio, tetrad and triangle tests)
+  difference tests (for any one of eight protocols: 2-AFC, 3-AFC,
+  duotrio, tetrad, triangle, two-out-of-five, two-out-of-five with 
+  forgiveness and hexad tests)
   for a given d-prime value and a given overdispersion (default 0).
 }
 \usage{
 discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
            method = c("duotrio", "halfprobit", "probit", "tetrad",
-             "triangle", "twoAFC", "threeAFC"))
+             "triangle", "twoAFC", "threeAFC", "twofive", "twofiveF", "hexad"))
 }
 \arguments{
   \item{sample.size}{the sample size - number of subjects}
@@ -38,7 +39,9 @@ discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
 \author{Rune Haubo B Christensen and Per Bruun Brockhoff}
 
 \seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},
-  \code{\link{threeAFC}}, \code{\link{duotrio}}, \code{\link{tetrad}},
+  \code{\link{threeAFC}}, \code{\link{duotrio}},
+  \code{\link{tetrad}}, \code{\link{twofive}},
+  \code{\link{twofiveF}}, \code{\link{hexad}},
   \code{\link{discrimPwr}}, \code{\link{discrim}},
   \code{\link{AnotA}}, \code{\link{discrimSS}},
   \code{\link{samediff}}, \code{\link{findcr}}}

@@ -148,7 +148,7 @@ discrimSS <-
 d.primeSS <- 
   function(d.primeA, d.prime0 = 0, target.power = 0.90, alpha = 0.05,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"), 
+             "triangle", "hexad", "twofive", "twofiveF"), 
            test = c("difference", "similarity"),
            statistic = c("exact", "stable.exact", "both.exact",
              "normal", "cont.normal"))
@@ -165,7 +165,15 @@ d.primeSS <-
   pd0 <- coef(rescale(d.prime = d.prime0, method = method))$pd
   newCall$method <- newCall$d.primeA <- newCall$d.prime0 <- NULL
   newCall$pGuess <-
-    ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+    as.vector( sapply(method, switch, 
+                      duotrio = 1/2,
+                      twoAFC = 1/2,
+                      threeAFC = 1/3,
+                      triangle = 1/3,
+                      tetrad = 1/3,
+                      hexad = 1/10, 
+                      twofive = 1/10,
+                      twofiveF = 2/5) )
   newCall$pdA <- pdA
   newCall$pd0 <- pd0
   newCall[[1]] <- as.name("discrimSS")
