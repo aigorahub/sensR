@@ -17,15 +17,7 @@ betabin <-
   if(NCOL(m$data) != 2 || NROW(m$data) < 3)
     stop("'data' should have 2 columns and > 3 rows")
   method <- match.arg(method)
-  pGuess <- as.vector( sapply(method, switch, 
-                              duotrio = 1/2,
-                              twoAFC = 1/2,
-                              threeAFC = 1/3,
-                              triangle = 1/3,
-                              tetrad = 1/3,
-                              hexad = 1/10, 
-                              twofive = 1/10,
-                              twofiveF = 2/5) )
+  Pguess <- getPguess(method)
   name <- c("mu", "gamma")
   if(any(start < 1e-3) || any(start > 1- 1e-3))
     stop("start has to be in the open interval (0, 1)")

@@ -20,8 +20,8 @@ AnotA <-
   ## Arrange data:
   xt <-  cbind(c(x1, x2), c(n1 - x1, n2 - x2))
   ## Fit GLM:
-  res <- glm(xt ~ gl(2,1), 
-             family = binomial(link = "probit"), ...) # added ""  to probit 1.4-6 
+  res <- glm(xt ~ gl(2,1),
+             family = binomial(link = "probit"), ...) # added ""  to probit 1.4-6
   ## Prepare output:
   b <- coef(summary(res))
   coef <- -b[2,1] # d-prime
@@ -67,15 +67,7 @@ discrim <-
   n <- as.integer(round(n))
   if(x > n)
     stop("'correct' cannot be larger than 'total'")
-  Pguess <- pc0 <- switch(method,
-                          duotrio = 1/2,
-                          twoAFC = 1/2,
-                          threeAFC = 1/3,
-                          triangle = 1/3,
-                          tetrad = 1/3,
-                          hexad = 1/10,
-                          twofive = 1/10,
-                          twofiveF = 2/5)
+  Pguess <- getPguess(method)
   pd0 <- 0 ## Initial default value.
   ## Check value of null hypothesis (pd0/d.prime0):
   null.args <- c("pd0", "d.prime0")
@@ -214,13 +206,13 @@ function (success, total,
         stop("'total' has to be larger than 'success'")
     if(pd0 < 0 | pd0 > 1)
         stop("'pd0' has to be between zero and one")
-    p <- as.vector( sapply(method, switch, 
+    p <- as.vector( sapply(method, switch,
                            duotrio = 1/2,
                            twoAFC = 1/2,
                            threeAFC = 1/3,
                            triangle = 1/3,
                            tetrad = 1/3,
-                           hexad = 1/10, 
+                           hexad = 1/10,
                            twofive = 1/10,
                            twofiveF = 2/5) )
     ## Compute p-value:
@@ -322,15 +314,7 @@ print.discrim <-
             "% two-sided confidence\nintervals are based on the",
             text1, "\n\n"))
   print(x$coefficients, digits = digits)
-  Pguess <- as.vector( sapply(x$method, switch, 
-                              duotrio = 1/2,
-                              twoAFC = 1/2,
-                              threeAFC = 1/3,
-                              triangle = 1/3,
-                              tetrad = 1/3,
-                              hexad = 1/10, 
-                              twofive = 1/10,
-                              twofiveF = 2/5) )
+  Pguess <- getPguess(method)
   d.prime0 <- psyinv(pd2pc(x$pd0, Pguess), method = x$method)
   null.value <- switch(x$alt.scale,
                        "pd" = x$pd0,
@@ -503,13 +487,13 @@ profile.discrim <-
     fitted <- eval.parent(call)
     prof <- fitted$profile
   }
-  pg <- as.vector( sapply(fitted$method, switch, 
+  pg <- as.vector( sapply(fitted$method, switch,
                           duotrio = 1/2,
                           twoAFC = 1/2,
                           threeAFC = 1/3,
                           triangle = 1/3,
                           tetrad = 1/3,
-                          hexad = 1/10, 
+                          hexad = 1/10,
                           twofive = 1/10,
                           twofiveF = 2/5) )
   prof <- prof[prof$pSeq >= pg, ]

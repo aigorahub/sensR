@@ -1,7 +1,22 @@
+getPguess <- function(method = c("duotrio", "tetrad", "threeAFC",
+             "twoAFC", "triangle", "hexad", "twofive", "twofiveF")) {
+    ## get guessing probability for all protocols
+    method <- match.arg(method)
+    switch(method,
+           duotrio = 1/2,
+           twoAFC = 1/2,
+           threeAFC = 1/3,
+           triangle = 1/3,
+           tetrad = 1/3,
+           hexad = 1/10,
+           twofive = 1/10,
+           twofiveF = 2/5)
+}
+
 rescale <-
-  function(pc, pd, d.prime, std.err, 
+  function(pc, pd, d.prime, std.err,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF")) 
+             "triangle", "hexad", "twofive", "twofiveF"))
 {
   m <- match.call(expand.dots = FALSE)
   m[[1]] <- as.name("list")
@@ -11,15 +26,7 @@ rescale <-
   if(sum(isPresent) != 1)
     stop("One and only one of pc, pd and d.prime should be given")
   method <- match.arg(method)
-  Pguess <- as.vector( sapply(method, switch, 
-                              duotrio = 1/2,
-                              twoAFC = 1/2,
-                              threeAFC = 1/3,
-                              triangle = 1/3,
-                              tetrad = 1/3,
-                              hexad = 1/10, 
-                              twofive = 1/10,
-                              twofiveF = 2/5) )
+  Pguess <- getPguess(method)
   par <- arg[isPresent]
   if(!is.null(se <- m$std.err)) {
     stopifnot(is.numeric(se) && length(se) == length(m[[par]]))
@@ -59,7 +66,7 @@ rescale <-
       se.d.prime <- se
       se.pc <- se * psyderiv(d.prime, method = method)
       se.pd <- se.pc / (1 - Pguess)
-    } 
+    }
   }
   coef <- data.frame(pc = pc, pd = pd, d.prime = d.prime)
   res <- list(coefficients = coef)
@@ -101,7 +108,7 @@ pc2pd <- function(pc, Pguess)
 
 pd2pc <- function(pd, Pguess) {
 ### Maps pd to pc
-  
+
 ### arg: pd: numeric vector; 0 <= pc <= 1
 ###      Pguess: the guessing probability; numeric scalar,
 ###              0 <= pc <= 1
@@ -117,9 +124,9 @@ pd2pc <- function(pd, Pguess) {
 psyfun <-
   function(d.prime,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF")) 
+             "triangle", "hexad", "twofive", "twofiveF"))
 ### Maps d.prime to pc for sensory discrimination protocols
-  
+
 ### arg: d.prime: non-negative numeric vector
 ### res: pc: numeric vector
 {
@@ -135,7 +142,7 @@ psyfun <-
                    twofive = twofive()$linkinv,
                    twofiveF = twofiveF()$linkinv)
   pc <- numeric(length(d.prime))
-### Extreme cases are not handled well in the links, so we need: 
+### Extreme cases are not handled well in the links, so we need:
   OK <- d.prime < Inf
   if(sum(OK) > 0)
     pc[OK] <- psyFun(d.prime[OK])
@@ -144,9 +151,9 @@ psyfun <-
   return(pc)
 }
 
-psyinv <- function(pc, 
+psyinv <- function(pc,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF")) 
+             "triangle", "hexad", "twofive", "twofiveF"))
 ### Maps pc to d.prime for sensory discrimination protocols
 
 ### arg: pc: numeric vector; 0 <= pc <= 1
@@ -164,7 +171,7 @@ psyinv <- function(pc,
                    twofive = twofive()$linkfun,
                    twofiveF = twofiveF()$linkfun)
   d.prime <- numeric(length(pc))
-### Extreme cases are not handled well in the links, so we need: 
+### Extreme cases are not handled well in the links, so we need:
   OK <- pc < 1
   if(sum(OK) > 0)
     d.prime[OK] <- psyInv(pc[OK])
@@ -174,12 +181,12 @@ psyinv <- function(pc,
 }
 
 psyderiv <-
-  function(d.prime, 
+  function(d.prime,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF")) 
+             "triangle", "hexad", "twofive", "twofiveF"))
 ### Computes the derivative of the psychometric functions at some
 ### d.prime for sensory discrimination protocols.
-  
+
 ### arg: d.prime: non-negative numeric vector
 ### res: pc: numeric vector
 {
@@ -195,7 +202,7 @@ psyderiv <-
                      twofive = twofive()$mu.eta,
                      twofiveF = twofiveF()$mu.eta)
   Deriv <- numeric(length(d.prime))
-### Extreme cases are not handled well in the links, so we need: 
+### Extreme cases are not handled well in the links, so we need:
   OK <- d.prime > 0 && d.prime < Inf
   if(sum(OK) > 0)
     Deriv[OK] <- psyDeriv(d.prime[OK])
@@ -239,7 +246,7 @@ test.crit <-
 
 ### OBS: there is deliberately no requirement that xcr should be
 ### positive or less than sample.size.
-{  
+{
   if(test %in% c("difference", "greater")) ## alternative is "greater"
     ((1 - pbinom(q = xcr - 1, size = sample.size, prob = p.correct) <= alpha) &&
      (1 - pbinom(q = xcr - 2, size = sample.size, prob = p.correct) > alpha))
@@ -291,7 +298,7 @@ findcr <-
     interval <- c(-2, ss) ## deliberately outside allowed range
   }
   else ## should never occur
-    stop("'test' not recognized") 
+    stop("'test' not recognized")
   xcr <- round(uniroot(crdiff, interval = interval)$root)
   ## is xcr the critical value?:
   is.crit <- test.crit(xcr = xcr, sample.size = ss, p.correct = pc,
@@ -304,7 +311,7 @@ findcr <-
   i <- 0
   if(test == "difference") {
     while(1 - pbinom(q = xcr + i, size = ss, prob = pc) > alpha) {
-      if(i > max.iter || xcr + i > ss) break 
+      if(i > max.iter || xcr + i > ss) break
       i <- i + 1
     }
     xcr <- xcr + i + 1
@@ -369,4 +376,4 @@ normalPvalue <-
 ## Value readability over speed.
 ## Value accuracy over speed.
 ## Use small functions with conceptual - easy-to-understand tasks.
-## 
+##
