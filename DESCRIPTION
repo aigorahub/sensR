@@ -8,7 +8,7 @@ Authors@R: c(person(given="Rune Haubo Bojesen", family="Christensen",
 	   person(given="Per Bruun", family="Brockhoff",
 	   email="perbb@dtu.dk", role=c("aut", "cre")),
 	   person(given="Alexandra", family="Kuznetsova", role = "ctb"),
-	   person(given="Sophie", family="BIROT", role = "ctb"))
+	   person(given="Sophie", family="Birot", role = "ctb"))
 Imports: multcomp, MASS, numDeriv
 Suggests: ordinal, parallel, testthat (>= 0.8)
 ByteCompile: yes
