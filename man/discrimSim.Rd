@@ -5,14 +5,14 @@
 \description{
   Simulates the outcome of \code{sample.size} replicated sensory
   difference tests (for any one of eight protocols: 2-AFC, 3-AFC,
-  duotrio, tetrad, triangle, two-out-of-five, two-out-of-five with 
+  duotrio, tetrad, triangle, two-out-of-five, two-out-of-five with
   forgiveness and hexad tests)
   for a given d-prime value and a given overdispersion (default 0).
 }
 \usage{
 discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
            method = c("duotrio", "halfprobit", "probit", "tetrad",
-             "triangle", "twoAFC", "threeAFC", "twofive", "twofiveF", "hexad"))
+             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"))
 }
 \arguments{
   \item{sample.size}{the sample size - number of subjects}

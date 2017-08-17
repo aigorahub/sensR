@@ -14,7 +14,7 @@
 
 discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "twofive", "twofiveF", "hexad"),
+             "triangle", "hexad", "twofive", "twofiveF"),
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 
@@ -54,7 +54,7 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
 %%%     standard errors etc. to be computed by summary.discrimr)}
   \item{conf.level}{the confidence level for the confidence intervals}
   \item{method}{the discrimination protocol. Eight allowed values:
-    "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle", "twofive", 
+    "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle", "twofive",
     "twofiveF", "hexad"}
   \item{test}{the type of test}
   \item{statistic}{the statistic to be used for hypothesis testing and

@@ -18,7 +18,7 @@ discrimSS(pdA, pd0 = 0, target.power = 0.90, alpha = 0.05,
 
 d.primeSS(d.primeA, d.prime0 = 0, target.power = 0.90, alpha = 0.05,
           method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-            "triangle", "twofive", "twofiveF", "hexad"),
+            "triangle", "hexad", "twofive", "twofiveF"),
           test = c("difference", "similarity"),
           statistic = c("exact", "stable.exact", "both.exact",
            "normal", "cont.normal"))
@@ -39,7 +39,7 @@ d.primeSS(d.primeA, d.prime0 = 0, target.power = 0.90, alpha = 0.05,
     should be computed}
   \item{pGuess}{the guessing probability for the discrimination
     protocol, e.g. 1/2 for duo-trio and 2-AFC, 1/3 for
-    triangle, tetrad and 3-AFC, 1/10 for two-out-of-five and hexad 
+    triangle, tetrad and 3-AFC, 1/10 for two-out-of-five and hexad
     and 2/5 for two-out-of-five with forgiveness;; scalar between zero and one}
   \item{test}{the type of one-sided binomial test (direction of the
     alternative hypothesis): "difference" corresponds "greater" and

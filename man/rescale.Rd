@@ -26,21 +26,21 @@
     \item{\code{pc2pd}}{maps from pc to pd}
     \item{\code{pd2pc}}{maps from pd to pc}
     }
-} 
+}
 \usage{
 
-rescale(pc, pd, d.prime, std.err, 
+rescale(pc, pd, d.prime, std.err,
         method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-        "triangle", "twofive", "twofiveF", "hexad")) 
+        "triangle", "hexad", "twofive", "twofiveF"))
 
 psyfun(d.prime, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-       "triangle", "twofive", "twofiveF", "hexad")) 
+       "triangle", "hexad", "twofive", "twofiveF"))
 
 psyinv(pc, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-       "triangle", "twofive", "twofiveF", "hexad")) 
+       "triangle", "hexad", "twofive", "twofiveF"))
 
 psyderiv(d.prime, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-         "triangle", "twofive", "twofiveF", "hexad")) 
+         "triangle", "hexad", "twofive", "twofiveF"))
 
 pc2pd(pc, Pguess)
 
@@ -51,13 +51,13 @@ pd2pc(pd, Pguess)
   \item{pc}{the proportion of correct answers; a numerical vector
     between 0 and 1}
   \item{pd}{the proportion of discriminators; a numerical vector between
-    0 and 1} 
+    0 and 1}
   \item{d.prime}{the sensory difference on the d-prime scale; a
-    non-negative numerical vector.} 
+    non-negative numerical vector.}
   \item{std.err}{optional numerical vector of standard errors of the
     same length as the either of \code{pc}, \code{pd} or
     \code{d.prime}. Negative values are not allowed, but values may be
-    \code{NA}}  
+    \code{NA}}
   \item{method}{the sensory discrimination protocol for which the
     results should apply}
   \item{Pguess}{the guessing probability implied by the protocol; a
@@ -65,7 +65,7 @@ pd2pc(pd, Pguess)
 }
 \details{
   The \code{rescale} function is based on the fact that once the
-  protocol and one of 
+  protocol and one of
   pc, pd and d-prime is known, the other two can be computed. The same
   applies to the standard errors of these parameters.
 
