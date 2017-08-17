@@ -206,15 +206,7 @@ function (success, total,
         stop("'total' has to be larger than 'success'")
     if(pd0 < 0 | pd0 > 1)
         stop("'pd0' has to be between zero and one")
-    p <- as.vector( sapply(method, switch,
-                           duotrio = 1/2,
-                           twoAFC = 1/2,
-                           threeAFC = 1/3,
-                           triangle = 1/3,
-                           tetrad = 1/3,
-                           hexad = 1/10,
-                           twofive = 1/10,
-                           twofiveF = 2/5) )
+    p <- getPguess(method)
     ## Compute p-value:
     p.value <-
         if(type == "difference")
@@ -487,15 +479,7 @@ profile.discrim <-
     fitted <- eval.parent(call)
     prof <- fitted$profile
   }
-  pg <- as.vector( sapply(fitted$method, switch,
-                          duotrio = 1/2,
-                          twoAFC = 1/2,
-                          threeAFC = 1/3,
-                          triangle = 1/3,
-                          tetrad = 1/3,
-                          hexad = 1/10,
-                          twofive = 1/10,
-                          twofiveF = 2/5) )
+  pg <- getPguess(fitted$method)
   prof <- prof[prof$pSeq >= pg, ]
 ### FIXME: This does not handle if x/n < pg, as the relative
 ### likelihood needs to be rescaled to have max in pg in that case.

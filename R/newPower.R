@@ -80,16 +80,7 @@ d.primePwr2 <-
 
     pA <- psyfun(d.primeA, method=method)
     p0 <- psyfun(d.prime0, method=method)
-    pg <- switch(method, 
-                 duotrio = 1/2,
-                 twoAFC = 1/2,
-                 threeAFC = 1/3,
-                 triangle = 1/3,
-                 tetrad = 1/3,
-                 hexad = 1/10, 
-                 twofive = 1/10,
-                 twofiveF = 2/5)
-
+    pg <- getPguess(method)
     binomPwr(pcA=pA, pc0=p0, n=size, pg=pg, alpha=alpha,
              alternative=alt, statistic=stat)
 }

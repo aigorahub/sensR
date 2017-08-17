@@ -119,16 +119,7 @@ d.primePwr <-
   pdA <- coef(rescale(d.prime = d.primeA, method = method))$pd
   pd0 <- coef(rescale(d.prime = d.prime0, method = method))$pd
   newCall$method <- newCall$d.primeA <- newCall$d.prime0 <- NULL
-  newCall$pGuess <-
-    as.vector( sapply(method, switch, 
-                      duotrio = 1/2,
-                      twoAFC = 1/2,
-                      threeAFC = 1/3,
-                      triangle = 1/3,
-                      tetrad = 1/3,
-                      hexad = 1/10, 
-                      twofive = 1/10,
-                      twofiveF = 2/5) )
+  newCall$pGuess <- getPguess(method)
   newCall$pdA <- pdA
   newCall$pd0 <- pd0
   newCall[[1]] <- as.name("discrimPwr")
