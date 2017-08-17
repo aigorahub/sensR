@@ -31,16 +31,16 @@
 
 rescale(pc, pd, d.prime, std.err, 
         method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-        "triangle")) 
+        "triangle", "twofive", "twofiveF", "hexad")) 
 
 psyfun(d.prime, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-       "triangle")) 
+       "triangle", "twofive", "twofiveF", "hexad")) 
 
 psyinv(pc, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-       "triangle")) 
+       "triangle", "twofive", "twofiveF", "hexad")) 
 
 psyderiv(d.prime, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-         "triangle")) 
+         "triangle", "twofive", "twofiveF", "hexad")) 
 
 pc2pd(pc, Pguess)
 

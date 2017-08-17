@@ -49,7 +49,7 @@ binomPwr <-
 d.primePwr2 <-
     function(d.primeA, d.prime0 = 0, sample.size, alpha = 0.05,
              method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"),
+             "triangle", "hexad", "twofive", "twofiveF"),
              alternative = c("difference", "similarity", "two.sided",
              "less", "greater"),
              statistic = c("likelihood", "score", "Wald"))
@@ -80,7 +80,15 @@ d.primePwr2 <-
 
     pA <- psyfun(d.primeA, method=method)
     p0 <- psyfun(d.prime0, method=method)
-    pg <- if(method %in% c("duotrio", "twoAFC")) 1/2 else 1/3
+    pg <- switch(method, 
+                 duotrio = 1/2,
+                 twoAFC = 1/2,
+                 threeAFC = 1/3,
+                 triangle = 1/3,
+                 tetrad = 1/3,
+                 hexad = 1/10, 
+                 twofive = 1/10,
+                 twofiveF = 2/5)
 
     binomPwr(pcA=pA, pc0=p0, n=size, pg=pg, alpha=alpha,
              alternative=alt, statistic=stat)

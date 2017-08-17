@@ -1,7 +1,7 @@
 rescale <-
   function(pc, pd, d.prime, std.err, 
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle", "hexad", "twofive", "twofiveF")) 
 {
   m <- match.call(expand.dots = FALSE)
   m[[1]] <- as.name("list")
@@ -11,7 +11,15 @@ rescale <-
   if(sum(isPresent) != 1)
     stop("One and only one of pc, pd and d.prime should be given")
   method <- match.arg(method)
-  Pguess <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  Pguess <- as.vector( sapply(method, switch, 
+                              duotrio = 1/2,
+                              twoAFC = 1/2,
+                              threeAFC = 1/3,
+                              triangle = 1/3,
+                              tetrad = 1/3,
+                              hexad = 1/10, 
+                              twofive = 1/10,
+                              twofiveF = 2/5) )
   par <- arg[isPresent]
   if(!is.null(se <- m$std.err)) {
     stopifnot(is.numeric(se) && length(se) == length(m[[par]]))
@@ -109,7 +117,7 @@ pd2pc <- function(pd, Pguess) {
 psyfun <-
   function(d.prime,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle", "hexad", "twofive", "twofiveF")) 
 ### Maps d.prime to pc for sensory discrimination protocols
   
 ### arg: d.prime: non-negative numeric vector
@@ -122,7 +130,10 @@ psyfun <-
                    tetrad = tetrad()$linkinv,
                    triangle = triangle()$linkinv,
                    twoAFC = twoAFC()$linkinv,
-                   threeAFC = threeAFC()$linkinv)
+                   threeAFC = threeAFC()$linkinv,
+                   hexad = hexad()$linkinv,
+                   twofive = twofive()$linkinv,
+                   twofiveF = twofiveF()$linkinv)
   pc <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need: 
   OK <- d.prime < Inf
@@ -135,7 +146,7 @@ psyfun <-
 
 psyinv <- function(pc, 
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle", "hexad", "twofive", "twofiveF")) 
 ### Maps pc to d.prime for sensory discrimination protocols
 
 ### arg: pc: numeric vector; 0 <= pc <= 1
@@ -148,7 +159,10 @@ psyinv <- function(pc,
                    tetrad = tetrad()$linkfun,
                    triangle = triangle()$linkfun,
                    twoAFC = twoAFC()$linkfun,
-                   threeAFC = threeAFC()$linkfun)
+                   threeAFC = threeAFC()$linkfun,
+                   hexad = hexad()$linkfun,
+                   twofive = twofive()$linkfun,
+                   twofiveF = twofiveF()$linkfun)
   d.prime <- numeric(length(pc))
 ### Extreme cases are not handled well in the links, so we need: 
   OK <- pc < 1
@@ -162,7 +176,7 @@ psyinv <- function(pc,
 psyderiv <-
   function(d.prime, 
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle")) 
+             "triangle", "hexad", "twofive", "twofiveF")) 
 ### Computes the derivative of the psychometric functions at some
 ### d.prime for sensory discrimination protocols.
   
@@ -176,7 +190,10 @@ psyderiv <-
                      tetrad = tetrad()$mu.eta,
                      triangle = triangle()$mu.eta,
                      twoAFC = twoAFC()$mu.eta,
-                     threeAFC = threeAFC()$mu.eta)
+                     threeAFC = threeAFC()$mu.eta,
+                     hexad = hexad()$mu.eta,
+                     twofive = twofive()$mu.eta,
+                     twofiveF = twofiveF()$mu.eta)
   Deriv <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need: 
   OK <- d.prime > 0 && d.prime < Inf

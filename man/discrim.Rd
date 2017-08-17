@@ -14,7 +14,7 @@
 
 discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"),
+             "triangle", "twofive", "twofiveF", "hexad"),
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 
@@ -53,8 +53,9 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
 %%%   \item{hess}{logical, should the hessian be computed? (requires for
 %%%     standard errors etc. to be computed by summary.discrimr)}
   \item{conf.level}{the confidence level for the confidence intervals}
-  \item{method}{the discrimination protocol. Five allowed values:
-    "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle"}
+  \item{method}{the discrimination protocol. Eight allowed values:
+    "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle", "twofive", 
+    "twofiveF", "hexad"}
   \item{test}{the type of test}
   \item{statistic}{the statistic to be used for hypothesis testing and
     confidence intervals}
@@ -133,7 +134,8 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
 
 \seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},
   \code{\link{threeAFC}}, \code{\link{duotrio}},
-  \code{\link{tetrad}},
+  \code{\link{tetrad}}, \code{\link{twofive}},
+  \code{\link{twofiveF}}, \code{\link{hexad}},
   \code{\link{discrimPwr}}, \code{\link{discrimSim}},
   \code{\link{discrimSS}}, \code{\link{samediff}},
   \code{\link{AnotA}}, \code{\link{findcr}},

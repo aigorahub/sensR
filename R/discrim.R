@@ -41,7 +41,7 @@ AnotA <-
 discrim <-
   function(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"),
+             "triangle", "hexad", "twofive", "twofiveF"),
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 {
@@ -67,7 +67,15 @@ discrim <-
   n <- as.integer(round(n))
   if(x > n)
     stop("'correct' cannot be larger than 'total'")
-  Pguess <- pc0 <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  Pguess <- pc0 <- switch(method,
+                          duotrio = 1/2,
+                          twoAFC = 1/2,
+                          threeAFC = 1/3,
+                          triangle = 1/3,
+                          tetrad = 1/3,
+                          hexad = 1/10,
+                          twofive = 1/10,
+                          twofiveF = 2/5)
   pd0 <- 0 ## Initial default value.
   ## Check value of null hypothesis (pd0/d.prime0):
   null.args <- c("pd0", "d.prime0")
@@ -206,7 +214,15 @@ function (success, total,
         stop("'total' has to be larger than 'success'")
     if(pd0 < 0 | pd0 > 1)
         stop("'pd0' has to be between zero and one")
-    p <- ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+    p <- as.vector( sapply(method, switch, 
+                           duotrio = 1/2,
+                           twoAFC = 1/2,
+                           threeAFC = 1/3,
+                           triangle = 1/3,
+                           tetrad = 1/3,
+                           hexad = 1/10, 
+                           twofive = 1/10,
+                           twofiveF = 2/5) )
     ## Compute p-value:
     p.value <-
         if(type == "difference")
@@ -253,7 +269,7 @@ function (success, total,
 discrimSim <-
   function(sample.size, replicates, d.prime, sd.indiv = 0,
            method = c("duotrio", "halfprobit", "probit", "tetrad",
-             "triangle", "twoAFC", "threeAFC"))
+             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"))
 {
   method <- match.arg(method)
   if(sample.size != trunc(sample.size) | sample.size <= 0)
@@ -306,7 +322,15 @@ print.discrim <-
             "% two-sided confidence\nintervals are based on the",
             text1, "\n\n"))
   print(x$coefficients, digits = digits)
-  Pguess <- ifelse(x$method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  Pguess <- as.vector( sapply(x$method, switch, 
+                              duotrio = 1/2,
+                              twoAFC = 1/2,
+                              threeAFC = 1/3,
+                              triangle = 1/3,
+                              tetrad = 1/3,
+                              hexad = 1/10, 
+                              twofive = 1/10,
+                              twofiveF = 2/5) )
   d.prime0 <- psyinv(pd2pc(x$pd0, Pguess), method = x$method)
   null.value <- switch(x$alt.scale,
                        "pd" = x$pd0,
@@ -479,7 +503,15 @@ profile.discrim <-
     fitted <- eval.parent(call)
     prof <- fitted$profile
   }
-  pg <- ifelse(fitted$method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  pg <- as.vector( sapply(fitted$method, switch, 
+                          duotrio = 1/2,
+                          twoAFC = 1/2,
+                          threeAFC = 1/3,
+                          triangle = 1/3,
+                          tetrad = 1/3,
+                          hexad = 1/10, 
+                          twofive = 1/10,
+                          twofiveF = 2/5) )
   prof <- prof[prof$pSeq >= pg, ]
 ### FIXME: This does not handle if x/n < pg, as the relative
 ### likelihood needs to be rescaled to have max in pg in that case.

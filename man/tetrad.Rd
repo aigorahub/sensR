@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Create tetrad binomial family}
 \description{
-  Creates af binomial family object with the inverse link function
+  Creates a binomial family object with the inverse link function
   equal to the psychometric function for the unspecified method of
   tetrads.
 }
