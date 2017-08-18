@@ -42,13 +42,15 @@ discrim <-
   function(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
              "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE,
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 {
   stopifnot(length(correct) == 1L, is.numeric(correct),
             length(total) == 1L, is.numeric(total),
             length(conf.level) == 1L, is.numeric(conf.level),
-            conf.level >= 0, conf.level <= 1)
+            conf.level >= 0, conf.level <= 1,
+            is.logical(double) || is.numeric(double) && length(double) == 1L)
   m <- match.call(expand.dots=FALSE)
   method <- match.arg(method)
   test <- match.arg(test)
@@ -56,7 +58,7 @@ discrim <-
   m[[1]] <- as.name("list")
   m$method <- m$statistic <- m$test <- NULL
   m <- eval.parent(m) # evaluate the *list* of arguments
-  x <- m$correct;  n <- m$total
+  x <- m$correct;  n <- m$total; double <- m$double[1L]
   call <- match.call()
   ## use round - as.integer also strips names:
   if(!isTRUE(all.equal(round(x), x)) || x < 0)
@@ -67,7 +69,9 @@ discrim <-
   n <- as.integer(round(n))
   if(x > n)
     stop("'correct' cannot be larger than 'total'")
-  Pguess <- pc0 <- getPguess(method)
+  if(method %in% c("hexad", "twofive", "twofiveF") && double)
+      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
+  Pguess <- pc0 <- getPguess(method=method, double=double)
   pd0 <- 0 ## Initial default value.
   ## Check value of null hypothesis (pd0/d.prime0):
   null.args <- c("pd0", "d.prime0")
@@ -99,7 +103,7 @@ discrim <-
                     d.prime0 >= 0)
           if(test == "similarity" && d.prime0 == 0)
               warning("'d.prime0' should be positive for a similarity test")
-          pc0 <- psyfun(d.prime0, method=method)
+          pc0 <- psyfun(d.prime0, method=method, double=double)
           pd0 <- pc2pd(pc=pc0, Pguess=Pguess)
       }
   }
@@ -111,12 +115,12 @@ discrim <-
   rownames(table) <- c("pc", "pd", "d-prime")
   colnames(table) <- c("Estimate", "Std. Error", "Lower", "Upper")
   ## Fill in estimates:
-  obj <- rescale(pc = mu, method = method)
+  obj <- rescale(pc = mu, method = method, double=double)
   table[,1] <- unlist(obj$coefficients)
   pc.hat <- table[1,1]
   ## Fill in standard errors:
   if(mu < 1 && mu > Pguess) {
-    obj <- rescale(pc = mu, std.err = se.mu, method = method)
+    obj <- rescale(pc = mu, std.err = se.mu, method = method, double=double)
     table[,2] <- unlist(obj$std.err)
   }
   ## Get p-value, CI and test statistic:
@@ -167,14 +171,15 @@ discrim <-
   }
   if(sum(is.na(ci)) == 0) {
     ci <- delimit(x = ci, lower = 0, upper = 1)
-    intervals <- rescale(pc = ci, method = method)$coefficients
+    intervals <- rescale(pc = ci, method = method, double = double)$coefficients
     table[,3] <- unlist(intervals[1,])
     table[,4] <- unlist(intervals[2,])
   }
   res <- list(coefficients = table, p.value = p.value, call = call,
               test = test, method = method, statistic = stat,
               data = c("correct" = x, "total" = n), pd0 = pd0,
-              conf.level = conf.level, alt.scale = alt.scale)
+              conf.level = conf.level, alt.scale = alt.scale,
+              double = double)
   if(stat != "exact")
     res$stat.value <- Stat
   if(stat == "score")
@@ -298,7 +303,8 @@ print.discrim <-
                   "likelihood" = "likelihood root statistic.",
                   "Wald" = "Wald statistic.",
                   "score" = "Pearson and score statistics.")
-  cat(paste("\nEstimates for the", x$method,
+  txt <- if(double) "\nEstimates for the double" else "\nEstimates for the"
+  cat(paste(txt, x$method,
             "discrimination protocol with", x$data[1],
             "correct\nanswers in",
             x$data[2], "trials. One-sided p-value and",
@@ -306,12 +312,13 @@ print.discrim <-
             "% two-sided confidence\nintervals are based on the",
             text1, "\n\n"))
   print(x$coefficients, digits = digits)
-  Pguess <- getPguess(x$method)
-  d.prime0 <- psyinv(pd2pc(x$pd0, Pguess), method = x$method)
+  Pguess <- getPguess(method=x$method, double=x$double)
+  d.prime0 <- psyinv(pd2pc(x$pd0, Pguess), method = x$method,
+                     double=x$double)
   null.value <- switch(x$alt.scale,
                        "pd" = x$pd0,
                        "d-prime" = psyinv(pd2pc(x$pd0, Pguess),
-                       method=x$method))
+                       method=x$method, double=x$double))
   cat(paste("\nResult of", x$test, "test:\n"))
   if(x$statistic == "Wald")
     cat(paste("Wald statistic = ", format(x$stat.value, digits),
@@ -334,6 +341,9 @@ print.discrim <-
   cat(paste(x$alt.scale,"is",
             ifelse(x$test == "difference", "greater", "less"),
             "than", format(null.value, digits=digits), "\n\n"))
+  if(any(is.na(x$coefficients[, 2])))
+      cat("Standard errors are not estimable due to an observed proportion either\n",
+          "at or below guessing level or at 100%. Everything else is still valid.\n\n")
   invisible(x)
 }
 
@@ -344,7 +354,8 @@ plot.discrim <-
   y <- dnorm(z)
   y2 <- dnorm(z, mean = coef(x)[3, 1])
   main.txt <- ifelse(main,
-                     paste("Distribution of sensory intensity for the",
+                     paste("Distribution of sensory intensity for",
+                           ifelse(x$double, "the double", "the"),
                            x$method, "test"), c("") )
   plot(z, y, type="l", xlab = "Sensory Magnitude",
        ylab = "", main = main.txt, las = 1, lty = 2, ...)
@@ -479,12 +490,13 @@ profile.discrim <-
     fitted <- eval.parent(call)
     prof <- fitted$profile
   }
-  pg <- getPguess(fitted$method)
+  pg <- getPguess(method=fitted$method, double=fitted$double)
   prof <- prof[prof$pSeq >= pg, ]
 ### FIXME: This does not handle if x/n < pg, as the relative
 ### likelihood needs to be rescaled to have max in pg in that case.
 ### - Really?
-  prof$d.prime <- psyinv(prof$pSeq, method = fitted$method)
+  prof$d.prime <-
+      psyinv(prof$pSeq, method=fitted$method, double=fitted$double)
   keep <- is.finite(prof$d.prime)
   prof$pSeq <- NULL
   prof <- prof[keep, ]
@@ -554,19 +566,18 @@ confint.profBinom <- function(object, level=0.95) {
 }
 
 plotProf <-
-    function(object, method = c("binom", "duotrio", "threeAFC",
-                     "twoAFC", "triangle"), log = FALSE,
-             relative = TRUE, ...){
+    function(object,
+             method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
+             "triangle", "hexad", "twofive", "twofiveF"),
+             double = FALSE, log = FALSE, relative = TRUE, ...)
+{
     method <- match.arg(method)
+    double <- as.logical(double[1L])
     if(method == "binom") {
         sp <- with(object, spline(pSeq, Lroot))
         xlab <- "p"
     } else {
-        fam <- switch(method,
-                      duotrio = duotrio(),
-                      threeAFC = threeAFC(),
-                      twoAFC = twoAFC(),
-                      triangle = triangle() )
+        fam <- getFamily(method=method, double=double)
         dSeq <- fam$linkfun(object$pSeq)
         skip <- seq_len(sum(dSeq == 0) -1) ## skip leading zeros
         sp <- spline(dSeq[-skip], object$Lroot[-skip])

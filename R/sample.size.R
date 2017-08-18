@@ -149,6 +149,7 @@ d.primeSS <-
   function(d.primeA, d.prime0 = 0, target.power = 0.90, alpha = 0.05,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
              "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE,
            test = c("difference", "similarity"),
            statistic = c("exact", "stable.exact", "both.exact",
              "normal", "cont.normal"))
@@ -157,14 +158,19 @@ d.primeSS <-
   ## calls discrimSS
   newCall <- call <- match.call()
   method <- match.arg(method)
+  double <- as.logical(double[1L])
   stopifnot(length(d.primeA) == 1 && is.numeric(d.primeA) &&
             d.primeA >= 0)
   stopifnot(length(d.prime0) == 1 && is.numeric(d.prime0) &&
             d.prime0 >= 0)
-  pdA <- coef(rescale(d.prime = d.primeA, method = method))$pd
-  pd0 <- coef(rescale(d.prime = d.prime0, method = method))$pd
-  newCall$method <- newCall$d.primeA <- newCall$d.prime0 <- NULL
-  newCall$pGuess <- getPguess(method)
+  stopifnot(length(double) == 1L && is.logical(double))
+  pdA <- coef(rescale(d.prime = d.primeA, method = method,
+                      double = double))$pd
+  pd0 <- coef(rescale(d.prime = d.prime0, method = method,
+                      double = double))$pd
+  newCall$method <- newCall$d.primeA <- newCall$d.prime0 <-
+      newCall$double <- NULL
+  newCall$pGuess <- getPguess(method=method, double=double)
   newCall$pdA <- pdA
   newCall$pd0 <- pd0
   newCall[[1]] <- as.name("discrimSS")

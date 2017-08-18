@@ -31,16 +31,20 @@
 
 rescale(pc, pd, d.prime, std.err,
         method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-        "triangle", "hexad", "twofive", "twofiveF"))
+        "triangle", "hexad", "twofive", "twofiveF"),
+        double = FALSE)
 
 psyfun(d.prime, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-       "triangle", "hexad", "twofive", "twofiveF"))
+       "triangle", "hexad", "twofive", "twofiveF"),
+        double = FALSE)
 
 psyinv(pc, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-       "triangle", "hexad", "twofive", "twofiveF"))
+       "triangle", "hexad", "twofive", "twofiveF"),
+        double = FALSE)
 
 psyderiv(d.prime, method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-         "triangle", "hexad", "twofive", "twofiveF"))
+         "triangle", "hexad", "twofive", "twofiveF"),
+        double = FALSE)
 
 pc2pd(pc, Pguess)
 
@@ -60,6 +64,8 @@ pd2pc(pd, Pguess)
     \code{NA}}
   \item{method}{the sensory discrimination protocol for which the
     results should apply}
+  \item{double}{should the 'double' variant of the discrimination protocol
+    be used? Logical scalar.}
   \item{Pguess}{the guessing probability implied by the protocol; a
     numeric scalar between 0 and 1}
 }

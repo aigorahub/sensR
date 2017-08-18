@@ -1,22 +1,58 @@
-getPguess <- function(method = c("duotrio", "tetrad", "threeAFC",
-             "twoAFC", "triangle", "hexad", "twofive", "twofiveF")) {
+getPguess <-
+    function(method = c("duotrio", "tetrad", "threeAFC",
+             "twoAFC", "triangle", "hexad", "twofive", "twofiveF"),
+             double = FALSE)
+{
     ## get guessing probability for all protocols
     method <- match.arg(method)
-    switch(method,
-           duotrio = 1/2,
-           twoAFC = 1/2,
-           threeAFC = 1/3,
-           triangle = 1/3,
-           tetrad = 1/3,
-           hexad = 1/10,
-           twofive = 1/10,
-           twofiveF = 2/5)
+    double <- as.logical(double[1])
+    pg <- switch(method,
+                 duotrio = 1/2,
+                 twoAFC = 1/2,
+                 threeAFC = 1/3,
+                 triangle = 1/3,
+                 tetrad = 1/3,
+                 hexad = 1/10,
+                 twofive = 1/10,
+                 twofiveF = 2/5)
+    if(double) pg^2 else pg
+}
+
+getFamily <-
+    function(method = c("duotrio", "tetrad", "threeAFC",
+             "twoAFC", "triangle", "hexad", "twofive", "twofiveF"),
+             double = FALSE)
+{
+  method <- match.arg(method)
+  double <- as.logical(double[1L])
+  if(method %in% c("hexad", "twofive", "twofiveF") && double)
+      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
+  if(!double) {
+      fam <- switch(method,
+                    duotrio = duotrio(),
+                    tetrad = tetrad(),
+                    triangle = triangle(),
+                    twoAFC = twoAFC(),
+                    threeAFC = threeAFC(),
+                    hexad = hexad(),
+                    twofive = twofive(),
+                    twofiveF = twofiveF())
+  } else {
+      fam <- switch(method,
+                    duotrio = doubleduotrio(),
+                    tetrad = doubletetrad(),
+                    triangle = doubletriangle(),
+                    twoAFC = doubletwoAFC(),
+                    threeAFC = doublethreeAFC())
+  }
+  fam
 }
 
 rescale <-
   function(pc, pd, d.prime, std.err,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF"))
+             "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE)
 {
   m <- match.call(expand.dots = FALSE)
   m[[1]] <- as.name("list")
@@ -25,8 +61,11 @@ rescale <-
   isPresent <- sapply(arg, function(arg) !is.null(m[[arg]]))
   if(sum(isPresent) != 1)
     stop("One and only one of pc, pd and d.prime should be given")
+  if(method %in% c("hexad", "twofive", "twofiveF") && double)
+      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
   method <- match.arg(method)
-  Pguess <- getPguess(method)
+  double <- as.logical(double[1])
+  Pguess <- getPguess(method, double)
   par <- arg[isPresent]
   if(!is.null(se <- m$std.err)) {
     stopifnot(is.numeric(se) && length(se) == length(m[[par]]))
@@ -43,28 +82,30 @@ rescale <-
       se.pc <- se
       se.pc[tooSmall] <- NA
       se.pd <- se.pc / (1 - Pguess)
-      se.d.prime <- se.pc / psyderiv(d.prime, method = method)
+      se.d.prime <-
+          se.pc / psyderiv(d.prime, method = method, double = double)
     }
   }
   if(par == "pd") {
     pd <- m[[par]]
     stopifnot(is.numeric(pd) && all(pd >= 0) && all(pd <= 1))
     pc <- pd2pc(pd, Pguess)
-    d.prime <- psyinv(pc, method = method)
+    d.prime <- psyinv(pc, method = method, double = double)
     if(!is.null(se)) {
       se.pd <- se
       se.pc <- se.pd * (1 - Pguess)
-      se.d.prime <- se.pc / psyderiv(d.prime, method = method)
+      se.d.prime <-
+          se.pc / psyderiv(d.prime, method = method, double = double)
     }
   }
   if(par == "d.prime") {
     stopifnot(is.numeric(d.prime) && all(d.prime >= 0))
     d.prime <- m[[par]]
-    pc <- psyfun(d.prime, method = method)
+    pc <- psyfun(d.prime, method = method, double = double)
     pd <- pc2pd(pc, Pguess)
     if(!is.null(se)) {
       se.d.prime <- se
-      se.pc <- se * psyderiv(d.prime, method = method)
+      se.pc <- se * psyderiv(d.prime, method = method, double = double)
       se.pd <- se.pc / (1 - Pguess)
     }
   }
@@ -73,14 +114,19 @@ rescale <-
   if(!is.null(se))
     res$std.err <- data.frame(pc = se.pc, pd = se.pd,
                               d.prime = se.d.prime)
-  res$method <- method
+  res <- c(res, list(method=method, double=double))
   class(res) <- "rescale"
   return(res)
 }
 
 print.rescale <- function(x, digits = getOption("digits"), ...)
 {
-  cat(paste("\nEstimates for the", x$method, "protocol:\n", sep = " "))
+    txt <- if(double) {
+        paste("\nEstimates for the double", x$method, "protocol:\n", sep = " ")
+    } else {
+        paste("\nEstimates for the", x$method, "protocol:\n", sep = " ")
+    }
+  cat(txt)
   print(coef(x))
   if(!is.null(x$std.err)) {
     cat("\nStandard errors:\n")
@@ -124,23 +170,18 @@ pd2pc <- function(pd, Pguess) {
 psyfun <-
   function(d.prime,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF"))
+             "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE)
 ### Maps d.prime to pc for sensory discrimination protocols
 
 ### arg: d.prime: non-negative numeric vector
 ### res: pc: numeric vector
 {
   method <- match.arg(method)
-  stopifnot(all(is.numeric(d.prime)) && all(d.prime >= 0))
-  psyFun <- switch(method,
-                   duotrio = duotrio()$linkinv,
-                   tetrad = tetrad()$linkinv,
-                   triangle = triangle()$linkinv,
-                   twoAFC = twoAFC()$linkinv,
-                   threeAFC = threeAFC()$linkinv,
-                   hexad = hexad()$linkinv,
-                   twofive = twofive()$linkinv,
-                   twofiveF = twofiveF()$linkinv)
+  double <- as.logical(double[1L])
+  stopifnot(all(is.numeric(d.prime)) && all(d.prime >= 0),
+            length(double) == 1L && is.logical(double))
+  psyFun <- getFamily(method=method, double=double)$linkinv
   pc <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need:
   OK <- d.prime < Inf
@@ -152,24 +193,19 @@ psyfun <-
 }
 
 psyinv <- function(pc,
-           method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF"))
+                   method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
+                   "triangle", "hexad", "twofive", "twofiveF"),
+                   double = FALSE)
 ### Maps pc to d.prime for sensory discrimination protocols
 
 ### arg: pc: numeric vector; 0 <= pc <= 1
 ### res: d.prime: numeric vector
 {
   method <- match.arg(method)
-  stopifnot(all(is.numeric(pc)) && all(pc >= 0) && all(pc <= 1))
-  psyInv <- switch(method,
-                   duotrio = duotrio()$linkfun,
-                   tetrad = tetrad()$linkfun,
-                   triangle = triangle()$linkfun,
-                   twoAFC = twoAFC()$linkfun,
-                   threeAFC = threeAFC()$linkfun,
-                   hexad = hexad()$linkfun,
-                   twofive = twofive()$linkfun,
-                   twofiveF = twofiveF()$linkfun)
+  double <- as.logical(double[1L])
+  stopifnot(all(is.numeric(pc)) && all(pc >= 0) && all(pc <= 1),
+            length(double) == 1L && is.logical(double))
+  psyInv <- getFamily(method=method, double=double)$linkfun
   d.prime <- numeric(length(pc))
 ### Extreme cases are not handled well in the links, so we need:
   OK <- pc < 1
@@ -180,10 +216,12 @@ psyinv <- function(pc,
   return(d.prime)
 }
 
+
 psyderiv <-
   function(d.prime,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle", "hexad", "twofive", "twofiveF"))
+             "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE)
 ### Computes the derivative of the psychometric functions at some
 ### d.prime for sensory discrimination protocols.
 
@@ -191,16 +229,10 @@ psyderiv <-
 ### res: pc: numeric vector
 {
   method <- match.arg(method)
-  stopifnot(all(is.numeric(d.prime)) && all(d.prime >= 0))
-  psyDeriv <- switch(method,
-                     duotrio = duotrio()$mu.eta,
-                     tetrad = tetrad()$mu.eta,
-                     triangle = triangle()$mu.eta,
-                     twoAFC = twoAFC()$mu.eta,
-                     threeAFC = threeAFC()$mu.eta,
-                     hexad = hexad()$mu.eta,
-                     twofive = twofive()$mu.eta,
-                     twofiveF = twofiveF()$mu.eta)
+  double <- as.logical(double[1L])
+  stopifnot(all(is.numeric(d.prime)) && all(d.prime >= 0),
+            length(double) == 1L && is.logical(double))
+  psyDeriv <- getFamily(method=method, double=double)$mu.eta
   Deriv <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need:
   OK <- d.prime > 0 && d.prime < Inf

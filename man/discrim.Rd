@@ -15,6 +15,7 @@
 discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
              "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE,
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 
@@ -56,6 +57,9 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   \item{method}{the discrimination protocol. Eight allowed values:
     "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle", "twofive",
     "twofiveF", "hexad"}
+  \item{double}{should the 'double' variant of the discrimination protocol
+    be used? Logical scalar. Currently not implemented for "twofive",
+    "twofiveF", and "hexad".}
   \item{test}{the type of test}
   \item{statistic}{the statistic to be used for hypothesis testing and
     confidence intervals}
@@ -90,6 +94,17 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   the boundary of their allowed range, so these will be reported as
   \code{NA} in such cases.
 
+  If \code{double = "TRUE"}, the 'double' variants of the discrimination
+  methods is used. For example in a double-triangle test each participant
+  will perform two individual triangle tests and only obtain a correct
+  answer in the double-triangle test if both of the answers to the
+  individual triangle tests are correct. The guessing probability for
+  the double methods are lower than in the conventional discrimination
+  methods. If \eqn{p_g} is the guessing probability of the conventional
+  discrimination method, then \eqn{p_g^2} is the guessing probability of
+  the double variant of that discrimination method. All the double
+  discrimination methods have their own psychometric functions.
+
   The \code{"Wald"} statistic is *NOT* recommended for practical
   use---it is included here for completeness and to allow comparisons.
 
@@ -112,6 +127,8 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   \item{call}{the matched call}
   \item{test}{the type of test}
   \item{method}{the discrimination protocol}
+  \item{double}{logical scalar; \code{TRUE} if a double discrimination
+    method is used, otherwise \code{FALSE}}
   \item{statistic}{the statistic used for confidence intervals and
     p-value}
   \item{pd0}{the probability of discrimination under the
@@ -127,9 +144,14 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   \item{profile}{for \code{statistic == "likelihood"} the profile
     likelihood on the scale of Pc}
 }
-\references{Brockhoff, P.B. and Christensen, R.H.B (2010). Thurstonian
+\references{
+  Brockhoff, P.B. and Christensen, R.H.B (2010). Thurstonian
   models for sensory discrimination tests as generalized linear models.
-  Food Quality and Preference, 21, pp. 330-338.}
+  Food Quality and Preference, 21, pp. 330-338.
+
+  Bi, J. (2001) The double discrimination methods. Food Quality and
+  Preference, 12, pp. 507-513.
+}
 \author{Rune Haubo B Christensen and Per Bruun Brockhoff}
 
 \seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},

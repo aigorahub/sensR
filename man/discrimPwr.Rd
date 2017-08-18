@@ -18,6 +18,7 @@ discrimPwr(pdA, pd0 = 0, sample.size, alpha = 0.05, pGuess = 1/2,
 d.primePwr(d.primeA, d.prime0 = 0, sample.size, alpha = 0.05,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
              "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE,
            test = c("difference", "similarity"),
            statistic = c("exact", "normal", "cont.normal"))
 }
@@ -35,6 +36,9 @@ d.primePwr(d.primeA, d.prime0 = 0, sample.size, alpha = 0.05,
     one}
   \item{method}{the discrimination protocol for which the power should
     be computed}
+  \item{double}{should the 'double' variant of the discrimination protocol
+    be used? Logical scalar. Currently not implemented for "twofive",
+    "twofiveF", and "hexad".}
   \item{pGuess}{the guessing probability for the discrimination
     protocol, e.g. 1/2 for duo-trio and 2-AFC, 1/3 for
     triangle, tetrad and 3-AFC, 1/10 for two-out-of-five and hexad
