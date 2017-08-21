@@ -2,6 +2,59 @@
 ## LINKS FOR DOUBLE METHODS:
 ################################################################
 
+doubleduotrio <- function() {
+  doubleduotrio <- binomial()
+  doubleduotrio$link <- "Link for the duo-trio double test"
+  doubleduotrio$linkinv <- function(eta) {
+    ok <- eta > 0 & eta < 20
+    eta[eta <= 0] <- 0.25
+    eta[eta >= 20] <- 1
+    if(sum(ok)) {
+      eta.ok <- eta[ok]
+      pnorm.eta.2 <- pnorm(eta.ok * sqrt(1/2))
+      pnorm.eta.6 <- pnorm(eta.ok * sqrt(1/6))
+      eta[ok] <-
+        (1 - pnorm.eta.2 - pnorm.eta.6 + 2 * pnorm.eta.2 * pnorm.eta.6)^2
+    }
+    pmin(pmax(eta, 0.25), 1) ## restrict to [0.25, 1] - just to be sure
+  }
+  doubleduotrio$mu.eta <- function(eta) {
+    ok <- eta > 0 ## no upper limit
+    eta[!ok] <- 0
+    eta[eta >= 20] <- 1 ## should we include this restriction?
+    if(sum(ok)) {
+      eta.ok <- eta[ok]
+      pnorm.eta.2 <- pnorm(eta.ok * sqrt(1/2))
+      pnorm.eta.6 <- pnorm(eta.ok * sqrt(1/6))
+      sqrt.2 <- sqrt(1/2)
+      sqrt.6 <- sqrt(1/6)
+      eta.2 <- eta.ok * sqrt.2
+      eta.6 <- eta.ok * sqrt.6
+      A <- dnorm(eta.2) * sqrt.2
+      B <- dnorm(eta.6) * sqrt.6
+      C <- dnorm(eta.2)
+      D <- pnorm(eta.6) * sqrt.2
+      E <- pnorm(eta.2)
+      eta[ok] <- 2 * (1 - pnorm.eta.2 - pnorm.eta.6 + 2 * pnorm.eta.2 * pnorm.eta.6) *
+        (- A - B + 2 * (C * D + E * B))
+    }
+    pmax(eta, 0) ## gradient cannot be negative.
+  }
+  doubleduotrio$linkfun <- function(mu) {
+    eps <- 1e-10
+    ok <- mu > 0.25 & mu < 1 - eps
+    mu[mu <= 0.25] <- 0
+    mu[mu >= 1 - eps] <- Inf
+    if(sum(ok)) {
+      duotriog <- function(d, p) doubleduotrio$linkinv(d) - p
+      mu[ok] <- sapply(mu[ok], function(mu) {
+        uniroot(f=duotriog, interval=c(0, 16), p=mu)$root })
+    }
+    pmax(mu, 0) ## delta cannot be negative
+  }
+  doubleduotrio
+}
+
 doublethreeAFC <- function ()
 {
   doublethreeAFC <- binomial()

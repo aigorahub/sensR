@@ -5,7 +5,7 @@ getPguess <-
 {
     ## get guessing probability for all protocols
     method <- match.arg(method)
-    double <- as.logical(double[1])
+    double <- as.logical(double[1L])
     pg <- switch(method,
                  duotrio = 1/2,
                  twoAFC = 1/2,
@@ -121,7 +121,7 @@ rescale <-
 
 print.rescale <- function(x, digits = getOption("digits"), ...)
 {
-    txt <- if(double) {
+    txt <- if(x$double) {
         paste("\nEstimates for the double", x$method, "protocol:\n", sep = " ")
     } else {
         paste("\nEstimates for the", x$method, "protocol:\n", sep = " ")

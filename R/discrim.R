@@ -58,7 +58,7 @@ discrim <-
   m[[1]] <- as.name("list")
   m$method <- m$statistic <- m$test <- NULL
   m <- eval.parent(m) # evaluate the *list* of arguments
-  x <- m$correct;  n <- m$total; double <- m$double[1L]
+  x <- m$correct;  n <- m$total
   call <- match.call()
   ## use round - as.integer also strips names:
   if(!isTRUE(all.equal(round(x), x)) || x < 0)
@@ -303,7 +303,7 @@ print.discrim <-
                   "likelihood" = "likelihood root statistic.",
                   "Wald" = "Wald statistic.",
                   "score" = "Pearson and score statistics.")
-  txt <- if(double) "\nEstimates for the double" else "\nEstimates for the"
+  txt <- if(x$double) "\nEstimates for the double" else "\nEstimates for the"
   cat(paste(txt, x$method,
             "discrimination protocol with", x$data[1],
             "correct\nanswers in",
@@ -343,7 +343,7 @@ print.discrim <-
             "than", format(null.value, digits=digits), "\n\n"))
   if(any(is.na(x$coefficients[, 2])))
       cat("Standard errors are not estimable due to an observed proportion either\n",
-          "at or below guessing level or at 100%. Everything else is still valid.\n\n")
+          "at or below guessing level or at 100%. Everything else is still valid.\n\n", sep="")
   invisible(x)
 }
 
