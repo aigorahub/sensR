@@ -70,7 +70,7 @@ discrim <-
   if(x > n)
     stop("'correct' cannot be larger than 'total'")
   if(method %in% c("hexad", "twofive", "twofiveF") && double)
-      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
+      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' are not yet implemented")
   Pguess <- pc0 <- getPguess(method=method, double=double)
   pd0 <- 0 ## Initial default value.
   ## Check value of null hypothesis (pd0/d.prime0):
@@ -258,7 +258,8 @@ function (success, total,
 discrimSim <-
   function(sample.size, replicates, d.prime, sd.indiv = 0,
            method = c("duotrio", "halfprobit", "probit", "tetrad",
-             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"))
+             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"),
+           double = FALSE)
 {
   method <- match.arg(method)
   if(sample.size != trunc(sample.size) | sample.size <= 0)
@@ -267,12 +268,14 @@ discrimSim <-
     stop("'replicates' has to be a non-negativ integer")
   if(d.prime < 0) stop("'d.prime' has to be non-negative")
   if(sd.indiv < 0) stop("'sd.indiv' has to be non-negative")
+  if(method %in% c("hexad", "twofive", "twofiveF") && double)
+    stop("'double' method for 'hexad', 'twofive' and 'twofiveF' are not yet implemented")
   ## Individual deviations in d.prime:
   D <- rnorm(n = sample.size, mean = 0, sd = sd.indiv)
   q <- delimit(d.prime + D, lower = 0) # individual d.prime's
   ## Compute no. correct answers for the test:
-  n.correct <- rbinom(n = sample.size, size = replicates,
-                      prob = psyfun(q, method = method))
+  n.correct <- rbinom(n=sample.size, size=replicates,
+                      prob=psyfun(q, method=method, double=double))
   n.correct
 }
 

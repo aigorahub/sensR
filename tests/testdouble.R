@@ -97,3 +97,16 @@ g <- sqrt(psyfun(psyinv(10/15, method = "tetrad", double = TRUE),
                  method = "tetrad", double = TRUE))
 stopifnot(all.equal(f,g, tol=1e-6))
 
+##########
+## More tests by RHBC:
+# Check that gradient(psyfun)==psyderiv across methods:
+if(require(numDeriv)) {
+  methvec <- c("duotrio", "tetrad", "threeAFC", 
+               "twoAFC", "triangle")
+  res <- lapply(methvec, function(meth) {
+    fun <- function(dp) psyfun(dp, method=meth, double=TRUE)
+    sapply(seq(0 + 1e-3, 3, length.out = 10), function(dp) 
+      grad(fun, x=dp) - psyderiv(dp, method=meth, double=TRUE) )
+  })
+  stopifnot(max(abs(unlist(res))) < 1e-5)
+}

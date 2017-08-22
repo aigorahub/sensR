@@ -12,7 +12,8 @@
 \usage{
 discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
            method = c("duotrio", "halfprobit", "probit", "tetrad",
-             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"))
+             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"),
+           double = FALSE)
 }
 \arguments{
   \item{sample.size}{the sample size - number of subjects}
@@ -21,6 +22,9 @@ discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
   \item{method}{the discrimination protocol}
   \item{sd.indiv}{the individual variability in d-prime values. A value
     of 0 (default) corresponds to complete independence}
+  \item{double}{should the 'double' variant of the discrimination protocol
+    be used? Logical scalar. Currently not implemented for "twofive",
+    "twofiveF", and "hexad".}
 }
 \details{
   The d-prime for each subject is a random draw from a normal

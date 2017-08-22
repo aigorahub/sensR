@@ -65,7 +65,7 @@ rescale <-
       stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
   method <- match.arg(method)
   double <- as.logical(double[1])
-  Pguess <- getPguess(method, double)
+  Pguess <- getPguess(method=method, double=double)
   par <- arg[isPresent]
   if(!is.null(se <- m$std.err)) {
     stopifnot(is.numeric(se) && length(se) == length(m[[par]]))
@@ -77,7 +77,7 @@ rescale <-
     tooSmall <- pc < Pguess
     pc[tooSmall] <- Pguess
     pd <- pc2pd(pc, Pguess)
-    d.prime <- psyinv(pc, method = method)
+    d.prime <- psyinv(pc, method = method, double=double)
     if(!is.null(se)) {
       se.pc <- se
       se.pc[tooSmall] <- NA
