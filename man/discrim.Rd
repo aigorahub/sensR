@@ -154,16 +154,19 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
 }
 \author{Rune Haubo B Christensen and Per Bruun Brockhoff}
 
-\seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},
-  \code{\link{threeAFC}}, \code{\link{duotrio}},
-  \code{\link{tetrad}}, \code{\link{twofive}},
-  \code{\link{twofiveF}}, \code{\link{hexad}},
+\seealso{ 
   \code{\link{discrimPwr}}, \code{\link{discrimSim}},
   \code{\link{discrimSS}}, \code{\link{samediff}},
   \code{\link{AnotA}}, \code{\link{findcr}},
   \code{\link[=profile.discrim]{profile}},
   \code{\link[=profile.discrim]{plot.profile}}
   \code{\link[=profile.discrim]{confint}}
+  
+  Link functions / discrimination protocols: 
+  \code{\link{triangle}}, \code{\link{twoAFC}},
+  \code{\link{threeAFC}}, \code{\link{duotrio}},
+  \code{\link{tetrad}}, \code{\link{twofive}},
+  \code{\link{twofiveF}}, \code{\link{hexad}},
 }
 
 \examples{
@@ -173,6 +176,12 @@ discrim(10, 15, method = "threeAFC", statistic = "likelihood")
 discrim(10, 15, method = "tetrad", statistic = "likelihood")
 discrim(10, 15, method = "duotrio", conf.level = 0.90)
 discrim(10, 15, method = "triangle", statistic = "score")
+
+# Example of double duotrio discrimination test from Bi (2001):
+discrim(35, 100, method = "duotrio", double=TRUE, statistic = "exact")
+# Critical value for a sample size of 100 and a guessing probability of 1/4:
+findcr(100, p0=1/4) # 33
+
 
 ## plot the distributions of sensory intensity:
 m1 <- discrim(10, 15, method = "twoAFC")
@@ -214,6 +223,9 @@ xres <- list(c(0.666666666666667, 0.333333333333333, 0.609140388347971,
 0.0720590807243847, 0.739487700025965, 0.000306144022107533))
 
 for(i in 1:length(x)) stopifnot(isTRUE(all.equal(x[[1]], xres[[1]])))
+
+stopifnot(findcr(100, p0=1/4) == 33,
+          discrim(35, 100, method = "duotrio", double=TRUE, statistic = "exact")$p.value < 0.05)
 
 }
 }

@@ -66,6 +66,9 @@ d.primePwr(d.primeA, d.prime0 = 0, sample.size, alpha = 0.05,
   Brockhoff, P.B. and Christensen, R.H.B (2010). Thurstonian
   models for sensory discrimination tests as generalized linear models.
   Food Quality and Preference, 21, pp. 330-338.
+  
+  Bi, J. (2001) The double discrimination methods. Food Quality and
+  Preference, 12, pp. 507-513.
 }
 \author{Rune Haubo B Christensen and Per Bruun Brockhoff}
 
@@ -84,6 +87,21 @@ d.primePwr(1, sample.size = 30, method = "twoAFC")
 ## continuity correction:
 discrimPwr(pd, sample.size = 30, statistic = "cont.normal")
 discrimPwr(pd, sample.size = 30, statistic = "normal")
+
+# Example from Bi (2001) with n=100 and 35 correct answers in a 
+# double duotrio test:
+p1 <- 0.35
+# Estimate of d-prime quoted by Bi(2001) was 1.06:
+dp <- psyinv(p1, method="duotrio", double=TRUE) 
+# Power using normal approximation w/o continuity adjustment quoted by Bi(2001):
+d.primePwr(dp, sample.size = 100, method="duotrio", 
+           double=TRUE, stat="normal") # 0.73
+# d.primePwr(dp, sample.size = 100, method="duotrio", double=TRUE, 
+#            stat="cont.normal")
+
+# Power of exact test:
+d.primePwr(dp, sample.size = 100, method="duotrio", 
+           double=TRUE, stat="exact") # 0.697
 
 ## A similarity example:
 discrimPwr(pdA = 0.1, pd0 = 0.2, sample.size = 100, pGuess = 1/3,
@@ -104,6 +122,15 @@ y <- c(y1, y2, y3)
 ## yres := dput(y)
 yres <- c(0.88466478871626, 0.921092040377824, 0.306809762270984)
 stopifnot(isTRUE(all.equal(y, yres)))
+
+# Check examples from Bi (2001):
+p1 <- 0.35
+stopifnot(
+  all.equal(psyinv(p1, method="duotrio", double=TRUE), 1.06082607037307),
+  all.equal(d.primePwr(dp, sample.size = 100, method="duotrio", 
+                       double=TRUE, stat="normal"), 0.726811262989353),
+  all.equal(d.primePwr(dp, sample.size = 100, method="duotrio", 
+           double=TRUE, stat="exact"), 0.697083711530984))
 }
 
 }
