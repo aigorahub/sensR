@@ -176,7 +176,7 @@ doubletetrad <- function()
       eta[ok] <- sapply(eta[ok], function(eta) {
         (1 - 2*integrate(tetrads.fun, -Inf, Inf, delta=eta)$value)^2 })
     }
-    pmin(pmax(eta, 1/3), 1) ## restrict to [1/3, 1] - just to be sure
+    pmin(pmax(eta, 1/9), 1) ## restrict to [1/9, 1] - just to be sure
   }
   doubletetrad$mu.eta <- function(eta) {
     eps <- 1e-8
