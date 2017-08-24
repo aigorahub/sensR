@@ -14,7 +14,8 @@
 
 discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"),
+             "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE,
            statistic = c("exact", "likelihood", "score", "Wald"),
            test = c("difference", "similarity"), ...)
 
@@ -53,8 +54,12 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
 %%%   \item{hess}{logical, should the hessian be computed? (requires for
 %%%     standard errors etc. to be computed by summary.discrimr)}
   \item{conf.level}{the confidence level for the confidence intervals}
-  \item{method}{the discrimination protocol. Five allowed values:
-    "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle"}
+  \item{method}{the discrimination protocol. Eight allowed values:
+    "twoAFC", "threeAFC", "duotrio", "tetrad", "triangle", "twofive",
+    "twofiveF", "hexad"}
+  \item{double}{should the 'double' variant of the discrimination protocol
+    be used? Logical scalar. Currently not implemented for "twofive",
+    "twofiveF", and "hexad".}
   \item{test}{the type of test}
   \item{statistic}{the statistic to be used for hypothesis testing and
     confidence intervals}
@@ -89,6 +94,17 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   the boundary of their allowed range, so these will be reported as
   \code{NA} in such cases.
 
+  If \code{double = "TRUE"}, the 'double' variants of the discrimination
+  methods is used. For example in a double-triangle test each participant
+  will perform two individual triangle tests and only obtain a correct
+  answer in the double-triangle test if both of the answers to the
+  individual triangle tests are correct. The guessing probability for
+  the double methods are lower than in the conventional discrimination
+  methods. If \eqn{p_g} is the guessing probability of the conventional
+  discrimination method, then \eqn{p_g^2} is the guessing probability of
+  the double variant of that discrimination method. All the double
+  discrimination methods have their own psychometric functions.
+
   The \code{"Wald"} statistic is *NOT* recommended for practical
   use---it is included here for completeness and to allow comparisons.
 
@@ -111,6 +127,8 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   \item{call}{the matched call}
   \item{test}{the type of test}
   \item{method}{the discrimination protocol}
+  \item{double}{logical scalar; \code{TRUE} if a double discrimination
+    method is used, otherwise \code{FALSE}}
   \item{statistic}{the statistic used for confidence intervals and
     p-value}
   \item{pd0}{the probability of discrimination under the
@@ -126,20 +144,29 @@ discrim(correct, total, d.prime0, pd0, conf.level = 0.95,
   \item{profile}{for \code{statistic == "likelihood"} the profile
     likelihood on the scale of Pc}
 }
-\references{Brockhoff, P.B. and Christensen, R.H.B (2010). Thurstonian
+\references{
+  Brockhoff, P.B. and Christensen, R.H.B (2010). Thurstonian
   models for sensory discrimination tests as generalized linear models.
-  Food Quality and Preference, 21, pp. 330-338.}
+  Food Quality and Preference, 21, pp. 330-338.
+
+  Bi, J. (2001) The double discrimination methods. Food Quality and
+  Preference, 12, pp. 507-513.
+}
 \author{Rune Haubo B Christensen and Per Bruun Brockhoff}
 
-\seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},
-  \code{\link{threeAFC}}, \code{\link{duotrio}},
-  \code{\link{tetrad}},
+\seealso{ 
   \code{\link{discrimPwr}}, \code{\link{discrimSim}},
   \code{\link{discrimSS}}, \code{\link{samediff}},
   \code{\link{AnotA}}, \code{\link{findcr}},
   \code{\link[=profile.discrim]{profile}},
   \code{\link[=profile.discrim]{plot.profile}}
   \code{\link[=profile.discrim]{confint}}
+  
+  Link functions / discrimination protocols: 
+  \code{\link{triangle}}, \code{\link{twoAFC}},
+  \code{\link{threeAFC}}, \code{\link{duotrio}},
+  \code{\link{tetrad}}, \code{\link{twofive}},
+  \code{\link{twofiveF}}, \code{\link{hexad}},
 }
 
 \examples{
@@ -149,6 +176,12 @@ discrim(10, 15, method = "threeAFC", statistic = "likelihood")
 discrim(10, 15, method = "tetrad", statistic = "likelihood")
 discrim(10, 15, method = "duotrio", conf.level = 0.90)
 discrim(10, 15, method = "triangle", statistic = "score")
+
+# Example of double duotrio discrimination test from Bi (2001):
+discrim(35, 100, method = "duotrio", double=TRUE, statistic = "exact")
+# Critical value for a sample size of 100 and a guessing probability of 1/4:
+findcr(100, p0=1/4) # 33
+
 
 ## plot the distributions of sensory intensity:
 m1 <- discrim(10, 15, method = "twoAFC")
@@ -190,6 +223,9 @@ xres <- list(c(0.666666666666667, 0.333333333333333, 0.609140388347971,
 0.0720590807243847, 0.739487700025965, 0.000306144022107533))
 
 for(i in 1:length(x)) stopifnot(isTRUE(all.equal(x[[1]], xres[[1]])))
+
+stopifnot(findcr(100, p0=1/4) == 33,
+          discrim(35, 100, method = "duotrio", double=TRUE, statistic = "exact")$p.value < 0.05)
 
 }
 }

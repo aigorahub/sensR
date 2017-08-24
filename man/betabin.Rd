@@ -10,7 +10,7 @@
 \usage{
 betabin(data, start = c(.5,.5),
         method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-          "triangle"),
+          "triangle", "hexad", "twofive", "twofiveF"),
         vcov = TRUE, corrected = TRUE, gradTol = 1e-4, ...)
 
 \method{summary}{betabin}(object, level = 0.95, ...)
@@ -59,7 +59,7 @@ interpretations.
 
 The summary method use the estimate of mu to infer the parameters of the
 sensory experiment; Pc, Pd and d-prime. These are restricted to their
-allowed ranges, e.g. Pc is always as least as large as the guessing
+allowed ranges, e.g. Pc is always at least as large as the guessing
 probability.
 
 Confidens intervals are computed as Wald (normal-based) intervals on the
@@ -160,6 +160,7 @@ The following additional methods are implemented objects of class
 
 \seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},
   \code{\link{threeAFC}}, \code{\link{duotrio}}, \code{\link{tetrad}}
+  \code{\link{twofive}}, \code{\link{twofiveF}}, \code{\link{hexad}}
 }
 
 \examples{

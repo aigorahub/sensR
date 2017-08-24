@@ -21,7 +21,7 @@ normalSS <-
   ## Also note that type="normal" is ok.
   if((target.power <= 0.5 || alpha >= 0.5) &&
      type %in% c("cont.normal", "lwr", "upr", "upr.EJ"))
-    stop("Normal approximation requires target.power > 0.5 and alpha < 0.5")  
+    stop("Normal approximation requires target.power > 0.5 and alpha < 0.5")
   pow <- target.power
   pc0 <- pd2pc(pd=pd0, Pguess=pGuess)
   pcA <- pd2pc(pd=pdA, Pguess=pGuess)
@@ -50,7 +50,7 @@ normalSS <-
     x <- (-b - sqrt(D)) / (2 * a)
     n <- max(1, round(x^2))
   return(as.vector(n))
-}    
+}
 
 pdSS <-
   function(pdA, pd0 = 0, target.power = 0.90, alpha = 0.05,
@@ -62,7 +62,7 @@ pdSS <-
   pow <- target.power
   pcA <- pd2pc(pdA, pGuess)
   sample.size <- double(length=0L)
-  ## Upper and lower bounds based on the normal approximations: 
+  ## Upper and lower bounds based on the normal approximations:
   n.lwr <- normalSS(pdA = pdA, pd0 = pd0, target.power = target.power,
                     alpha = alpha, pGuess = pGuess, test = test,
                     type="lwr") ## -5
@@ -106,7 +106,7 @@ discrimSS <-
   function(pdA, pd0 = 0, target.power = 0.90, alpha = 0.05,
            pGuess = 1/2, test = c("difference", "similarity"),
            statistic = c("exact", "stable.exact", "both.exact",
-             "normal", "cont.normal")) 
+             "normal", "cont.normal"))
 {
   ## Match and test arguments:
   test <- match.arg(test)
@@ -118,7 +118,7 @@ discrimSS <-
             pd0 >= 0 && pd0 <= 1)
   stopifnot(is.numeric(alpha) && length(alpha) == 1 &&
             alpha > 0 && alpha < 1)
-  stopifnot(is.numeric(target.power) && length(target.power) == 1 && 
+  stopifnot(is.numeric(target.power) && length(target.power) == 1 &&
             target.power > 0 && target.power < 1)
   stopifnot(is.numeric(pGuess) && length(pGuess) == 1 &&
             pGuess >= 0 && pGuess < 1)
@@ -145,10 +145,11 @@ discrimSS <-
   return(as.vector(n))
 }
 
-d.primeSS <- 
+d.primeSS <-
   function(d.primeA, d.prime0 = 0, target.power = 0.90, alpha = 0.05,
            method = c("duotrio", "tetrad", "threeAFC", "twoAFC",
-             "triangle"), 
+             "triangle", "hexad", "twofive", "twofiveF"),
+           double = FALSE,
            test = c("difference", "similarity"),
            statistic = c("exact", "stable.exact", "both.exact",
              "normal", "cont.normal"))
@@ -157,15 +158,19 @@ d.primeSS <-
   ## calls discrimSS
   newCall <- call <- match.call()
   method <- match.arg(method)
+  double <- as.logical(double[1L])
   stopifnot(length(d.primeA) == 1 && is.numeric(d.primeA) &&
             d.primeA >= 0)
   stopifnot(length(d.prime0) == 1 && is.numeric(d.prime0) &&
             d.prime0 >= 0)
-  pdA <- coef(rescale(d.prime = d.primeA, method = method))$pd
-  pd0 <- coef(rescale(d.prime = d.prime0, method = method))$pd
-  newCall$method <- newCall$d.primeA <- newCall$d.prime0 <- NULL
-  newCall$pGuess <-
-    ifelse(method %in% c("duotrio", "twoAFC"), 1/2, 1/3)
+  stopifnot(length(double) == 1L && is.logical(double))
+  pdA <- coef(rescale(d.prime = d.primeA, method = method,
+                      double = double))$pd
+  pd0 <- coef(rescale(d.prime = d.prime0, method = method,
+                      double = double))$pd
+  newCall$method <- newCall$d.primeA <- newCall$d.prime0 <-
+      newCall$double <- NULL
+  newCall$pGuess <- getPguess(method=method, double=double)
   newCall$pdA <- pdA
   newCall$pd0 <- pd0
   newCall[[1]] <- as.name("discrimSS")

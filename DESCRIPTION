@@ -1,12 +1,15 @@
 Package: sensR
 Type: Package
 Title: Thurstonian Models for Sensory Discrimination
-Version: 1.4-8
-Date: 2017-01-31
+Version: 1.5-0
+Date: 2017-08-24
 Authors@R: c(person(given="Rune Haubo Bojesen", family="Christensen",
-	   email="rhbc@dtu.dk", role=c("aut")),
+	   email="Rune@ChristensenStatistics.dk", role=c("aut")),
 	   person(given="Per Bruun", family="Brockhoff",
-	   email="perbb@dtu.dk", role=c("aut", "cre")))
+	   email="perbb@dtu.dk", role=c("aut", "cre")),
+	   person(given="Alexandra", family="Kuznetsova", role = "ctb"),
+	   person(given="Sophie", family="Birot", role = "ctb"),
+	   person(given="Karolina Amelia", family="Stachlewska", role = "ctb"))
 Imports: multcomp, MASS, numDeriv
 Suggests: ordinal, parallel, testthat (>= 0.8)
 ByteCompile: yes
@@ -18,12 +21,3 @@ Description: Provides methods for sensory discrimination methods;
   comparisons of different d-primes. Methods for profile likelihood
   confidence intervals and plotting are included.
 License: GPL-2 | GPL-3
-Author: Rune Haubo Bojesen Christensen [aut],
-  Per Bruun Brockhoff [aut, cre]
-Maintainer: Per Bruun Brockhoff <perbb@dtu.dk>
-Repository: CRAN
-Repository/R-Forge/Project: sensr
-Repository/R-Forge/Revision: 87
-Packaged: 2016-04-05 14:50:48 UTC; perbb
-NeedsCompilation: no
-Date/Publication: 2016-04-05 17:40:33

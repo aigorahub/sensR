@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Create 3-AFC binomial family}
 \description{
-Creates af copy of the binomial family with the inverse link function changed to equal
+Creates a copy of the binomial family with the inverse link function changed to equal
 the 3-AFC psychometric function and correspondingly changed link function and derivative of the
 inverse link function.
 }

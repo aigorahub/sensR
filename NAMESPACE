@@ -20,7 +20,7 @@ importFrom("stats", "AIC", "approx", "binom.test", "coefficients", "dbinom",
 
 # functions
 export(AnotA, discrimPwr, discrimSS, discrim, #discrimr,
-       discrimSim, duotrio, threeAFC, triangle, twoAFC, tetrad,
+       discrimSim, duotrio, threeAFC, triangle, twoAFC, tetrad, hexad, twofive, twofiveF,
        SDT, ROC, AUC,
        samediff, findcr, betabin, samediffSim, discrimR, clls,
        samediffPwr, twoAC, rescale, psyfun, psyinv, psyderiv, pc2pd,

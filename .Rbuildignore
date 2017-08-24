@@ -1,0 +1,10 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.gitignore
+^\.git$
+.*~$
+README.md
+^build$
+TODO.md
+.Rhistory
+^.*\.Rproj$

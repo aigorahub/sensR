@@ -4,14 +4,16 @@
 \title{Simulates replicated difference tests}
 \description{
   Simulates the outcome of \code{sample.size} replicated sensory
-  difference tests (for any one of four protocols: 2-AFC, 3-AFC,
-  duotrio, tetrad and triangle tests)
+  difference tests (for any one of eight protocols: 2-AFC, 3-AFC,
+  duotrio, tetrad, triangle, two-out-of-five, two-out-of-five with
+  forgiveness and hexad tests)
   for a given d-prime value and a given overdispersion (default 0).
 }
 \usage{
 discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
            method = c("duotrio", "halfprobit", "probit", "tetrad",
-             "triangle", "twoAFC", "threeAFC"))
+             "triangle", "twoAFC", "threeAFC", "hexad", "twofive", "twofiveF"),
+           double = FALSE)
 }
 \arguments{
   \item{sample.size}{the sample size - number of subjects}
@@ -20,6 +22,9 @@ discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
   \item{method}{the discrimination protocol}
   \item{sd.indiv}{the individual variability in d-prime values. A value
     of 0 (default) corresponds to complete independence}
+  \item{double}{should the 'double' variant of the discrimination protocol
+    be used? Logical scalar. Currently not implemented for "twofive",
+    "twofiveF", and "hexad".}
 }
 \details{
   The d-prime for each subject is a random draw from a normal
@@ -38,7 +43,9 @@ discrimSim(sample.size, replicates, d.prime, sd.indiv = 0,
 \author{Rune Haubo B Christensen and Per Bruun Brockhoff}
 
 \seealso{ \code{\link{triangle}}, \code{\link{twoAFC}},
-  \code{\link{threeAFC}}, \code{\link{duotrio}}, \code{\link{tetrad}},
+  \code{\link{threeAFC}}, \code{\link{duotrio}},
+  \code{\link{tetrad}}, \code{\link{twofive}},
+  \code{\link{twofiveF}}, \code{\link{hexad}},
   \code{\link{discrimPwr}}, \code{\link{discrim}},
   \code{\link{AnotA}}, \code{\link{discrimSS}},
   \code{\link{samediff}}, \code{\link{findcr}}}
