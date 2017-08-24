@@ -214,15 +214,25 @@ March 2nd 2015 (version 1.4-6)
 
 - Changing package maintainer from Rune H B Christensen to Per B
   Brockhoff.
-  
+
 July 16th 2015 (version 1.4-6)
 
 -  submition to CRAN
--  cosmetic changes in NAMESPACE file: 
+-  cosmetic changes in NAMESPACE file:
              fixing warnings:  no visible global function definition
-- in descrim.R and discrimR.R changed probit to "probit" in order to fix NOTES 
+- in descrim.R and discrimR.R changed probit to "probit" in order to fix NOTES
   issues in CRAN check
-  
+
 
 March 14th 2016 (version 1.4-7)
--  cosmetic changes in test-disrim_pd0.R due to new version of testthat package
+- cosmetic changes in test-disrim_pd0.R due to new version of
+  testthat package
+
+August 24 2017 (version 1.5-0)
+- new submission to CRAN with a number of additions
+- new link functions 'twofive' (two out of five), 'twofiveF' (two out
+  of five with forgiveness), and the 'hexad' have been implemented by
+  Karolina Stachlewska.
+- the so-called double methods have been implemented (initially) by
+  Sophie Birot and ported current sensR by Rune Christensen.
+
