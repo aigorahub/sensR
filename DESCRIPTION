@@ -1,14 +1,15 @@
 Package: sensR
 Type: Package
 Title: Thurstonian Models for Sensory Discrimination
-Version: 1.4-9
-Date: 2017-08-17
+Version: 1.5-0
+Date: 2017-08-24
 Authors@R: c(person(given="Rune Haubo Bojesen", family="Christensen",
 	   email="Rune@ChristensenStatistics.dk", role=c("aut")),
 	   person(given="Per Bruun", family="Brockhoff",
 	   email="perbb@dtu.dk", role=c("aut", "cre")),
 	   person(given="Alexandra", family="Kuznetsova", role = "ctb"),
-	   person(given="Sophie", family="Birot", role = "ctb"))
+	   person(given="Sophie", family="Birot", role = "ctb"),
+	   person(given="Karolina Amelia", family="Stachlewska", role = "ctb"))
 Imports: multcomp, MASS, numDeriv
 Suggests: ordinal, parallel, testthat (>= 0.8)
 ByteCompile: yes

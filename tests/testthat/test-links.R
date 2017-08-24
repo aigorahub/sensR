@@ -342,3 +342,200 @@ test_that("2-AFC linkfun, linkinv and deriv return what we expect", {
     expect_true(twoAFC()$linkfun(.5 + 1e-17) == 0)
     expect_true(twoAFC()$linkfun(.5 + 1e-16) > 0)
 })
+
+##################################################################
+## Tests of twofive family object:
+
+## Evaluating linkinv, mu.eta and linkfun for a range of values:
+delta.lim <- c(-Inf, -1, 0, 1e-3, 1e-2, .1, 1:20, 30, Inf)
+pc <- c(-Inf, -1, 0:3/10, 1/3, 1/3 + 1e-4, 1/3 + 1e-3,
+        4:9/10, 1-1e-7, 1-1e-8, 1, 2, Inf)
+twofiveMat <- cbind(delta.lim,
+                   linkinv= twofive()$linkinv(delta.lim),
+                   muEta= twofive()$mu.eta(delta.lim))
+twofiveMat2 <- cbind(pc, twofive()$linkfun(pc))
+
+## dput(twofiveMat)
+twofiveMat.expect <-
+  structure(c(-Inf, -1, 0, 0.001, 0.01, 0.1, 1, 2, 3, 4, 5, 6, 
+              7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, Inf,
+              0.1, 0.1, 0.1, 0.1, 0.1, 0.10107152220502, 0.2085955085975, 
+              0.4631918310644, 0.7124482472027, 0.8743173541682, 0.9536893496279, 
+              0.985517362940003, 0.99632352060592, 0.999099033570223, 0.999906785944802, 
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0.0147526755690574, 
+              0.0160439376647026, 0.0303146850800881, 0.20518076191, 0.27470131402, 
+              0.210319797589999, 0.115388382039998, 0.0498410549499981, 0.0182495204599735, 
+              0.00535523526997128, 0.0012066894399716, 0.000363007189989162, 0, 0, 0, 0, 0, 
+              0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(28L, 3L), .Dimnames = list(
+                NULL, c("delta.lim", "linkinv", "muEta")))
+twofiveMat2.expect <-
+  structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333, 
+              0.334333333333333, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.9999999, 0.99999999, 
+              1, 2, Inf, 0, 0, 0, 0, 0.957403058573684, 1.39426754683237, 1.52299708814271, 
+              1.52337648371465, 1.52678948089008, 1.77021597385117, 2.13463230604927, 
+              2.51517099025998, 2.94156707479731, 3.46684035199777, 4.24359588167823, 
+              9.28, Inf, Inf, Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc", "")))
+
+test_that("Twofive linkfun, linkinv and deriv return what we expect", {
+  expect_equal(twofiveMat, twofiveMat.expect)
+  expect_equal(twofiveMat2, twofiveMat2.expect)
+  
+  ## Going smooth toward zero:
+  x <- twofive()$mu.eta(9 - 10^(0:-7))
+  expect_true(all(diff(x) < 0))
+  
+  ## Upper limit for linkinv:
+  expect_true((1 - twofive()$linkinv(9.28-.1)) > 0) # 4.30169477070308e-05
+  expect_true((1 - twofive()$linkinv(9.28)) == 0) # 0
+  expect_true((1 - twofive()$linkinv(9.28+.1)) == 0) # 0
+  
+  ## Lower limit for linkinv:
+  expect_true((twofive()$linkinv(1e-1) - 1/10) > 0) # 0.0010715222050199
+  expect_true((twofive()$linkinv(1e-2) - 1/10) == 0) # 0
+  
+  ## The upper limit for linkfun:
+  expect_true(twofive()$linkfun(1 - 1.1e-8) < Inf) ## < Inf = 9.28
+  expect_true(twofive()$linkfun(1 - 1e-8) == Inf) ## Inf
+  
+  ## Lower limit for linkfun:
+  expect_true(twofive()$linkfun(1/10 + 1e-10) > 0)# 0.060283157452941 
+  expect_true(twofive()$linkfun(1/10) == 0) # 0
+  
+  ## mu.eta - upper limit:
+  expect_true(twofive()$mu.eta(9) > 0)
+  expect_equal(twofive()$mu.eta(10), 0)
+  
+  ## mu.eta - lower limit
+  expect_equal(twofive()$mu.eta(0), 0)
+  expect_true(twofive()$mu.eta(1e-10) > 0)
+})
+
+##################################################################
+## Tests of twofiveF family object:
+
+## Evaluating linkinv, mu.eta and linkfun for a range of values:
+delta.lim <- c(-Inf, -1, 0, 1e-3, 1e-2, .1, 1:20, 30, Inf)
+pc <- c(-Inf, -1, 0:3/10, 1/3, 1/3 + 1e-4, 1/3 + 1e-3,
+        4:9/10, 1-1e-7, 1-1e-8, 1, 2, Inf)
+twofiveFMat <- cbind(delta.lim,
+                    linkinv= twofiveF()$linkinv(delta.lim),
+                    muEta= twofiveF()$mu.eta(delta.lim))
+twofiveFMat2 <- cbind(pc, twofiveF()$linkfun(pc))
+
+## dput(twofiveFMat)
+twofiveFMat.expect <-
+  structure(c(-Inf, -1, 0, 0.001, 0.01, 0.1, 1, 2, 3, 4, 5, 6, 
+              7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, Inf,
+              0.4, 0.4, 0.4, 0.4, 0.400004094567141, 0.402114695368665, 
+              0.574036964, 0.847933892, 0.972890546, 0.997992001999998, 
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+              0, 0, 0, 0.002248824591079, 0.00575869873662864, 0.0412242342558282, 
+              0.292185373, 0.209416505, 0.0559823170000006, 0.00787465299998846, 
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+            .Dim = c(28L, 3L), .Dimnames = list(NULL, c("delta.lim", "linkinv", "muEta")))
+twofiveFMat2.expect <-
+  structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333, 
+              0.334333333333333, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.9999999, 0.99999999, 
+              1, 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.729864546922193, 1.08785340036478, 
+              1.42206556656007, 1.78981247157219, 2.28384664010161, 4.333, 
+              Inf, Inf, Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc", "")))
+
+test_that("twofiveF linkfun, linkinv and deriv return what we expect", {
+  expect_equal(twofiveFMat, twofiveFMat.expect)
+  expect_equal(twofiveFMat2, twofiveFMat2.expect)
+  
+  ## Going smooth toward zero:
+  x <- twofiveF()$mu.eta(4.333 - 10^(0:-6))
+  expect_true(all(diff(x) < 0))
+  
+  ## Upper limit for linkinv:
+  expect_true((1 - twofiveF()$linkinv(4.333-.1)) > 0) # 0.000506208846268397
+  expect_true((1 - twofiveF()$linkinv(4.333)) == 0) # 0
+  expect_true((1 - twofiveF()$linkinv(4.333+.1)) == 0) # 0
+  
+  ## Lower limit for linkinv:
+  expect_true((twofiveF()$linkinv(1e-2) - 2/5) > 0) # 4.0945671406778e-06
+  expect_true((twofiveF()$linkinv(1e-3) - 2/5) == 0) # 0
+  
+  ## The upper limit for linkfun:
+  expect_true(twofiveF()$linkfun(1 - 1.1e-8) < Inf) ## < Inf = 4.333
+  expect_true(twofiveF()$linkfun(1 - 1e-8) == Inf) ## Inf
+  
+  ## Lower limit for linkfun:
+  expect_true(twofiveF()$linkfun(2/5 + 1e-10) > 0) # 0.00925646686553957 
+  expect_true(twofiveF()$linkfun(2/5) == 0) # 0
+  
+  ## mu.eta - upper limit:
+  expect_true(twofiveF()$mu.eta(4) > 0) # 0.00787465299998846
+  expect_equal(twofiveF()$mu.eta(5), 0)
+  
+  ## mu.eta - lower limit
+  expect_equal(twofiveF()$mu.eta(0), 0)
+  expect_true(twofiveF()$mu.eta(1e-10) > 0) # 0.00185946103892992
+})
+
+##################################################################
+## Tests of hexad family object:
+
+## Evaluating linkinv, mu.eta and linkfun for a range of values:
+delta.lim <- c(-Inf, -1, 0, 1e-3, 1e-2, .1, 1:20, 30, Inf)
+pc <- c(-Inf, -1, 0:3/10, 1/3, 1/3 + 1e-4, 1/3 + 1e-3,
+        4:9/10, 1-1e-7, 1-1e-8, 1, 2, Inf)
+hexadMat <- cbind(delta.lim,
+                     linkinv= hexad()$linkinv(delta.lim),
+                     muEta= hexad()$mu.eta(delta.lim))
+hexadMat2 <- cbind(pc, hexad()$linkfun(pc))
+
+## dput(hexadMat)
+hexadMat.expect <-
+  structure(c(-Inf, -1, 0, 0.001, 0.01, 0.1, 1, 2, 3, 4, 5, 6, 
+              7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, Inf,
+              0.1, 0.1, 0.1, 0.1, 0.1, 0.101754500271923, 0.263344564, 
+              0.6237275423, 0.889966449, 0.981722649100002, 0.998591169200013, 
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+              0, 0, 0, 0.0321121029051165, 0.033335925950264, 0.0490797938556163, 
+              0.3092317417, 0.3520537998, 0.1689499573, 0.0362509917999989, 
+              0.00575683289999063, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+            .Dim = c(28L, 3L), .Dimnames = list(NULL, c("delta.lim", "linkinv", "muEta")))
+hexadMat2.expect <-
+  structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333, 
+              0.334333333333333, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.9999999, 0.99999999, 
+              1, 2, Inf, 0, 0, 0, 0, 0.774651186581047, 1.11407101060899, 1.21181120347948, 
+              1.21209786250229, 1.21467624044908, 1.39674167184043, 1.66308754346337, 
+              1.93329841163929, 2.22665668787166, 2.57416319260789, 3.06152074898156, 
+              5.368, Inf, Inf, Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc", "")))
+
+test_that("hexad linkfun, linkinv and deriv return what we expect", {
+  expect_equal(hexadMat, hexadMat.expect)
+  expect_equal(hexadMat2, hexadMat2.expect)
+  
+  ## Going smooth toward zero:
+  x <- hexad()$mu.eta(5.368 - 10^(0:-4))
+  expect_true(all(diff(x) < 0))
+  
+  ## Upper limit for linkinv:
+  expect_true((1 - hexad()$linkinv(5.368-.1)) > 0) # 0.000448359778093987
+  expect_true((1 - hexad()$linkinv(5.368)) == 0) # 0
+  expect_true((1 - hexad()$linkinv(5.368+.1)) == 0) # 0
+  
+  ## Lower limit for linkinv:
+  expect_true((hexad()$linkinv(7e-2) - 1/10) > 0) # 0.000372278973465756
+  expect_true((hexad()$linkinv(1e-2) - 1/10) == 0) # 0
+  
+  ## The upper limit for linkfun:
+  expect_true(hexad()$linkfun(1 - 1.1e-8) < Inf) ## < Inf = 5.368
+  expect_true(hexad()$linkfun(1 - 1e-8) == Inf) ## Inf
+  
+  ## Lower limit for linkfun:
+  expect_true(hexad()$linkfun(1/10 + 1e-10) > 0) # 0.0611756998151541
+  expect_true(hexad()$linkfun(1/10) == 0) # 0
+  
+  ## mu.eta - upper limit:
+  expect_true(hexad()$mu.eta(5) > 0) # 0.00575683289999063
+  expect_equal(hexad()$mu.eta(6), 0)
+  
+  ## mu.eta - lower limit
+  expect_equal(hexad()$mu.eta(0), 0)
+  expect_true(hexad()$mu.eta(1e-10) > 0) # 0.0319804414131226
+})
+
