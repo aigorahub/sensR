@@ -16,14 +16,14 @@ sudo: false
 # r_check_args: --as-cran --no-build-vignettes
 
 # chicago.bst not needed for the vignette bibliographi:
-# before_install:
-#   - tlmgr install chicago
+before_install:
+  - tlmgr install chicago
 
 # need to add nloptr this way to make it build in 'oldrel':
-addons:
-  apt:
-    packages:
-      - libnlopt-dev
+# addons:
+#   apt:
+#     packages:
+#       - libnlopt-dev
 
 env:
  global:
