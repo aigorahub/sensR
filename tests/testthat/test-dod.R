@@ -6,11 +6,12 @@
 ##   library(devtools)
 ##   Path <- "/Users/rhbc/Documents/Rpackages/sensR/pkg/sensR"
 ##   load_all(Path)
+TOL <- 1e-5
 
 context("Tests of the main dod function(s)")
 
 test_that("We get an error when we expect one", {
-    ## expect_true(FALSE) ## Should tricker and R CMD check error
+    ## expect_true(FALSE) ## Should tricker an R CMD check error
 })
 
 test_that("dod estimates are stable", {
@@ -28,7 +29,7 @@ test_that("dod estimates are stable", {
                     ), .Names = c("d.prime", "tau1", "tau2", "tau3", "logLik", "p.value",
                        "stat.value"))
 
-    expect_equal(res, RES)
+    expect_equal(res, RES, tol=TOL)
 
     ## dput(coef(fm))
     coefExpect <-
@@ -36,7 +37,7 @@ test_that("dod estimates are stable", {
                   .Dim = c(1L, 4L), .Dimnames = list("d.prime", c("Estimates",
                                     "Std. Error", "Lower", "Upper")))
 
-    expect_equal(coef(fm), coefExpect)
+    expect_equal(coef(fm), coefExpect, tol=TOL)
 })
 
 test_that("dod works for extreme data settings", {
@@ -50,16 +51,17 @@ test_that("dod works for extreme data settings", {
                    "Cannot assess convergence: non-finite gradient")
 
     ## Almost complete separation:
+    ## These produce warnings on some, but not all systems:
     data <- rbind(c(55, 45, 2, 0),
                   c(0, 0, 48, 52))
-    expect_warning(dod(data[1, ], data[2, ]),
-                   "Cannot assess convergence: non-finite gradient")
-    expect_warning(dod_fit(data[1, ], data[2, ]),
-                   "Cannot assess convergence: non-finite gradient")
+    # expect_warning(dod(data[1, ], data[2, ]),
+    #                "Cannot assess convergence: non-finite gradient")
+    # expect_warning(dod_fit(data[1, ], data[2, ]),
+    #                "Cannot assess convergence: non-finite gradient")
     data <- rbind(c(55, 45, 0, 1),
                   c(0, 0, 48, 52))
-    expect_warning(dod(data[1, ], data[2, ]),
-                   "Estimation failed with max")
+    # expect_warning(dod(data[1, ], data[2, ]),
+    #                "Estimation failed with max")
 
     data <- rbind(c(55, 45, 0, 0),
                   c(0, 0, 48, 52))
