@@ -6,6 +6,7 @@
 \usepackage{Sweave}
 \usepackage{float}%Use `float.sty'
 \usepackage[left=3.5cm,right=3.5cm]{geometry}
+\usepackage[utf8]{inputenx}
 
 %%\VignetteIndexEntry{Examples for 2-AC paper}
 %%\VignetteDepends{sensR, ordinal}
