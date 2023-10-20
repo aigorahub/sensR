@@ -3,13 +3,14 @@ Type: Package
 Title: Thurstonian Models for Sensory Discrimination
 Version: 1.5-2
 Date: 2020-02-10
-Authors@R: c(person(given="Rune Haubo Bojesen", family="Christensen",
-	   email="Rune@ChristensenStatistics.dk", role=c("aut")),
-	   person(given="Per Bruun", family="Brockhoff",
-	   email="perbb@dtu.dk", role=c("aut", "cre")),
-	   person(given="Alexandra", family="Kuznetsova", role = "ctb"),
-	   person(given="Sophie", family="Birot", role = "ctb"),
-	   person(given="Karolina Amelia", family="Stachlewska", role = "ctb"))
+Authors@R: c(person(given = "Rune Haubo Bojesen", family = "Christensen",
+	   email = "Rune@ChristensenStatistics.dk", role = "aut"),
+	   person(given = "Per Bruun", family = "Brockhoff",
+	   email = "perbb@dtu.dk", role = "aut"),
+	   person(given = "Alexandra", family = "Kuznetsova", role = "ctb"),
+	   person(given = "Sophie", family = "Birot", role = "ctb"),
+	   person(given = "Karolina Amelia", family = "Stachlewska", role = "ctb"),
+	   person(given = "Dominik", family = "Rafacz", role = "cre", email = "dominik.rafacz@aigora.com"))
 Imports: multcomp, MASS, numDeriv
 Suggests: ordinal, parallel, testthat (>= 0.8)
 ByteCompile: yes
