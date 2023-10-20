@@ -79,15 +79,16 @@ z <- pnorm(fm1$coef/sqrt(2))
 w <- 0.817851857437929
 
 stopifnot(
-  isTRUE(all.equal(as.vector(x$value), as.vector(y$value),
-                   as.vector(z), w)),
+  isTRUE(all.equal(as.vector(x$value), as.vector(y$value))),
+  isTRUE(all.equal(as.vector(x$value), as.vector(z))),
+  isTRUE(all.equal(as.vector(x$value), w)),
   isTRUE(all.equal(x$lower, y$lower)),
   isTRUE(all.equal(x$upper, y$upper))
 )
 
 ## Don't actually know what this is supposed to illustrate:
-(odor <- matrix(c(112, 112, 72, 53, 22, 4, 7, 38, 50, 117, 101, 62), 2,
-               byrow = TRUE))
+(odor <- matrix(c(112, 112, 72, 53, 22, 4, 7, 38, 50, 117, 101, 62), 2, 
+                byrow = TRUE))
 (d.primes <- SDT(odor)[,3])
 for(i in 1:5) print(AUC(d.primes[i]))
 }

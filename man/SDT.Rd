@@ -75,7 +75,10 @@ zH - zFA  # d'
   ## Test equality of all three d-prime computation methods:
   yy2 <- as.vector(coef(m1))
   yy3 <- zH - zFA
-  stopifnot(isTRUE(all.equal(yy[3], yy2, yy3)))
+  stopifnot(
+  isTRUE(all.equal(yy[3], yy2)),
+  isTRUE(all.equal(yy[3], yy3))
+  )
 
 }
 

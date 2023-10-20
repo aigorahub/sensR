@@ -85,7 +85,8 @@ if(require(ordinal)) {
     b <- clm2twoAC(fit.clm)
     b2 <- c(tau, d.prime, se.tau, se.d.prime)
     stopifnot(
-    isTRUE(all.equal(unlist(b[, 1:2]), b2, c(coef(fm1)), check.attributes=FALSE))
+    isTRUE(all.equal(unlist(b[, 1:2]), b2, check.attributes=FALSE)),
+    isTRUE(all.equal(unlist(b[, 1:2]), c(coef(fm1)), check.attributes=FALSE))
     )
     ## Test stability of clm2twoAC results:
     tab <- unlist(clm2twoAC(fm2)[, 1:3])
