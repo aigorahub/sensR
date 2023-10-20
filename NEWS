@@ -243,3 +243,6 @@ April 25 2018 (version 1.5-1)
 
 February 10 2020 (version 1.5-2)
 - Adjust uses of "class(<object>) == 'value'" to use inherits instead
+
+October 2023 (version 1.5-3)
+- Fix incorrect usage of `all.equal` in examples
