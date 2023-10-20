@@ -1,7 +1,7 @@
 
-R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
-Copyright (C) 2013 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin10.8.0 (64-bit)
+R Under development (unstable) (2020-02-08 r77786) -- "Unsuffered Consequences"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -202,7 +202,8 @@ Significance test:
 > logLik(fit2)
 [1] 0
 > pr2 <- try(profile(fit2, range = c(-5, 5)), silent = TRUE)
-> stopifnot(class(pr2) == "try-error")
+> stopifnot(inherits(pr2, "try-error"))
+> 
 > 
 > ## case 3
 > (fit3 <- twoAC(c(0, 0, 5)))
@@ -292,8 +293,6 @@ d.prime -1.23499 1.23499
 +     clm2twoAC(fit.clm2)
 + }
 Loading required package: ordinal
-Loading required package: Matrix
-Loading required package: lattice
          Estimate Std. Error  z value Pr(>|z|)
 tau     0.4159726  0.2674311 1.555439  0.11984
 d-prime 0.7742597  0.5416737 1.429384  0.15289
@@ -302,4 +301,4 @@ d-prime 0.7742597  0.5416737 1.429384  0.15289
 > 
 > proc.time()
    user  system elapsed 
-  2.231   0.064   2.300 
+  1.429   0.135   1.568 

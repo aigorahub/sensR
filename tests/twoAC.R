@@ -43,7 +43,8 @@ confint(pr1)
 (fit2 <- twoAC(c(0, 5, 0)))
 logLik(fit2)
 pr2 <- try(profile(fit2, range = c(-5, 5)), silent = TRUE)
-stopifnot(class(pr2) == "try-error")
+stopifnot(inherits(pr2, "try-error"))
+
 
 ## case 3
 (fit3 <- twoAC(c(0, 0, 5)))

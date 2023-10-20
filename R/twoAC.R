@@ -135,11 +135,11 @@ profile.twoAC <-
     ## Get range from Wald interval and supplied alpha:
     range <- as.vector(confint(fitted, parm = "d.prime",
                                level = 1 - alpha, type = "Wald"))
-    if(!is.numeric(range) || !is.finite(range))
+    if(!all(is.numeric(range) || !is.finite(range)))
       stop(paste("could not determine 'range' from fitted object:",
                  "Please specify 'range'"))
   } else {
-    stopifnot(is.numeric(range) && is.finite(range) &&
+    stopifnot(all(is.numeric(range)) && all(is.finite(range)) &&
               length(range) >= 2)
     ## Warn if d.prime is finite and not in the range interval:
     if(is.finite(d.prime)) {
@@ -347,7 +347,7 @@ estimate.2AC <- function(data, vcov = TRUE, warn = TRUE)
                       method.args = list())
       vcov <- try(solve(hess), silent = TRUE)
       ## If hess is not invertible:
-      if(class(vcov) != "try-error") {
+      if(!inherits(vcov, "try-error")) {
         makeWarn <- TRUE
         res$coefficients[,2] <- sqrt(diag(vcov))
         res$vcov <- vcov

@@ -240,3 +240,6 @@ April 25 2018 (version 1.5-1)
 - Adjust tests of dod: lower numerical tolerance and remove tests of warnings 
   that do not happen on all systems.
 - Adding Url and BugReports fields to Description (https://github.com/perbrock/sensR)
+
+February 10 2020 (version 1.5-2)
+- Adjust uses of "class(<object>) == 'value'" to use inherits instead

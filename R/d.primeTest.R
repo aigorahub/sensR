@@ -52,7 +52,7 @@ dprime_test <-
             dprime0 >= 0)
   z <- 1
   if(isTRUE(all.equal(dprime0, 0)) &&
-     !alternative %in% c("difference", "greater"))
+     !alt %in% c("difference", "greater"))
     stop("'alternative' has to be 'difference'/'greater' if 'dprime0' is 0")
   if(alt == "difference") alt <- "greater"
   if(alt == "similarity") alt <- "less"

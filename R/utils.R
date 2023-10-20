@@ -61,10 +61,10 @@ rescale <-
   isPresent <- sapply(arg, function(arg) !is.null(m[[arg]]))
   if(sum(isPresent) != 1)
     stop("One and only one of pc, pd and d.prime should be given")
-  if(method %in% c("hexad", "twofive", "twofiveF") && double)
-      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
   method <- match.arg(method)
   double <- as.logical(double[1])
+  if(method %in% c("hexad", "twofive", "twofiveF") && double)
+      stop("'double' method for 'hexad', 'twofive' and 'twofiveF' is not yet implemented")
   Pguess <- getPguess(method=method, double=double)
   par <- arg[isPresent]
   if(!is.null(se <- m$std.err)) {
@@ -235,7 +235,7 @@ psyderiv <-
   psyDeriv <- getFamily(method=method, double=double)$mu.eta
   Deriv <- numeric(length(d.prime))
 ### Extreme cases are not handled well in the links, so we need:
-  OK <- d.prime > 0 && d.prime < Inf
+  OK <- (d.prime > 0 & d.prime < Inf)
   if(sum(OK) > 0)
     Deriv[OK] <- psyDeriv(d.prime[OK])
   Deriv[d.prime == 0] <- NA

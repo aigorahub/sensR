@@ -24,7 +24,7 @@ dod <-
                     d.prime0=d.prime0,
                     return.data=FALSE, int.tol=ctrl$integer.tol)
     if(isTRUE(all.equal(d.prime0, 0)) &&
-       !alternative %in% c("difference", "greater"))
+       !alt %in% c("difference", "greater"))
         stop("'alternative' has to be 'difference' or 'greater' if 'd.prime0' is 0")
     if(!isTRUE(all.equal(d.prime0, 0)) && stat == "Wilcoxon") {
         stop("Wilcoxon statistic only available with d.prime0 = 0")
