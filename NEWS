@@ -234,5 +234,9 @@ August 24 2017 (version 1.5-0)
   of five with forgiveness), and the 'hexad' have been implemented by
   Karolina Stachlewska.
 - the so-called double methods have been implemented (initially) by
-  Sophie Birot and ported current sensR by Rune Christensen.
+  Sophie Birot and ported to current sensR by Rune Christensen.
 
+April 25 2018 (version 1.5-1)
+- Adjust tests of dod: lower numerical tolerance and remove tests of warnings 
+  that do not happen on all systems.
+- Adding Url and BugReports fields to Description (https://github.com/perbrock/sensR)
