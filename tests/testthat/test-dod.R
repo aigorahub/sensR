@@ -10,10 +10,6 @@ TOL <- 1e-5
 
 context("Tests of the main dod function(s)")
 
-test_that("We get an error when we expect one", {
-    ## expect_true(FALSE) ## Should tricker an R CMD check error
-})
-
 test_that("dod estimates are stable", {
     ## Simulate some data and estimate:
     dprime <- 1
