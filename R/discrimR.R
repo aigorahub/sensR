@@ -8,7 +8,8 @@ discrimR <-
   ## start: optional starting values
 
 ### Function to minimized:
-  fminNM <- function(beta) {
+  fminNM <- function(beta, store) {
+    fp0 <- double(nl)
     for(j in 1:nl) { 
       func1 <- function(u) {
         x <- X[ind==j, ,drop=FALSE] ## within cluster
@@ -18,11 +19,11 @@ discrimR <-
         p <- link.inv(eta)
         b <- exp(beta[nb + ns]) ## exp(sigma)
         d <- dnorm(u/b)/b ## normal density
-        fp0[j] <<- p0^(w * y) * (1 - p0)^(w * (1 - y)) * pnorm(-beta[1]/b)
+        fp0[j] <- p0^(w * y) * (1 - p0)^(w * (1 - y)) * pnorm(-beta[1]/b)
         prod( p^(w * y) * (1 - p)^(w * (1 - y)) ) * d
       }
-      h[j] <<- integrate(Vectorize(func1), -beta[1], Inf)$value
-      f[j] <<- fp0[j] + h[j]
+      store$h[j] <- integrate(Vectorize(func1), -beta[1], Inf)$value
+      store$f[j] <- fp0[j] + store$h[j]
     }
     if (all(f > 0)) 
       -2*sum(log(f)) # - minus twice negative log likelihood
@@ -63,7 +64,12 @@ discrimR <-
   ns <- 1; ns ## 1
   nl <- nlevels(m$"(cluster)"); nl
   ind <- c(unclass(m$"(cluster)")); ind ## indicater for clusters
-  f <- h <- g <- fp0 <- double(nl)
+  g <- double(nl)
+  
+  # create an environment to store partial results while avoiding global assignment
+  store <- environment()
+  store$f <- double(nl)
+  store$h <- double(nl)
   p0 <- ifelse(method %in% c("triangle", "threeAFC"), 1/3, .5)
   
   ## Starting values:
@@ -82,8 +88,10 @@ discrimR <-
   
   ## Optimization
   fit <- optim(par=start, fn=fminNM, method="BFGS", 
-               hessian=hess, ...) 
-
+               hessian=hess, store = store, ...) 
+  f <- store$f
+  h <- store$h
+  
   ## Output:
   fpar <- fit$par[seq_len(nb)]; fpar
   rpar <- c(fit$par[nb+ns], exp(fit$par[nb+ns])); rpar
