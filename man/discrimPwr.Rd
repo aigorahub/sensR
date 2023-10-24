@@ -1,7 +1,6 @@
 \name{discrimPwr}
 \alias{discrimPwr}
 \alias{d.primePwr}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Sensory discrimination power analysis}
 \description{
   Computes the power of a difference or similarity test for a sensory
@@ -137,4 +136,4 @@ stopifnot(
 }
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

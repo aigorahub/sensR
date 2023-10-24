@@ -16,7 +16,6 @@
 \usage{
 dprime_table(correct, total, protocol, restrict.above.guess = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{correct}{
     a numeric vector of the number of correct answers; one element for

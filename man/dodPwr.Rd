@@ -1,6 +1,5 @@
 \name{dodPwr}
 \alias{dodPwr}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Power of the Degree-of-Difference (DOD) method}
 \description{
   Computes the power of the Degree-of-Difference (DOD) method by
@@ -38,8 +37,6 @@ dodPwr(d.primeA, d.prime0=0, ncat = 4, sample.size, nsim = 1e3,
     parameters in the DOD model, otherwise not used.}
   \item{\dots}{parsed on to \code{\link{wilcox.test}} when appropriate.}
 }
-%% \details{
-%% }
 \value{
   The simulation based estimate of the power with the following
   attributes:

@@ -1,6 +1,5 @@
 \name{dod_fit}
 \alias{dod_fit}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Direct fitter of the Thurstonian Degree-of-Difference (DOD) model}
 \description{
   Fits the Thurstonian Degree-of-Difference (DOD) model.
@@ -83,4 +82,4 @@ fm <- dod_fit(same=same.pairs, diff=diff.pairs, d.prime=1)
 
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

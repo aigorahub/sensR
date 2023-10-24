@@ -2,7 +2,6 @@
 \alias{profile.discrim}
 \alias{plot.profile.discrim}
 \alias{confint.discrim}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Profile likelihood and confidence interval methods for discrim
   objects} 
 \description{
@@ -78,4 +77,4 @@ plot(profile(dd))
 points(confint(dd)[3,], rep(.1465, 2), pch = 3, cex = 2, lwd=2)
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

@@ -1,7 +1,6 @@
 \name{dod}
 \alias{dod}
 \alias{print.dod}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Thurstonian Degree-of-Difference (DOD) model}
 \description{
   Fits the Thurstonian Degree-of-Difference (DOD) model and performs
@@ -128,4 +127,4 @@ coef(fm)
 
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

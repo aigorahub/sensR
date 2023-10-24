@@ -1,6 +1,5 @@
 \name{triangle}
 \alias{triangle}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Create triangle binomial family}
 \description{
   Creates a copy of the binomial family with the inverse link function
@@ -73,5 +72,4 @@ lim <- sapply(level, function(x) exp(-qchisq(x, df=1)/2) )
 abline(h = lim, col = "grey")
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
-
+\keyword{models}

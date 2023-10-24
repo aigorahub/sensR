@@ -26,7 +26,6 @@ posthoc(x, ...)
     padj.method = c("holm", "bonferroni", "none"), ...)
 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
     an object of class \code{\link{dprime_compare}} or

@@ -1,7 +1,6 @@
 \name{discrimSS}
 \alias{discrimSS}
 \alias{d.primeSS}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Sensory discrimination sample size calculation}
 \description{
   Computes the sample size for a difference or similarity test for a
@@ -158,4 +157,4 @@ expect <- c(23, 28, 30, 30, 604)
 stopifnot(c(a, a2, b, c, d) == expect)
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

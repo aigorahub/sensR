@@ -1,6 +1,5 @@
 \name{clm2twoAC}
 \alias{clm2twoAC}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Extract 2-AC coefficient table from a cumulative link model}
 \description{
   The Thurstonian model for the 2-AC protocol can be formulated as a
@@ -101,4 +100,4 @@ if(require(ordinal)) {
 }
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

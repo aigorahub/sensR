@@ -1,6 +1,5 @@
 \name{samediffPwr}
 \alias{samediffPwr}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Power Analysis for Same-different Experiments}
 \description{
   Computes the power for at same-different discrimination experiment
@@ -10,7 +9,6 @@
 samediffPwr(n = 1000, tau, delta, Ns, Nd, alpha = 0.05)
 }
 %- maybe also 'usage' for other objects documented here.
-\arguments{
   \item{n}{the number of samples to use in the simulation. More samples
     means higher precision, but takes longer to compute.}
   \item{tau}{the value of tau}
@@ -60,4 +58,4 @@ samediffPwr(n = 1000, tau, delta, Ns, Nd, alpha = 0.05)
 samediffPwr(n = 100, tau = 1, delta = 2, Ns = 10, Nd = 10)
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

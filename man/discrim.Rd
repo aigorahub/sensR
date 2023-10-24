@@ -2,7 +2,6 @@
 \alias{discrim}
 \alias{print.discrim}
 % \alias{discrimr}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Sensory discrimination analysis}
 \description{
   Computes the probability of a correct answer (Pc), the probability of
@@ -229,4 +228,4 @@ stopifnot(findcr(100, p0=1/4) == 33,
 
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

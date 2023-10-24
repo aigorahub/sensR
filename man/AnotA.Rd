@@ -2,7 +2,6 @@
 \alias{AnotA}
 \alias{confint.anota}
 \alias{plot.anota}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Analysis of A-not-A tests}
 \description{
   Computation of dprime and it's uncertainty for the monadic A-not-A test
@@ -116,4 +115,4 @@ lim <- sapply(level, function(x)
 abline(h = lim, col = "grey")
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

@@ -1,6 +1,5 @@
 \name{plot.samediff}
 \alias{plot.samediff}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Plot function for samediff objects}
 \description{
   This function plots the latent distributions of sensory intensity
@@ -12,7 +11,6 @@
            limits, fig = TRUE, ...)
 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{The \code{samediff} object whose latent distributions are to
     be plotted}
@@ -24,9 +22,6 @@
   \item{fig}{logical: Should the function create the plot? Defaults to \code{TRUE}.}
   \item{\dots}{additional arguments to \code{plot} and \code{lines}}
 }
-%% \details{
-%%   ~~ If necessary, more details than the description above ~~
-%% }
 \value{
   If \code{fig = TRUE}, the function will produce the plot. The function
   invisibly returns a data.frame with elements
@@ -39,20 +34,11 @@
   This facilitates later plotting and changing the appearance of the
   plot. 
 }
-%% \references{ ~put references to the literature/web site here ~ }
 \author{Rune Haubo B Christensen}
-%% \note{ ~~further notes~~ 
-%% 
-%%  ~Make other sections like Warning with \section{Warning }{....} ~
-%% }
-%% \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 ## Make same-diff object:
 sadi <- samediff(8, 5, 4, 9)
 ## Plot distributions of sensory intensity:
 plot(sadi)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{hplot}
-%% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

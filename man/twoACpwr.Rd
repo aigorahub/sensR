@@ -1,6 +1,5 @@
 \name{twoACpwr}
 \alias{twoACpwr}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Exact Power Computation for the 2-AC Discrimination Protocol}
 \description{
   
@@ -120,4 +119,4 @@ twoACpwr(tau = 0.4, d.prime = -0.5, size = 100, d.prime0 = 0, tol = 1e-5,
          alternative = "two.sided")
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

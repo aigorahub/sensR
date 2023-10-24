@@ -118,5 +118,4 @@ pc2pd(0.7, 1/2)
 pd2pc(0.3, 1/3)
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
-
+\keyword{models}

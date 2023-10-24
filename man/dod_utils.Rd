@@ -4,7 +4,6 @@
 \alias{dod_nll}
 \alias{dod_null}
 \alias{dod_null_tau}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Utility functions for the Degree-of-Difference model}
 \description{
   Various utility functions supporting the Degree-of-Difference (DOD)
@@ -134,6 +133,4 @@ stopifnot(all(
 ## stopifnot(all(a == expect))
 ## }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{models}

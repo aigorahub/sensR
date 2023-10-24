@@ -1,6 +1,5 @@
 \name{dodControl}
 \alias{dodControl}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Control settings for the dod function}
 \description{
   Specify control setting when fitting the the Thurstonian
@@ -63,4 +62,4 @@ dod(same=same.pairs, diff=diff.pairs, control=ctrl)
 
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

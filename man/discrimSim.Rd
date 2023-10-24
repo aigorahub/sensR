@@ -1,6 +1,5 @@
 \name{discrimSim}
 \alias{discrimSim}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Simulates replicated difference tests}
 \description{
   Simulates the outcome of \code{sample.size} replicated sensory
@@ -63,6 +62,4 @@ expect <- c(3L, 3L, 2L, 3L, 3L, 1L, 3L, 3L, 1L, 2L)
 stopifnot(all(a == expect))
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{models}

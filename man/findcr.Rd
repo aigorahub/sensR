@@ -45,5 +45,5 @@ findcr(sample.size = 25, , p0 = 1/3)
 ## Similarity example:
 findcr(sample.size = 25, p0 = 1/3, pd0 = .2, test = "simil")
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}
 

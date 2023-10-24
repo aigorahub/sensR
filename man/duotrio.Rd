@@ -1,6 +1,5 @@
 \name{duotrio}
 \alias{duotrio}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Create duotrio binomial family}
 \description{
   Creates af copy of the binomial family with the inverse link function changed to equal
@@ -11,7 +10,6 @@
 duotrio()
 }
 %- maybe also 'usage' for other objects documented here.
-\value{
 A binomial family object for models. Among other things it inludes the psychometric function as
 \code{linkinv} and the inverse psychometric function (for direct dprime computation) as
 \code{linkfun}
@@ -72,4 +70,4 @@ abline(h = lim, col = "grey")
 points(confint(res), rep(lim[1], 2), pch = 4)
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

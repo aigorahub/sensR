@@ -2,7 +2,6 @@
 \alias{profile.samediff}
 \alias{plot.profile.samediff}
 \alias{confint.samediff}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Profile likelihood methods for samediff objects.}
 \description{
   Computes the (normalized or relative) profile likelihood for the
@@ -79,4 +78,4 @@ confint(sadi)
 plot(profile(sadi))
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

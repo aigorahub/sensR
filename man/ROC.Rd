@@ -2,7 +2,6 @@
 \alias{ROC.default}
 \alias{ROC.anota}
 \alias{ROC}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Plot the Receiver Operating Characteristic Curve}
 \description{
   The function computes and plots the empirical ROC (receiver operating
@@ -17,7 +16,6 @@ fig = TRUE, se.type = c("CI", "SE"), CI.alpha = 0.05, ...)
 \method{ROC}{anota}(object, length = 1000, fig = TRUE,
 se.type = c("CI", "SE"), CI.alpha = 0.05, ...) 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
 %%   \item{d}{a unit length vector with the value of d-prime for which the
 %%     ROC curve should be computed and plotted}
@@ -59,13 +57,7 @@ se.type = c("CI", "SE"), CI.alpha = 0.05, ...)
   \item{lower}{y-coordinates to the lower limit}
   \item{upper}{y-coordinates to the upper limit}
 }
-%% \references{ ~put references to the literature/web site here ~ }
 \author{Rune Haubo B Christensen}
-%% \note{ ~~further notes~~ 
-%% 
-%%  ~Make other sections like Warning with \section{Warning }{....} ~
-%% }
-%% \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 ## ROC.default:
 (mat <- matrix(c(8, 17, 1, 24), 2, byrow = TRUE))
@@ -75,7 +67,4 @@ ROC(d.prime)
 fm1 <- AnotA(8, 25, 1, 25)
 ROC(fm1)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{hplot}
-%% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

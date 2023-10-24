@@ -1,6 +1,5 @@
 \name{summary.samediff}
 \alias{summary.samediff}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Summary method for samediff objects.}
 \description{
   Makes a summary of a \code{samediff} object with option to use profile
@@ -50,4 +49,4 @@ summary(sadi)
 summary(sadi, FALSE)
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

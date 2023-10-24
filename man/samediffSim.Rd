@@ -1,6 +1,5 @@
 \name{samediffSim}
 \alias{samediffSim}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Simulates data from a samediff test}
 \description{
   Simulates the outcome of \code{n} same-different experiments.
@@ -36,6 +35,4 @@ samediffSim(n, tau, delta, Ns, Nd)
 samediffSim(n = 10, tau = 1, delta = 1, Ns = 10, Nd = 10)
 
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{models}

@@ -1,6 +1,5 @@
 \name{samediff}
 \alias{samediff}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Computation of tau and dprime for same different test}
 \description{
   Computation of tau and dprime and their uncertainties for the
@@ -50,4 +49,4 @@ samediff(nsamesame, ndiffsame, nsamediff, ndiffdiff, VCOV = TRUE)
 
 samediff(8, 5, 4, 9)
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

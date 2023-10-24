@@ -1,6 +1,5 @@
 \name{hexad}
 \alias{hexad}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Create hexad binomial family}
 \description{
   Creates af binomial family object with the inverse link function
@@ -83,5 +82,4 @@ lim <- sapply(level, function(x) exp(-qchisq(x, df=1)/2) )
 abline(h = lim, col = "grey")
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
-
+\keyword{models}

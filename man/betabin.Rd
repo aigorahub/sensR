@@ -203,4 +203,4 @@ x2 <- c(0.493812345858779, 0.31442578341548, 0.5, 0, 0, 0.0723816596143461,
 stopifnot(isTRUE(all.equal(x, x2)))
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

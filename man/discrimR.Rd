@@ -1,6 +1,5 @@
 \name{discrimR}
 \alias{discrimR}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Replicated Thurstonian Model for discrimination analysis}
 \description{
   The model is a synthesis of a mixture and a mixed effect model. The
@@ -109,4 +108,4 @@ names(fm)
 fm[1:4]
 }
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

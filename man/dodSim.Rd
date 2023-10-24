@@ -1,6 +1,5 @@
 \name{dodSim}
 \alias{dodSim}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Simulate data from the Degree-of-Difference model}
 \description{
   Simulate data from the Degree-of-Difference model for a given value of
@@ -107,6 +106,4 @@ dodSim(d.prime=1, ncat=3, sample.size=c(75, 125),
 ## stopifnot(all(a == expect))
 ## }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{models}

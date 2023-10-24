@@ -1,7 +1,6 @@
 \name{twoAC}
 \alias{twoAC}
 \alias{print.twoAC}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{2-AC Discrimination and Preference Protocol}
 \description{
   Computes estimates and standard errors of d-prime and tau for the two
@@ -122,4 +121,4 @@ confint(pr)
 plot(pr)
 
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}
