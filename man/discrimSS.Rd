@@ -71,36 +71,31 @@ d.primeSS(d.primeA, d.prime0 = 0, target.power = 0.90, alpha = 0.05,
 
   The \code{statistic} argument:
   \itemize{
-    \item{\code{"exact"}}{
+    \item \code{"exact"}  
       is the conventional sample size for the exact binomial test:
       The smallest sample size that gives the desired power
       (\code{target.power}) at the given
       significance level. Ususally slightly higher sample sizes will not
       have the desired power, however. This is due to the non-monotonic
       behavior of power as a function of sample size.
-    }
-    \item{\code{"stable.exact"}}{
+    \item \code{"stable.exact"} 
       is so-called stable exact sample size proposed by Ennis and
       Jesionka (2011) which has the property that no larger sample sizes
       has a power less than the \code{target.power}.
-    }
-    \item{\code{"both.exact"}}{
+    \item \code{"both.exact"} 
       returns both \code{exact} and \code{stable.exact}
       sample sizes
-    }
-    \item{\code{"normal"}}{
+    \item \code{"normal"} 
       is the normal approximation to the exact binomial sample size
       without any continuity adjustment. This usually provides a sample
       size that is smaller than the sample size for the exact binomial
       test.
-    }
-    \item{\code{"cont.normal"}}{
+    \item \code{"cont.normal"} 
       is the continuity adjusted normal approximation to
       the sample size for the exact binomial test. This sample size is
       usually closer to the exact sample size than the unadjusted
       approximation and usually higher than the unadjusted
       approximation.
-    }
   }
 
   If the sample size based on the continuity adjusted normal
