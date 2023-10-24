@@ -551,7 +551,7 @@ profBinom <- function(success, total, nProf = 100, ...)
     prof
 }
 
-confint.profBinom <- function(object, level=0.95) {
+confint.profBinom <- function(object, parm, level=0.95, ...) {
     a <- (1-level)/2
     a <- c(a, 1-a)
     cutoff <- qnorm(a)
