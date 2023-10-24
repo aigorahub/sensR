@@ -122,11 +122,12 @@ pr1 <- profile(fm1)
 confint(pr1)
 
 pr1 <- profile(fm1, alpha = 1e-5)
-par(mfrow = c(2,2))
+old <- par(mfrow = c(2,2))
 plot(pr1)
 plot(pr1, Log = FALSE, relative = TRUE)
 plot(pr1, Log = TRUE, relative = TRUE)
 plot(pr1, Log = TRUE, relative = FALSE)
+par(old)
 \dontshow{
 ## Test stability of CIs:
 ci <- c(confint(fm1), confint(fm1, type = "Wald"))

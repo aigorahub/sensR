@@ -37,11 +37,12 @@
 ## Generate discrim objects to be plotted:
 fm1 <- discrim(10, 15, method = "threeAFC")
 fm2 <- discrim(10, 15, method = "triangle")
-par(mfrow=c(2,1)) ## Split plotting window in two
+old <- par(mfrow=c(2,1)) ## Split plotting window in two
 ## Plot the distributions of sensory intensity for the two objects
 ## and increase the line width
 plot(fm1, lwd=2) 
 plot(fm2, lwd=2)
+par(old)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

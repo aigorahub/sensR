@@ -156,7 +156,7 @@
 }
 \examples{
 \dontrun{
-  options(contrasts = c("contr.treatment", "contr.poly"))
+  old <- options(contrasts = c("contr.treatment", "contr.poly"))
   ## Extend example from polr in package MASS:
   ## Fit model from polr example:
   data(housing, package = "MASS")
@@ -170,6 +170,7 @@
   summary(fm2 <- update(fm1, scale =~ Cont))
   anova(fm1, fm2)
   ## which seems to improve the fit
+  options(old)
 }
 
 }

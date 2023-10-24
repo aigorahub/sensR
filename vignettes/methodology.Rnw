@@ -1817,6 +1817,13 @@ discrimSS(pdA = pd, pd0 = 0, target.power = 0.8, alpha = 0.05, pGuess
 %% difference will be Superior to the other two tests or at least at
 %% least as good as them.
 %%
+
+<<Initialize, echo=FALSE, results=hide>>=
+
+options(op)
+
+@
+
 \bibliography{meth}
 %% \newpage
 %% \appendix

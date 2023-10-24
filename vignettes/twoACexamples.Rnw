@@ -456,6 +456,12 @@ Versions details for \textsf{R} and the packages \textsf{sensR} and
 sessionInfo()
 @
 
+<<Finalize, echo=FALSE, results=hide>>=
+
+options(op)
+
+@
+
 \bibliography{twoAC}
 %% \newpage
 %% \appendix
