@@ -92,7 +92,7 @@ dodPwr(d.primeA=1, d.prime0=0, ncat=4, sample.size=100, nsim=50,
 dodPwr(d.primeA=1, d.prime0=0, ncat=4, sample.size=100, nsim=1e3,
        alpha=.05, method.tau="LR.max", statistic="Wilcox")
 
-\dontrun{
+\donttest{
 ## Not automatically run to reduce computation time.
 
 ## Power of a similarity test:
@@ -145,6 +145,4 @@ if(require(parallel)) {
 ## stopifnot(all(a == expect))
 ## }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{models}

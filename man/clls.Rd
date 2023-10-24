@@ -155,7 +155,6 @@
   \code{\link[nnet]{multinom}}.
 }
 \examples{
-\dontrun{
   old <- options(contrasts = c("contr.treatment", "contr.poly"))
   ## Extend example from polr in package MASS:
   ## Fit model from polr example:
@@ -171,7 +170,6 @@
   anova(fm1, fm2)
   ## which seems to improve the fit
   options(old)
-}
 
 }
 \keyword{models}
