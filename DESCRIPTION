@@ -22,5 +22,5 @@ Description: Provides methods for sensory discrimination methods;
   comparisons of different d-primes. Methods for profile likelihood
   confidence intervals and plotting are included.
 License: GPL-2 | GPL-3
-URL: https://github.com/perbrock/sensR
-BugReports: https://github.com/perbrock/sensR/issues
+URL: https://github.com/aigorahub/sensR
+BugReports: https://github.com/aigorahub/sensR/issues
