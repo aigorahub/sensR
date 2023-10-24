@@ -23,9 +23,9 @@
 %% \details{
 %%   ~~ If necessary, more details than the description above ~~
 %% }
-%% \value{
-%%   The function produce the plot and does not return any value.
-%% }
+\value{
+   The function produces a plot and does not return any value.
+}
 %% \references{ ~put references to the literature/web site here ~ }
 \author{Rune Haubo B Christensen}
 %% \note{ ~~further notes~~ 
