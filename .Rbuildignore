@@ -9,3 +9,5 @@ TODO.md
 .Rhistory
 ^.*\.Rproj$
 ^\.travis.yml$
+^cran-comments\.md$
+^CRAN-SUBMISSION$
