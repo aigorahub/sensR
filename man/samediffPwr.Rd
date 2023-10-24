@@ -8,7 +8,7 @@
 \usage{
 samediffPwr(n = 1000, tau, delta, Ns, Nd, alpha = 0.05)
 }
-%- maybe also 'usage' for other objects documented here.
+\arguments{
   \item{n}{the number of samples to use in the simulation. More samples
     means higher precision, but takes longer to compute.}
   \item{tau}{the value of tau}
