@@ -103,9 +103,9 @@
 
 }
 \references{
-  Christensen R.H.B., lee H-S and Brockhoff P.B. (2010). Estimation of
-  the Thurstonian model for the 2-AC protocol. Manuscript for Food
-  Quality and Preference.
+  Christensen R.H.B., lee H-S and Brockhoff P.B. (2012). Estimation of
+  the Thurstonian model for the 2-AC protocol. Food Quality
+  and Preference, 24(1), pp.119-128.
 }
 
 \author{Rune Haubo B Christensen}

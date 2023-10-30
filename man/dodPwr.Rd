@@ -52,9 +52,9 @@ dodPwr(d.primeA, d.prime0=0, ncat = 4, sample.size, nsim = 1e3,
 }
 
 \references{
-  Ennis, J.M. and R.H.B. Christensen (2014) A Thurstonian comparison
+  Ennis, J.M. and R.H.B. Christensen (2015) A Thurstonian comparison
   of the tetrad and degree of difference tests.
-  \emph{Food Quality and Preference}, in press.
+  \emph{Food Quality and Preference}, 40, pp.263-269.
 }
 
 \author{Rune Haubo B Christensen}

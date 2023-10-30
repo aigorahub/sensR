@@ -143,9 +143,10 @@
 \references{
   Agresti, A. (2002) \emph{Categorical Data.} Second edition.  Wiley.
 
-  Christensen, R. H. B., Brockhoff, P. B. and Cleaver, G. (2008)
-  Estimation and Inference in the A-Not A test with Sureness. Manuscript
-  for \emph{Food Quality and Preference}.
+  Christensen, R.H.B., Cleaver, G. and Brockhoff, P.B. (2011). 
+  Statistical and Thurstonian models for the A-not A protocol
+  with and without sureness. \emph{Food Quality and Preference}, 
+  22(6), pp.542-549.
 
   Venables, W. N. and Ripley, B. D. (2002)
   \emph{Modern Applied Statistics with S.} Fourth edition.  Springer.
