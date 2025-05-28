@@ -53,8 +53,16 @@ from senspy.discrimination import (
     tetrad_pc,
     hexad_pc,
     twofive_pc,
-    get_pguess
+    get_pguess,
+    # Import new functions to be tested
+    dod,
+    samediff,
+    dprime_test,
+    dprime_compare,
+    SDT,
+    AUC
 )
+from scipy.stats import chi2 # For dprime_compare
 
 # --- Tests for discrim function ---
 
@@ -251,3 +259,176 @@ def test_twoAC_vs_sensR(x, n, _ed, _et, test_id):
     if np.isfinite(r_se_tau) and np.isfinite(py_result["se_tau"]):
         np.testing.assert_allclose(py_result["se_tau"], r_se_tau, rtol=0.05, atol=0.001)
     np.testing.assert_allclose(py_result["loglik"], r_loglik, rtol=1e-5, atol=1e-5)
+
+
+# --- Tests for dod function ---
+def test_dod_basic_functionality():
+    same_counts = np.array([10, 20, 70]) # K=3 categories
+    diff_counts = np.array([70, 20, 10])
+    result = dod(same_counts, diff_counts)
+
+    assert isinstance(result, dict)
+    expected_keys = ["d_prime", "tau", "se_d_prime", "se_tpar", "loglik", 
+                     "vcov_optim_params", "convergence_status", "initial_params_optim",
+                     "optim_result", "same_counts", "diff_counts", "method", "conf_level"]
+    for key in expected_keys:
+        assert key in result, f"Key '{key}' missing in dod output."
+
+    assert result["d_prime"] >= 0
+    assert len(result["tau"]) == len(same_counts) - 1
+    if len(result["tau"]) > 0:
+        assert np.all(result["tau"] > 0)
+        if len(result["tau"]) > 1:
+            assert np.all(np.diff(result["tau"]) > 0) # Should be strictly increasing
+    
+    # For a typical case, expect convergence
+    assert result["convergence_status"] is True, f"dod optimizer failed to converge: {result.get('optim_result', {}).get('message', 'No message')}"
+    assert np.isfinite(result["loglik"])
+    assert result["vcov_optim_params"].shape == (len(result["initial_params_optim"]), len(result["initial_params_optim"]))
+
+
+def test_dod_input_validation():
+    with pytest.raises(ValueError, match="same_counts and diff_counts must have the same length"):
+        dod(same_counts=[10, 20], diff_counts=[10, 20, 30])
+    with pytest.raises(ValueError, match="Number of categories must be at least 2"):
+        dod(same_counts=[10], diff_counts=[10])
+    with pytest.raises(ValueError, match="Counts must be non-negative"):
+        dod(same_counts=[10, -1], diff_counts=[10, 10])
+    with pytest.raises(ValueError, match="Total counts for both same and different pairs cannot be zero"):
+        dod(same_counts=[0,0,0], diff_counts=[0,0,0])
+
+
+# --- Tests for samediff function ---
+def test_samediff_basic_functionality():
+    result = samediff(nsamesame=50, ndiffsame=10, nsamediff=20, ndiffdiff=40)
+    
+    assert isinstance(result, dict)
+    expected_keys = ["tau", "delta", "se_tau", "se_delta", "loglik", "vcov",
+                     "convergence_status", "initial_params", "optim_result",
+                     "nsamesame", "ndiffsame", "nsamediff", "ndiffdiff", "method", "conf_level"]
+    for key in expected_keys:
+        assert key in result, f"Key '{key}' missing in samediff output."
+
+    assert result["tau"] > 0
+    assert result["delta"] >= 0
+    assert result["convergence_status"] is True,  f"samediff optimizer failed to converge: {result.get('optim_result', {}).get('message', 'No message')}"
+    assert np.isfinite(result["loglik"])
+    assert result["vcov"].shape == (2,2)
+
+def test_samediff_input_validation():
+    with pytest.raises(ValueError, match="All counts must be non-negative integers"):
+        samediff(nsamesame=-1, ndiffsame=10, nsamediff=10, ndiffdiff=10)
+    with pytest.raises(ValueError, match="The sum of counts must be positive"):
+        samediff(0,0,0,0)
+    with pytest.raises(ValueError, match="Not enough information in data"):
+        samediff(nsamesame=10, ndiffsame=0, nsamediff=0, ndiffdiff=0)
+
+
+# --- Tests for dprime_test function ---
+def test_dprime_test_single_group():
+    result = dprime_test(correct=30, total=50, protocol='2afc', dprime0=0)
+    assert isinstance(result, dict)
+    expected_keys = ["common_dprime_est", "se_common_dprime_est", "conf_int_common_dprime",
+                     "statistic_value", "p_value", "dprime0", "alternative", "conf_level",
+                     "estim_method", "statistic_type", "individual_group_estimates",
+                     "loglik_common_dprime", "convergence_status_common_dprime"]
+    for key in expected_keys:
+        assert key in result
+    assert 0 <= result["p_value"] <= 1
+    assert np.isfinite(result["common_dprime_est"])
+    assert result["convergence_status_common_dprime"] is True
+
+def test_dprime_test_multi_group():
+    result = dprime_test(correct=[30,35], total=[50,50], protocol=['2afc','2afc'], dprime0=0.5)
+    assert isinstance(result, dict)
+    assert 0 <= result["p_value"] <= 1
+    assert np.isfinite(result["common_dprime_est"])
+    assert len(result["individual_group_estimates"]) == 2
+    assert result["convergence_status_common_dprime"] is True
+
+def test_dprime_test_alternatives():
+    # Case where dprime_est > dprime0
+    res_greater = dprime_test(correct=40, total=50, protocol='2afc', dprime0=0.1, alternative="greater")
+    res_less = dprime_test(correct=40, total=50, protocol='2afc', dprime0=0.1, alternative="less")
+    assert res_greater["p_value"] < 0.05 # Expect small p-value
+    assert res_less["p_value"] > 0.95 # Expect large p-value
+
+    # Case where dprime_est < dprime0
+    res_greater2 = dprime_test(correct=20, total=50, protocol='2afc', dprime0=1.5, alternative="greater")
+    res_less2 = dprime_test(correct=20, total=50, protocol='2afc', dprime0=1.5, alternative="less")
+    assert res_greater2["p_value"] > 0.95
+    assert res_less2["p_value"] < 0.05
+
+
+# --- Tests for dprime_compare function ---
+def test_dprime_compare_basic():
+    # Groups expected to be different
+    res_diff = dprime_compare(correct=[30,45], total=[50,50], protocol=['2afc','2afc'])
+    assert isinstance(res_diff, dict)
+    expected_keys_compare = ["LR_statistic", "df", "p_value", "loglik_full_model", 
+                             "loglik_reduced_model", "common_dprime_H0_est",
+                             "individual_group_estimates", "estim_method", "statistic_method"]
+    for key in expected_keys_compare:
+        assert key in res_diff
+    assert res_diff["LR_statistic"] >= 0
+    assert res_diff["df"] == 1 # num_groups - 1
+    assert 0 <= res_diff["p_value"] <= 1
+    assert res_diff["p_value"] < 0.05 # Expect significant difference
+
+    # Groups expected to be similar
+    res_sim = dprime_compare(correct=[30,31], total=[50,50], protocol=['2afc','2afc'])
+    assert res_sim["p_value"] > 0.05 # Expect non-significant difference
+
+
+# --- Tests for SDT function ---
+def test_SDT_probit():
+    counts_table = np.array([[10,20,30,40], [5,15,25,55]]) # J=4 categories
+    # Expected values from R's sensR::SDT(table), but with zFA and zH columns swapped
+    # Original R output: zH, zFA, dprime
+    # senspy SDT output: zFA, zH, dprime
+    expected_zFA = np.array([-0.8416212, -0.1534109,  0.5244005])
+    expected_zH  = np.array([-1.2815518, -0.4307273,  0.5244005])
+    expected_dprime = expected_zH - expected_zFA 
+    
+    result = SDT(counts_table, method="probit")
+    assert result.shape == (3, 3) # (J-1)x3
+    np.testing.assert_allclose(result[:,0], expected_zFA, rtol=1e-4, atol=1e-4)
+    np.testing.assert_allclose(result[:,1], expected_zH, rtol=1e-4, atol=1e-4)
+    np.testing.assert_allclose(result[:,2], expected_dprime, rtol=1e-4, atol=1e-4)
+
+def test_SDT_logit():
+    counts_table = np.array([[10,20,30,40], [5,15,25,55]])
+    result = SDT(counts_table, method="logit")
+    assert result.shape == (3, 3)
+    assert np.all(np.isfinite(result)) # Check it runs and produces finite numbers
+
+def test_SDT_zero_row_sum():
+    counts_table = np.array([[0,0,0,0], [5,15,25,55]])
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        result = SDT(counts_table, method="probit")
+        assert len(w) == 1 # Should warn for the zero sum row
+        assert issubclass(w[-1].category, UserWarning)
+    assert result.shape == (3,3)
+    assert np.all(np.isnan(result[:,0])) # First column (zFA) should be all NaN
+    assert np.all(np.isfinite(result[:,1])) # Second column (zH) should be finite
+    assert np.all(np.isnan(result[:,2])) # d-prime will be NaN if zFA is NaN
+
+
+# --- Tests for AUC function ---
+def test_AUC_basic():
+    assert AUC(d_prime=0.0) == 0.5
+    np.testing.assert_allclose(AUC(d_prime=1.0, scale=1.0), norm.cdf(1/np.sqrt(2)), atol=1e-7)
+    np.testing.assert_allclose(AUC(d_prime=1.0, scale=0.5), norm.cdf(1/np.sqrt(1+0.5**2)), atol=1e-7)
+    np.testing.assert_allclose(AUC(d_prime=-1.0, scale=1.0), norm.cdf(-1/np.sqrt(2)), atol=1e-7)
+
+
+def test_AUC_input_validation():
+    with pytest.raises(ValueError, match="scale must be strictly positive"):
+        AUC(d_prime=1.0, scale=0)
+    with pytest.raises(ValueError, match="scale must be strictly positive"):
+        AUC(d_prime=1.0, scale=-1.0)
+    with pytest.raises(TypeError, match="d_prime must be a numeric scalar"):
+        AUC(d_prime="a")
+    with pytest.raises(TypeError, match="scale must be a numeric scalar"):
+        AUC(d_prime=1.0, scale="a")
