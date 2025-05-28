@@ -16,7 +16,6 @@ def duotrio_pc(dprime: float) -> float:
     b = norm.cdf(dprime / np.sqrt(6.0))
     return 1 - a - b + 2 * a * b
 
-
 def discrim_2afc(correct: int, total: int) -> dict:
     """Estimate d-prime and standard error for a 2-AFC test."""
     if total <= 0:
