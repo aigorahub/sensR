@@ -5,6 +5,7 @@ from .models import BetaBinomial
 from .discrimination import two_afc
 from .power import beta_binomial_power
 from .plotting import plot_psychometric
+from .utils import has_jax, version
 
 __all__ = [
     "psyfun",
@@ -15,4 +16,6 @@ __all__ = [
     "two_afc",
     "beta_binomial_power",
     "plot_psychometric",
+    "has_jax",
+    "version",
 ]
