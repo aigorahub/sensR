@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+authors:
+  - name: sensPy Development Team
+message: >-
+  If you use sensPy, please cite the project using the DOI from the
+  release you used.

@@ -1,0 +1,5 @@
+function,file,description
+psyfun,sensR/R/utils.R,"Map d-prime to proportion correct for a protocol"
+psyinv,sensR/R/utils.R,"Map proportion correct to d-prime"
+psyderiv,sensR/R/utils.R,"Derivative of psychometric function"
+rescale,sensR/R/utils.R,"Convert between pc, pd, and d-prime"
