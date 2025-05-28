@@ -23,7 +23,6 @@ def duotrio_pc(dprime: float) -> float:
     b = norm.cdf(dprime / np.sqrt(6.0))
     return 1 - a - b + 2 * a * b
 
-
 def discrim_2afc(correct: int, total: int) -> dict:
     """Estimate d-prime from 2-AFC data using the Gaussian model.
 
@@ -93,3 +92,4 @@ def pd2pc(pd: float, p_guess: float) -> float:
     if not 0 <= pd <= 1:
         raise ValueError("pd must be between 0 and 1")
     return p_guess + pd * (1 - p_guess)
+
