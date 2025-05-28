@@ -2,7 +2,14 @@
 
 from .links import psyfun, psyinv, psyderiv, rescale
 from .models import BetaBinomial
-from .discrimination import two_afc, duotrio_pc, discrim_2afc
+from .discrimination import (
+    two_afc,
+    duotrio_pc,
+    discrim_2afc,
+    get_pguess,
+    pc2pd,
+    pd2pc,
+)
 from .power import beta_binomial_power
 from .plotting import plot_psychometric
 from .utils import has_jax, version
@@ -16,6 +23,9 @@ __all__ = [
     "two_afc",
     "duotrio_pc",
     "discrim_2afc",
+    "get_pguess",
+    "pc2pd",
+    "pd2pc",
     "beta_binomial_power",
     "plot_psychometric",
     "has_jax",
