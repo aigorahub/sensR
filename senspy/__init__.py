@@ -14,8 +14,19 @@ from .discrimination import (
     pc2pd,
     pd2pc,
     discrim_2afc,
+    "discrim",
+    "twoAC",
+    "dod",
+    "samediff",
+    "dprime_test",
+    "dprime_compare",
+    "SDT",
+    "AUC",
+    "par2prob_dod", 
+    "dod_nll",      
+    "samediff_nll", 
 )
-from .power import beta_binomial_power
+from .power import beta_binomial_power, find_critical_binomial_value, exact_binomial_power, sample_size_for_binomial_power, power_discrim
 from .plotting import plot_psychometric
 from .utils import has_jax, version
 
@@ -36,7 +47,22 @@ __all__ = [
     "pc2pd",
     "pd2pc",
     "discrim_2afc",
+    "discrim",
+    "twoAC",
+    "dod",
+    "samediff",
+    "dprime_test",
+    "dprime_compare",
+    "SDT",
+    "AUC",
+    "par2prob_dod",
+    "dod_nll",
+    "samediff_nll",
     "beta_binomial_power",
+    "find_critical_binomial_value",
+    "exact_binomial_power",
+    "sample_size_for_binomial_power",
+    "power_discrim",
     "plot_psychometric",
     "has_jax",
     "version",
