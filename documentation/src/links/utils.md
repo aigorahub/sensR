@@ -55,6 +55,62 @@ pc_2afc = psyfun(dprime=1.0, method="2afc")
 print(f"Proportion correct for d'=1.0 (2AFC): {pc_2afc:.4f}")
 ```
 
+#### Illustrative Psychometric Function (2AFC)
+<!-- TODO: Add illustrative_psychometric_function_2afc.png here once script execution is resolved -->
+The `psyfun` for the "2afc" method shows a characteristic S-shaped curve, starting from Pc=0.5 (chance) at d'=0 and asymptotically approaching Pc=1.0 for large d-prime values.
+
+#### Further Examples for `psyfun`, `psyinv`, and `psyderiv`
+
+##### Example 1: Cross-Method Comparison for `psyfun`
+The proportion correct (Pc) for the same d-prime value varies across different sensory discrimination methods due to differences in their underlying Thurstonian models and chance performance levels (`pguess`).
+
+```python
+from senspy.links import psyfun, psyinv, psyderiv # Ensure all are imported
+import numpy as np # For np.nan, np.isclose
+
+d_val = 1.0
+pc_2afc = psyfun(d_val, method="2afc")
+pc_triangle = psyfun(d_val, method="triangle")
+pc_duotrio = psyfun(d_val, method="duotrio")
+print(f"For d'={d_val}: Pc(2afc)={pc_2afc:.3f}, Pc(triangle)={pc_triangle:.3f}, Pc(duotrio)={pc_duotrio:.3f}")
+```
+**Comments:**
+*   For `d'=1.0`, Pc(2afc) will be `norm.cdf(1/sqrt(2)) approx 0.760`.
+*   Pc(triangle) and Pc(duotrio) will be lower for the same d-prime because their chance levels (1/3 and 1/2 respectively, before mapping to d') are different, and the Thurstonian models are distinct.
+
+##### Example 2: Inverse Relationship (`psyinv(psyfun(...))` Check)
+The `psyinv` function should ideally return the original d-prime if you convert `d-prime -> Pc -> d-prime`.
+
+```python
+d_original = 1.5
+method_example = "tetrad" # Using tetrad as an example
+
+pc_val = psyfun(d_original, method=method_example)
+d_recalculated = psyinv(pc_val, method=method_example)
+
+print(f"Original d': {d_original}, Pc from psyfun: {pc_val:.4f}")
+print(f"Recalculated d' from psyinv(Pc): {d_recalculated:.4f} for {method_example}")
+assert np.isclose(d_original, d_recalculated), "Recalculated d-prime should match original."
+```
+**Comments:**
+*   `d_recalculated` should be very close to `d_original`. Minor differences might occur due to floating-point precision and the numerical root-finding in `psyinv`.
+
+##### Example 3: `psyderiv` for Different d-primes and Methods
+The derivative `dPc/dd'` indicates the slope of the psychometric function. It's often maximal at an intermediate d-prime (or Pc) and smaller at very low or very high d-primes.
+
+```python
+deriv_low_d_2afc = psyderiv(dprime=0.5, method="2afc")
+deriv_high_d_2afc = psyderiv(dprime=2.0, method="2afc")
+deriv_low_d_3afc = psyderiv(dprime=0.5, method="3afc") # Different method
+
+print(f"psyderiv(dprime=0.5, method='2afc'): {deriv_low_d_2afc:.4f}")
+print(f"psyderiv(dprime=2.0, method='2afc'): {deriv_high_d_2afc:.4f}")
+print(f"psyderiv(dprime=0.5, method='3afc'): {deriv_low_d_3afc:.4f}")
+```
+**Comments:**
+*   For many methods like "2afc", the psychometric function is steepest (derivative is maximal) around `d_prime=0` if `pc_func(0)=pguess` and `pguess=0.5`. The derivative generally decreases as `d_prime` moves away from the steepest point.
+*   The magnitude of the derivative also depends on the specific method.
+
 ---
 
 ## `psyinv`: Proportion Correct to d-prime
@@ -92,6 +148,8 @@ d_prime_3afc = psyinv(pc=0.65, method="3afc")
 print(f"d-prime for Pc=0.65 (3AFC): {d_prime_3afc:.4f}")
 ```
 
+*(See "Further Examples for `psyfun`, `psyinv`, and `psyderiv`" above for more examples)*
+
 ---
 
 ## `psyderiv`: Derivative of the Psychometric Function
@@ -128,6 +186,8 @@ print(f"Derivative at d'=1.0 (2AFC): {derivative_value:.4f}")
 derivative_triangle = psyderiv(dprime=1.5, method="triangle")
 print(f"Derivative at d'=1.5 (triangle): {derivative_triangle:.4f}")
 ```
+
+*(See "Further Examples for `psyfun`, `psyinv`, and `psyderiv`" above for more examples)*
 
 ---
 
@@ -194,3 +254,59 @@ print(f"  Pc: {result2['coefficients']['pc']:.4f} +/- {result2['std_errors']['pc
 print(f"  Pd: {result2['coefficients']['pd']:.4f} +/- {result2['std_errors']['pd']:.4f}")
 print(f"  d-prime: {result2['coefficients']['d_prime']:.4f} +/- {result2['std_errors']['d_prime']:.4f}")
 ```
+
+#### Further Examples for `rescale`
+
+##### Example 3: Rescale `pd` to `dprime` and `pc` with `std_err`
+This example shows how to convert a Proportion Discriminated (Pd) value and its standard error to the d-prime and Pc scales for a "duotrio" task.
+
+```python
+pd_val = 0.6
+se_pd = 0.05
+method_rescale_duo = "duotrio"
+
+rescaled_from_pd = rescale(x=pd_val, from_scale="pd", to_scale="dp", 
+                           method=method_rescale_duo, std_err=se_pd)
+
+print(f"\\n--- Rescaled from Pd={pd_val} +/- {se_pd} ({method_rescale_duo}) ---")
+print(f"  d-prime: {rescaled_from_pd['coefficients']['d_prime']:.3f} +/- {rescaled_from_pd['std_errors']['d_prime']:.3f}")
+print(f"  Pc:      {rescaled_from_pd['coefficients']['pc']:.3f} +/- {rescaled_from_pd['std_errors']['pc']:.3f}")
+print(f"  Pd:      {rescaled_from_pd['coefficients']['pd']:.3f} +/- {rescaled_from_pd['std_errors']['pd']:.3f}")
+```
+
+##### Example 4: Rescale from `dprime` for a method with lower `pguess` (e.g., "hexad")
+Methods like "hexad" have a lower chance performance level (`pguess`). This affects the relationship between d-prime, Pc, and Pd.
+
+```python
+dp_val_hex = 2.0
+se_dp_hex = 0.2
+method_hexad = "hexad" # pguess for hexad is 0.1
+
+rescaled_hexad = rescale(x=dp_val_hex, from_scale="dp", to_scale="pc", 
+                         method=method_hexad, std_err=se_dp_hex)
+
+print(f"\\n--- Rescaled from d'={dp_val_hex} +/- {se_dp_hex} ({method_hexad}) ---")
+print(f"  Pc:      {rescaled_hexad['coefficients']['pc']:.3f} +/- {rescaled_hexad['std_errors']['pc']:.3f}")
+print(f"  Pd:      {rescaled_hexad['coefficients']['pd']:.3f} +/- {rescaled_hexad['std_errors']['pd']:.3f}")
+print(f"  d-prime: {rescaled_hexad['coefficients']['d_prime']:.3f} +/- {rescaled_hexad['std_errors']['d_prime']:.3f}")
+```
+**Comments:**
+*   For a given d-prime, methods with lower `pguess` values will generally yield lower Pc values compared to methods like "2afc" (where `pguess=0.5`). The Pd value, which corrects for chance, provides a more standardized measure of discriminability across methods.
+
+##### Example 5: `to_scale` parameter's role
+The `to_scale` parameter specifies the primary scale of interest for the output, but the `rescale` function in `sensPy` always returns values on all three scales (`pc`, `pd`, `d_prime`) in the `coefficients` dictionary.
+
+```python
+result_all_scales = rescale(x=0.75, from_scale="pc", to_scale="dp", method="triangle")
+
+print("\\n--- 'to_scale' parameter and accessing all coefficients ---")
+print(f"Input: Pc=0.75, Method=triangle, to_scale='dp'")
+print(f"  Coefficients returned:")
+print(f"    d-prime: {result_all_scales['coefficients']['d_prime']:.4f}")
+print(f"    Pc:      {result_all_scales['coefficients']['pc']:.4f}") # This is the input Pc
+print(f"    Pd:      {result_all_scales['coefficients']['pd']:.4f}")
+# The 'to_scale' argument is mainly for context or if a single value was expected,
+# but sensPy's rescale provides all three for convenience.
+```
+**Comments:**
+*   This behavior differs slightly from `sensR`'s `rescale` which typically returns a single numeric value corresponding to `to_scale`. `sensPy`'s version returns a dictionary with all conversions, making `to_scale` less critical for data retrieval but still useful for indicating the primary conversion of interest.

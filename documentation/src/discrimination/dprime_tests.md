@@ -95,6 +95,73 @@ print(f"P-value: {result_multi['p_value']:.4f}")
 #     print(f"  Group {i+1} ({res_group['method']}): d-prime = {res_group['dprime']:.4f}")
 ```
 
+#### Further Examples for `dprime_test`
+
+##### Example 3: Different Protocols in a Multi-Group Test
+The `dprime_test` can estimate a common d-prime even when the groups used different sensory protocols, as d-prime is a common scale.
+
+```python
+correct_diff_proto = [30, 25]
+total_diff_proto = [50, 40] # Different number of trials too
+protocol_diff_proto = ['2afc', 'triangle']
+dprime0_val = 0.5
+
+result_diff_proto = dprime_test(correct_diff_proto, total_diff_proto, protocol_diff_proto, 
+                                dprime0=dprime0_val, alternative="two.sided")
+
+print(f"\\n--- dprime_test with Different Protocols (vs d'={dprime0_val}) ---")
+print(f"Common d-prime estimate: {result_diff_proto['common_dprime_est']:.4f}")
+print(f"P-value: {result_diff_proto['p_value']:.4f}")
+# The common d-prime is estimated by finding a single d-prime value that best fits 
+# all group data simultaneously, considering each group's specific protocol.
+```
+
+##### Example 4: Interpreting `alternative` options more explicitly
+Let's use a single group with `correct=40, total=50, protocol='2afc'`. 
+The d-prime for this (from `discrim(40,50,'2afc')`) is approximately 1.68.
+
+```python
+# Data: correct=40, total=50, protocol='2afc' (d' approx 1.68)
+
+# Test 1: Is d-prime greater than 1.5?
+res_alt1 = dprime_test(40, 50, '2afc', dprime0=1.5, alternative='greater')
+print(f"\\n--- Alternative Test (d' > 1.5) ---")
+print(f"P-value (d' > 1.5): {res_alt1['p_value']:.4f}")
+# Expected: p-value might be low/moderate if 1.68 is sufficiently > 1.5 given SE.
+
+# Test 2: Is d-prime less than 1.5?
+res_alt2 = dprime_test(40, 50, '2afc', dprime0=1.5, alternative='less')
+print(f"\\n--- Alternative Test (d' < 1.5) ---")
+print(f"P-value (d' < 1.5): {res_alt2['p_value']:.4f}")
+# Expected: p-value should be high, as 1.68 is not less than 1.5.
+
+# Test 3: Is d-prime greater than 2.0?
+res_alt3 = dprime_test(40, 50, '2afc', dprime0=2.0, alternative='greater')
+print(f"\\n--- Alternative Test (d' > 2.0) ---")
+print(f"P-value (d' > 2.0): {res_alt3['p_value']:.4f}")
+# Expected: p-value should be high, as 1.68 is not greater than 2.0.
+```
+**Explanation:**
+*   **Test 1 (`alternative='greater'`, `dprime0=1.5`):** We're testing if the true d-prime is significantly greater than 1.5. Since our estimate is ~1.68, the p-value tells us the probability of observing a d-prime this high or higher if the true d-prime were actually 1.5.
+*   **Test 2 (`alternative='less'`, `dprime0=1.5`):** We're testing if the true d-prime is significantly less than 1.5. Since our estimate is ~1.68, it's unlikely to be significantly less than 1.5, so we expect a large p-value.
+*   **Test 3 (`alternative='greater'`, `dprime0=2.0`):** We're testing if the true d-prime is significantly greater than 2.0. Since our estimate is ~1.68, it's unlikely to be significantly greater than 2.0, so we expect a large p-value.
+
+##### Example 5: Case where `common_dprime_est` is close to `dprime0`
+If the true common d-prime is very close to `dprime0`, the p-value for a two-sided test should be large, indicating no significant difference from `dprime0`.
+
+```python
+# Data: Two groups with similar, low performance.
+# For 2AFC, 35/100 correct -> pc=0.35. pguess=0.5. dprime from discrim is 0.
+# The common dprime ML estimate should also be 0.
+result_close = dprime_test(correct=[35,36], total=[100,100], 
+                           protocol=['2afc','2afc'], dprime0=0.0, 
+                           alternative='two.sided')
+print(f"\\n--- dprime_test (d' close to dprime0=0) ---")
+print(f"Common d-prime estimate: {result_close['common_dprime_est']:.4f}")
+print(f"P-value when d-prime close to dprime0: {result_close['p_value']:.3f}")
+# Expected: p-value should be large (close to 1.0).
+```
+
 ---
 
 ## `dprime_compare`: Compare d-primes from multiple groups
@@ -163,14 +230,73 @@ print(f"P-value: {result_compare_diff['p_value']:.4f}")
 # print(f"Common d-prime under H0: {result_compare_diff['common_dprime_H0_est']:.4f}")
 
 
-# Example 2: Two groups, likely similar
-correct_g2 = [30, 32]
-total_g2 = [50, 50]
-protocol_g2 = ["triangle", "triangle"]
-result_compare_sim = dprime_compare(correct_g2, total_g2, protocol_g2)
-print("\\n--- d-prime Comparison (Likely Similar Groups) ---")
-print(f"LR Statistic: {result_compare_sim['LR_statistic']:.4f}")
-print(f"df: {result_compare_sim['df']}")
-print(f"P-value: {result_compare_sim['p_value']:.4f}")
+# Example 2: Two groups, likely similar (from original examples)
+correct_g2_orig = [30, 32]
+total_g2_orig = [50, 50]
+protocol_g2_orig = ["triangle", "triangle"]
+result_compare_sim_orig = dprime_compare(correct_g2_orig, total_g2_orig, protocol_g2_orig)
+print("\\n--- d-prime Comparison (Likely Similar Groups - Original Example) ---")
+print(f"LR Statistic: {result_compare_sim_orig['LR_statistic']:.4f}")
+print(f"df: {result_compare_sim_orig['df']}")
+print(f"P-value: {result_compare_sim_orig['p_value']:.4f}")
 
 ```
+
+#### Further Examples for `dprime_compare`
+
+##### Example 3: Comparing Three Groups
+This demonstrates comparing more than two groups. The degrees of freedom will be `num_groups - 1`.
+
+```python
+correct_3gr = [30, 35, 40]
+total_3gr = [50, 50, 50]
+protocol_3gr = ['2afc', '2afc', '2afc']
+result_3gr = dprime_compare(correct_3gr, total_3gr, protocol_3gr)
+
+print(f"\\n--- Comparing Three 2AFC Groups ---")
+print(f"LR Statistic: {result_3gr['LR_statistic']:.4f}")
+print(f"df: {result_3gr['df']}") # Should be 3 - 1 = 2
+print(f"P-value: {result_3gr['p_value']:.4f}")
+# A significant p-value would suggest at least one group's d-prime differs.
+```
+
+##### Example 4: Comparing Groups with Different Protocols
+The comparison is still valid as d-prime is the common scale.
+
+```python
+correct_mix_proto = [30, 28] # 2AFC: 30/50 (Pc=0.6), Triangle: 28/40 (Pc=0.7)
+total_mix_proto = [50, 40]
+protocol_mix_proto = ['2afc', 'triangle']
+result_mix_proto = dprime_compare(correct_mix_proto, total_mix_proto, protocol_mix_proto)
+
+print(f"\\n--- Comparing Groups with Different Protocols (2AFC vs Triangle) ---")
+print(f"LR Statistic: {result_mix_proto['LR_statistic']:.4f}")
+print(f"df: {result_mix_proto['df']}") # Should be 2 - 1 = 1
+print(f"P-value: {result_mix_proto['p_value']:.4f}")
+```
+**Comments:**
+*   The Likelihood Ratio Test compares the fit of a model where all groups share a common d-prime against a model where each group has its own d-prime. This comparison is valid even if the protocols (and thus the relationship between d-prime and Pc) differ between groups, because d-prime itself is considered the underlying measure of sensory difference on a common scale.
+
+##### Example 5: Clear Difference vs. No Clear Difference in d-primes
+Illustrating how p-values reflect the evidence for/against the null hypothesis (H0: all d-primes are equal).
+
+```python
+# Case A: No clear difference expected
+correct_nodiff = [30, 32] # Fairly similar performance (Pc=0.6, Pc=0.64 for 2AFC)
+total_nodiff = [50, 50]
+protocol_nodiff = ['2afc', '2afc']
+res_nodiff = dprime_compare(correct_nodiff, total_nodiff, protocol_nodiff)
+print(f"\\n--- Comparison: No Clear Difference Expected ---")
+print(f"P-value: {res_nodiff['p_value']:.4f}") # Expect high p-value
+
+# Case B: Clear difference expected
+correct_clear_diff = [20, 45] # Very different performance (Pc=0.4, Pc=0.9 for 2AFC)
+total_clear_diff = [50, 50]
+protocol_clear_diff = ['2afc', '2afc']
+res_clear_diff = dprime_compare(correct_clear_diff, total_clear_diff, protocol_clear_diff)
+print(f"\\n--- Comparison: Clear Difference Expected ---")
+print(f"P-value: {res_clear_diff['p_value']:.4f}") # Expect low p-value
+```
+**Comments:**
+*   A high p-value (e.g., > 0.05) from `dprime_compare` suggests that there is no statistically significant evidence to reject the hypothesis that all groups have the same underlying d-prime.
+*   A low p-value suggests that the d-prime values are not all equal across the groups.

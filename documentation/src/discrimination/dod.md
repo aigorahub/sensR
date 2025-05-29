@@ -113,6 +113,108 @@ else:
 
 ```
 
+### Further Examples
+
+#### Example 1: Different Number of Categories (K=4)
+
+The `dod` function adapts to the number of categories specified by the length of `same_counts` and `diff_counts`. If K categories are used, K-1 `tau` parameters will be estimated.
+
+```python
+# Example with K=4 categories
+same_counts_4cat = np.array([5, 15, 40, 40])  # Sum = 100
+diff_counts_4cat = np.array([20, 35, 35, 10]) # Sum = 100
+
+result_4cat = dod(same_counts_4cat, diff_counts_4cat)
+print("\\n--- DoD Example (K=4 categories) ---")
+if result_4cat["convergence_status"]:
+    print(f"Estimated d-prime: {result_4cat['d_prime']:.4f}")
+    print(f"Estimated tau values (K-1={len(result_4cat['tau'])}): {np.array2string(result_4cat['tau'], precision=4, suppress_small=True)}")
+else:
+    print("Model with K=4 did not converge.")
+```
+**Comments:**
+*   With 4 categories, the model estimates 3 `tau` parameters. The `tau` array in the result will have 3 elements.
+
+#### Example 2: Data Suggesting Low vs. High d-prime
+
+The estimated d-prime reflects how separated the "same" and "different" response distributions are.
+
+```python
+# Low d-prime data (distributions are similar)
+same_low_d = np.array([40, 30, 30]) # Total 100
+diff_low_d = np.array([35, 30, 35]) # Total 100
+result_low_d = dod(same_low_d, diff_low_d)
+print("\\n--- DoD Example (Low d-prime expected) ---")
+if result_low_d["convergence_status"]:
+    print(f"Estimated d-prime (low): {result_low_d['d_prime']:.4f}")
+else:
+    print("Low d-prime model did not converge.")
+
+# High d-prime data (distributions are very separate)
+same_high_d = np.array([5, 15, 80])  # Total 100
+diff_high_d = np.array([70, 25, 5])  # Total 100
+result_high_d = dod(same_high_d, diff_high_d)
+print("\\n--- DoD Example (High d-prime expected) ---")
+if result_high_d["convergence_status"]:
+    print(f"Estimated d-prime (high): {result_high_d['d_prime']:.4f}")
+else:
+    print("High d-prime model did not converge.")
+```
+**Comments:**
+*   For `low d-prime data`, where the response patterns for "same" and "different" pairs are similar, the estimated `d_prime` will be small (closer to 0).
+*   For `high d-prime data`, where the response patterns show a clear shift (e.g., "same" pairs mostly in low categories, "different" pairs mostly in high categories), the estimated `d_prime` will be larger.
+
+#### Example 3: Using `initial_tau` and `initial_d_prime`
+
+Providing initial guesses can sometimes help the optimizer, especially if the default starting points are far from the optimal solution or if the likelihood surface is complex.
+
+```python
+# Using the first example's data (K=3 categories)
+same_counts_data = np.array([10, 20, 70])
+diff_counts_data = np.array([70, 20, 10])
+
+# K=3 means K-1 = 2 tau values.
+initial_tau_custom = np.array([0.5, 1.5]) # Must be positive and increasing
+initial_d_prime_custom = 2.0
+
+result_custom = dod(same_counts_data, diff_counts_data, 
+                    initial_tau=initial_tau_custom, 
+                    initial_d_prime=initial_d_prime_custom)
+
+print("\\n--- DoD Example with Custom Initial Guesses ---")
+if result_custom["convergence_status"]:
+    print(f"Custom Init d-prime: {result_custom['d_prime']:.2f}, tau: {np.round(result_custom['tau'], 2)}")
+    # Compare with initial guesses provided (after conversion to tpar and back to tau for initial_params_optim)
+    # print(f"Initial params for optimizer (tpar, d_prime): {result_custom['initial_params_optim']}")
+else:
+    print("Model with custom initial guesses did not converge.")
+```
+**Comments:**
+*   The `initial_tau` provided should be an array of the `K-1` tau values themselves, not the `tpar` increments. The `dod` function will convert these to `tpar` internally for optimization.
+*   If the optimization fails to converge with default starting points, trying different `initial_tau` and `initial_d_prime` values can be a useful troubleshooting step.
+
+#### Example 4: Interpreting `tpar` and `se_tpar`
+
+The `dod` function optimizes parameters called `tpar`, which are the increments of the `tau` boundary parameters (i.e., `tau[0] = tpar[0]`, `tau[1] = tpar[0] + tpar[1]`, and so on). The standard errors in `se_tpar` and the variance-covariance matrix `vcov_optim_params` relate to these `tpar` and `d_prime`.
+
+```python
+# Using 'result_dod' from the first main example
+if result_dod["convergence_status"]:
+    print("\\n--- Interpreting tpar and se_tpar ---")
+    print(f"Estimated d-prime: {result_dod['d_prime']:.4f} (SE: {result_dod['se_d_prime']:.4f})")
+    print(f"Estimated tau values: {np.array2string(result_dod['tau'], precision=4, suppress_small=True)}")
+    print(f"Optimized tpar values: {np.array2string(result_dod['tpar'], precision=4, suppress_small=True)}")
+    print(f"SE for tpar values: {np.array2string(result_dod['se_tpar'], precision=4, suppress_small=True)}")
+    print(f"Variance-Covariance Matrix (for tpar and d_prime):")
+    print(np.array2string(result_dod['vcov_optim_params'], precision=4, suppress_small=True))
+else:
+    print("\\nOriginal DoD model did not converge, skipping tpar interpretation.")
+```
+**Comments:**
+*   `tpar`: These are the direct parameters (along with `d_prime`) estimated by the optimizer. `tau` is derived from them. All `tpar` values must be positive to ensure `tau` values are strictly increasing.
+*   `se_tpar`: These are the standard errors for the `tpar` increments.
+*   `vcov_optim_params`: This matrix provides the variances (on the diagonal) and covariances for the `tpar` values and `d_prime`. To get standard errors for the `tau` values themselves, one would typically apply the delta method using this variance-covariance matrix and the relationship `tau_k = sum(tpar_i)`. This is not done automatically by the `dod` function but could be performed by an advanced user.
+
 ## Notes on Calculation
 
 *   The function uses `scipy.optimize.minimize` with the "L-BFGS-B" method to find the Maximum Likelihood Estimates.
