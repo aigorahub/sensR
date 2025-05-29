@@ -1,6 +1,7 @@
 // eleventy.config.js
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/static/css"); // Passthrough for CSS
+  eleventyConfig.addPassthroughCopy("src/static/images"); // Passthrough for Images
 
   return {
     dir: {

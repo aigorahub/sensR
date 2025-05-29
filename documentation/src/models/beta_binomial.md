@@ -146,3 +146,109 @@ else:
     print("  Beta:  CI could not be reliably computed.")
 
 ```
+
+### Example 1: Fitting with a Different Dataset
+
+Let's try a dataset that might exhibit more overdispersion or a different underlying mean proportion. Here, the number of trials (`n`) is constant.
+
+```python
+# Example 1: Different Dataset
+x_new = np.array([5, 8, 12, 15]) # Successes out of 20 trials each
+n_new = np.array([20, 20, 20, 20]) # Could also be n_new = 20
+
+model_new = BetaBinomial()
+model_new.fit(x_new, n_new)
+
+print("\\n--- Fit with New Dataset ---")
+print(model_new.summary())
+```
+
+**Comments:**
+*   Depending on the data's characteristics (e.g., if proportions `x_new/n_new` vary significantly), the estimated `alpha` and `beta` values will change.
+*   Lower `alpha` and `beta` values generally indicate more overdispersion. Higher values suggest the data is closer to a standard binomial distribution.
+
+### Example 2: Interpreting `confint()` for Specific Parameters
+
+You can request confidence intervals for specific parameters.
+
+```python
+# Example 2: Confidence Interval for a single parameter
+# Using the 'std_model' from the first example
+if std_model.convergence_status: # Ensure model converged before getting CIs
+    print("\\n--- CI for Alpha only (Standard Model) ---")
+    ci_alpha_only = std_model.confint(parm=['alpha'])
+    alpha_ci = ci_alpha_only.get('alpha', (np.nan, np.nan)) # Safely get the tuple
+    if not any(np.isnan(alpha_ci)):
+        print(f"  Alpha (95% CI): ({alpha_ci[0]:.4f}, {alpha_ci[1]:.4f})")
+    else:
+        print("  Alpha: CI could not be reliably computed.")
+    # The output is still a dictionary, but only contains the requested parameter.
+else:
+    print("\\nStandard model did not converge, skipping specific CI example.")
+```
+
+### Example 3: Chance-Corrected Model with a High Guess Rate
+
+This example demonstrates a chance-corrected model where the probability of guessing correctly is unusually high (e.g., 0.75).
+
+```python
+# Example 3: Corrected Model with High Guess Rate
+x_high_pg = np.array([30, 35]) # Number of correct identifications
+n_high_pg = np.array([50, 50]) # Total trials
+p_guess_high = 0.75 # e.g. a 4-AFC task where 3 choices are very obviously wrong
+
+model_high_pg = BetaBinomial()
+try:
+    model_high_pg.fit(x_high_pg, n_high_pg, corrected=True, p_guess=p_guess_high)
+    print("\\n--- Corrected Model (High p_guess=0.75) ---")
+    print(model_high_pg.summary())
+    
+    print("\\nConfidence Intervals (High p_guess):")
+    ci_high_pg = model_high_pg.confint()
+    alpha_ci_hpg = ci_high_pg.get('alpha', (np.nan, np.nan))
+    beta_ci_hpg = ci_high_pg.get('beta', (np.nan, np.nan))
+
+    if not any(np.isnan(alpha_ci_hpg)):
+        print(f"  Alpha: ({alpha_ci_hpg[0]:.4f}, {alpha_ci_hpg[1]:.4f})")
+    else:
+        print("  Alpha: CI could not be reliably computed.")
+    if not any(np.isnan(beta_ci_hpg)):
+        print(f"  Beta:  ({beta_ci_hpg[0]:.4f}, {beta_ci_hpg[1]:.4f})")
+    else:
+        print("  Beta:  CI could not be reliably computed.")
+except ValueError as e:
+    print(f"\\nError fitting high p_guess model: {e}")
+
+```
+**Comments:**
+*   A high `p_guess` means a significant portion of correct responses could be due to chance.
+*   This can lead to different `alpha` and `beta` estimates compared to a non-corrected model or one with a lower `p_guess`.
+*   The confidence intervals might become wider, reflecting increased uncertainty about the true underlying parameters once the high chance of guessing is accounted for. If `p_guess` is very close to or exceeds the observed proportion correct, the model may not be identifiable, leading to convergence issues or extremely wide/unreliable CIs. The current `fit` method restricts `p_guess` to be strictly between 0 and 1 when `corrected=True`.
+
+### Example 4: Conceptual Access to `vcov` for Standard Errors
+
+The `summary()` method conveniently provides standard errors for `alpha` and `beta`. However, it's useful to understand that `model.vcov` stores the variance-covariance matrix of the *logarithms* of these parameters (`log_alpha`, `log_beta`), as these are often what is estimated during optimization for stability.
+
+```python
+# Example 4: Conceptual SEs from vcov
+# Using the 'std_model' from the first example, assuming it converged.
+if std_model.convergence_status and std_model.vcov is not None:
+    print("\\n--- Conceptual SEs from vcov (Standard Model) ---")
+    log_params_vcov = std_model.vcov 
+    
+    # SE for log_alpha and log_beta are sqrt of diagonal elements
+    # Ensure diagonal elements are non-negative before sqrt
+    se_log_alpha = np.sqrt(log_params_vcov[0,0]) if log_params_vcov[0,0] >= 0 else np.nan
+    se_log_beta = np.sqrt(log_params_vcov[1,1]) if log_params_vcov[1,1] >= 0 else np.nan
+    
+    print(f"  Raw vcov of [log_alpha, log_beta]:")
+    print(log_params_vcov)
+    print(f"  SE for log_alpha (from vcov): {se_log_alpha:.4f}")
+    print(f"  SE for log_beta (from vcov): {se_log_beta:.4f}")
+    
+    print("\\n  Note: The `summary()` method already provides standard errors for alpha and beta")
+    print("  on their natural scale, transformed from the log-scale vcov via the delta method.")
+else:
+    print("\\nStandard model did not converge or vcov not available, skipping vcov example.")
+```
+This example is primarily for understanding the underlying components. For practical use, the SEs in the `summary()` output are generally sufficient.

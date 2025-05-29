@@ -110,6 +110,102 @@ print(f"Estimated tau: {result_2ac_2['tau']:.4f}")
 
 ```
 
+### Further Examples
+
+#### Example 1: Different Levels of Sensitivity and Bias
+
+Let's explore how `delta` and `tau` reflect different performance patterns.
+
+```python
+# Case 1: High sensitivity, low bias
+hits1 = 90
+false_alarms1 = 10
+n_signal1 = 100
+n_noise1 = 100
+result1 = twoAC(x=[hits1, false_alarms1], n=[n_signal1, n_noise1])
+print("\\n--- High Sensitivity, Low Bias (90H, 10FA from 100/100) ---")
+if result1["convergence_status"]:
+    print(f"  Delta: {result1['delta']:.4f} (SE: {result1['se_delta']:.4f})")
+    print(f"  Tau:   {result1['tau']:.4f} (SE: {result1['se_tau']:.4f})")
+else:
+    print("  Optimization did not converge.")
+
+# Case 2: Lower sensitivity, notable bias (e.g., towards "yes")
+hits2 = 60 # P(Hit) = 0.6
+false_alarms2 = 30 # P(FA) = 0.3
+n_signal2 = 100
+n_noise2 = 100
+result2 = twoAC(x=[hits2, false_alarms2], n=[n_signal2, n_noise2])
+print("\\n--- Lower Sensitivity, Notable Bias (60H, 30FA from 100/100) ---")
+if result2["convergence_status"]:
+    print(f"  Delta: {result2['delta']:.4f} (SE: {result2['se_delta']:.4f})")
+    print(f"  Tau:   {result2['tau']:.4f} (SE: {result2['se_tau']:.4f})")
+else:
+    print("  Optimization did not converge.")
+```
+**Comments:**
+*   In Case 1 (90 Hits, 10 False Alarms), we expect a high `delta` (good sensitivity) and a `tau` close to zero (low bias, as Hit Rate is high and False Alarm Rate is low, symmetrically).
+*   In Case 2 (60 Hits, 30 False Alarms), `delta` will be lower than in Case 1. If both P(Hit) and P(FA) are relatively high, `tau` might be negative, indicating a bias towards responding "yes". If both are low, `tau` might be positive.
+
+#### Example 2: Impact of Unequal Number of Signal/Noise Trials
+
+The number of signal and noise trials can influence the precision of the estimates.
+
+```python
+# Case 3: Unequal trials (fewer noise trials)
+hits3 = 70
+false_alarms3 = 10 # P(FA) = 10/50 = 0.2
+n_signal3 = 100
+n_noise3 = 50 
+result3 = twoAC(x=[hits3, false_alarms3], n=[n_signal3, n_noise3])
+print("\\n--- Unequal Trials (70H/100S, 10FA/50N) ---")
+if result3["convergence_status"]:
+    print(f"  Delta: {result3['delta']:.4f} (SE: {result3['se_delta']:.4f})")
+    print(f"  Tau:   {result3['tau']:.4f} (SE: {result3['se_tau']:.4f})")
+else:
+    print("  Optimization did not converge.")
+```
+**Comments:**
+*   Having fewer trials for one type (e.g., noise trials) might lead to larger standard errors for the parameters, especially for `tau`, as the estimation of the corresponding probability (P(FA) in this case) is based on less data.
+
+#### Example 3: Near Chance Performance
+
+When performance is near chance (P(Hit) approx. P(FA)), `delta` should be close to zero.
+
+```python
+# Case 4: Near chance performance
+hits4 = 55
+false_alarms4 = 45
+n_signal4 = 100
+n_noise4 = 100
+result4 = twoAC(x=[hits4, false_alarms4], n=[n_signal4, n_noise4])
+print("\\n--- Near Chance Performance (55H, 45FA from 100/100) ---")
+if result4["convergence_status"]:
+    print(f"  Delta: {result4['delta']:.4f} (SE: {result4['se_delta']:.4f})") # Expected near 0
+    print(f"  Tau:   {result4['tau']:.4f} (SE: {result4['se_tau']:.4f})")   # Bias can still be present
+else:
+    print("  Optimization did not converge.")
+```
+**Comments:**
+*   Here, P(Hit) = 0.55 and P(FA) = 0.45. We expect `delta` to be small, indicating low sensitivity.
+*   `tau` will reflect the overall tendency to say "yes" or "no". Since both rates are around 0.5, `tau` should also be close to zero.
+
+#### Example 4: User-Provided Initial Guesses
+
+While the optimizer is generally robust, you can provide initial guesses for `delta` and `tau`.
+
+```python
+# Case 5: Using initial guesses
+result_custom_init = twoAC(x=[70, 15], n=[100, 100], initial_delta=2.0, initial_tau=0.1)
+print("\\n--- Using Initial Guesses (70H, 15FA) ---")
+if result_custom_init["convergence_status"]:
+    print(f"  Delta: {result_custom_init['delta']:.4f}, Tau: {result_custom_init['tau']:.4f}")
+else:
+    print("  Optimization did not converge (with custom initial guesses).")
+```
+**Comments:**
+*   Providing good initial guesses can sometimes help the optimizer, especially in complex or near-boundary cases, though L-BFGS-B is often quite good with its defaults. The `initial_params` in the return dictionary shows what the function used to start optimization.
+
 ## Notes on Calculation
 
 *   The function uses `scipy.optimize.minimize` with the "L-BFGS-B" method to find the Maximum Likelihood Estimates of `delta` and `tau`.
