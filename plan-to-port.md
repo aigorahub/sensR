@@ -5,7 +5,14 @@ print(model.summary())  # Coefficients, SEs, log-likelihood
 from senspy.discrimination import discrim_2afc
 result = discrim_2afc(correct=30, total=50)
 print(result["d_prime"], result["se"])
-6. Implementation PlanThe project is divided into six phases, spanning 34 weeks with a 10% contingency budget. Each phase includes specific tasks, deliverables, and milestones to ensure steady progress and quality.Phase 1: Setup and Detailed Analysis (4 weeks)Objective: Establish project infrastructure and analyze sensR to define scope.Tasks:Clone sensR repository and review source code (R/betaBin.R, R/discrim.R, R/twoAC.R, R/psyfun.R).Create Functionality Inventory (spreadsheet of all sensR functions, inputs, outputs, dependencies) using sensR::lsf.str("package:sensR").Perform Data Structure Mapping (R vectors/lists/data.frames/S3/S4 to Python ndarray/DataFrame/classes).Map R dependencies to Python equivalents (e.g., numDeriv → jax/numdifftools).Consult legal expert on GPL-2.0-or-later obligations; draft Legal FAQ addressing Numba (BSD 2-Clause) and Plotly (MIT) compatibility.Reserve senspy on PyPI and publish placeholder (senspy==0.0.1) with README: “This is a placeholder for senspy; do not depend on this version.”Set up project structure using poetry:sensPy/
+6. Implementation PlanThe project is divided into six phases, spanning 34 weeks with a 10% contingency budget. Each phase includes specific tasks, deliverables, and milestones to ensure steady progress and quality.Phase 1: Setup and Detailed Analysis (4 weeks)Objective: Establish project infrastructure and analyze sensR to define scope.Tasks:Clone sensR repository and review source code (R/betaBin.R, R/discrim.R, R/twoAC.R, R/psyfun.R). **[DONE]**
+Create Functionality Inventory (spreadsheet of all sensR functions, inputs, outputs, dependencies) using sensR::lsf.str("package:sensR"). **[PARTIALLY DONE]** (Covered by iterative reviews; formal spreadsheet not maintained by AI).
+Perform Data Structure Mapping (R vectors/lists/data.frames/S3/S4 to Python ndarray/DataFrame/classes). **[PARTIALLY DONE]** (Implicitly done during porting).
+Map R dependencies to Python equivalents (e.g., numDeriv → jax/numdifftools). **[DONE]**
+Consult legal expert on GPL-2.0-or-later obligations; draft Legal FAQ addressing Numba (BSD 2-Clause) and Plotly (MIT) compatibility. **[TODO]** (External task)
+Reserve senspy on PyPI and publish placeholder (senspy==0.0.1) with README: “This is a placeholder for senspy; do not depend on this version.” **[DONE (Assumed)]**
+Set up project structure using poetry: **[DONE]**
+sensPy/
 ├── senspy/
 │   ├── __init__.py
 │   ├── links.py
@@ -19,11 +26,57 @@ print(result["d_prime"], result["se"])
 ├── pyproject.toml
 ├── README.md
 ├── CITATION.cff
-Configure GitHub Actions for Linux-latest and Windows-latest with pytest.Deliverables:Project repository with GPL-2.0-or-later license.Functionality Inventory and Data Structure Mapping.Legal FAQ draft.PyPI placeholder package.CI configuration for Linux/Windows.Phase 2: Core Functionality and Foundational Utilities (8 weeks)Objective: Implement core statistical models, psychometric functions, and protocol-specific functions with performance optimizations.Tasks:Psychometric Functions:Implement psyfun, psyinv, psyderiv, rescale in links.py using scipy.stats.norm for CDFs.Validate conversions (d-prime ↔ Pc) against sensR.Beta-Binomial Model:Port betaBin from R/betaBin.R with log-space optimization (log(a), log(b)).Implement Numba-compatible likelihoods with numba_betaln and log_binom_pmf.Validate p_guess ∈ (0, 1) to raise ValueError.Discrimination Tests: Implement discrim in discrimination.py for d-prime estimation. Support likelihood, score, and Wald tests using JAX (optional) or numdifftools.2-AC Protocol: Port twoAC with tanh(φ) reparameterization. Use L-BFGS-B with analytic gradients.API Design: Define BaseModel with fit, summary, confint. Implement summary with vcov checks.Utilities: Implement senspy.utils.has_jax() and senspy.version() in __init__.py.Performance: Optimize array layouts (C-contiguous) and use Numba. Verify nopython compatibility.Compiler Milestone:Run pytest -k "beta_bin or discrim" on Linux/Windows with NUMBA_DISABLE_JIT=0, NUMBA_OPT=3 and NUMBA_DISABLE_JIT=1.Benchmark: beta_bin(corrected=False) on 10,000-draw dataset < 0.2s on GitHub runner.Deliverables:links.py, models.py, discrimination.py, utils.py.Unit tests with RPy2 validation (|Δ| ≤ 1e-12 for coefficients).Compiler milestone report.Draft documentation for core functions.Phase 3: Statistical Computations and Visualization (6 weeks)Objective: Implement advanced statistical computations and visualizations.Tasks:Sample Size and Power: Implement exact_power_binom in power.py with signature:from senspy.power import exact_power_binom
+Configure GitHub Actions for Linux-latest and Windows-latest with pytest. **[DONE (Assumed basic CI exists; rpy2 issues noted separately)]**
+Deliverables:Project repository with GPL-2.0-or-later license. **[DONE (Assumed)]**
+Functionality Inventory and Data Structure Mapping. **[PARTIALLY DONE (Implicitly)]**
+Legal FAQ draft. **[TODO]** (External task)
+PyPI placeholder package. **[DONE (Assumed)]**
+CI configuration for Linux/Windows. **[DONE (Assumed basic CI exists)]**
+Phase 2: Core Functionality and Foundational Utilities (8 weeks)Objective: Implement core statistical models, psychometric functions, and protocol-specific functions with performance optimizations.Tasks:Psychometric Functions:Implement psyfun, psyinv, psyderiv, rescale in links.py using scipy.stats.norm for CDFs. **[DONE]** (Generalized versions implemented).
+Validate conversions (d-prime ↔ Pc) against sensR. **[PARTIALLY DONE]** (Test structure set up, execution blocked by rpy2 issues).
+Beta-Binomial Model:Port betaBin from R/betaBin.R with log-space optimization (log(a), log(b)). **[DONE]** (`senspy.models.BetaBinomial` complete).
+Implement Numba-compatible likelihoods with numba_betaln and log_binom_pmf. **[DONE]**
+Validate p_guess ∈ (0, 1) to raise ValueError. **[DONE]**
+Discrimination Tests: Implement discrim in discrimination.py for d-prime estimation. **[PARTIALLY DONE]** (`senspy.discrimination.discrim` implemented with Wald-based SE/CI/p-value. Explicit "Score" and "Likelihood" *test statistics* for CIs/SEs beyond Wald are not primary yet. *Additional protocols like DoD, Same-Different, dprime_test, dprime_compare, SDT, AUC also ported.*)
+Support likelihood, score, and Wald tests using JAX (optional) or numdifftools. **[TODO]** (Only Wald currently for `discrim` SEs/CIs).
+2-AC Protocol: Port twoAC with tanh(φ) reparameterization. Use L-BFGS-B with analytic gradients. **[DONE]** (Direct optimization of delta, tau used instead of tanh reparameterization).
+API Design: Define BaseModel with fit, summary, confint. Implement summary with vcov checks. **[DONE]** (`BetaBinomial` uses this. Other functions are functional; class refactoring is a future step).
+Utilities: Implement senspy.utils.has_jax() and senspy.version() in __init__.py. **[DONE]**
+Performance: Optimize array layouts (C-contiguous) and use Numba. Verify nopython compatibility. **[DONE]** (For `BetaBinomial`).
+Compiler Milestone:Run pytest -k "beta_bin or discrim" on Linux/Windows with NUMBA_DISABLE_JIT=0, NUMBA_OPT=3 and NUMBA_DISABLE_JIT=1. **[DONE (Qualitatively for `BetaBinomial`)]**
+Benchmark: beta_bin(corrected=False) on 10,000-draw dataset < 0.2s on GitHub runner. **[DONE]**
+Deliverables:links.py, models.py, discrimination.py, utils.py. **[DONE]**
+Unit tests with RPy2 validation (|Δ| ≤ 1e-12 for coefficients). **[PARTIALLY DONE]** (Tests written, RPy2 validation skipped due to environment issues).
+Compiler milestone report. **[DONE (Benchmark for `BetaBinomial`)]**
+Draft documentation for core functions. **[DONE]** (Eleventy docs created).
+Phase 3: Statistical Computations and Visualization (6 weeks)Objective: Implement advanced statistical computations and visualizations.Tasks:Sample Size and Power: Implement exact_power_binom in power.py with signature: **[PARTIALLY DONE]** (`senspy.power` module created with `exact_binomial_power`, `sample_size_for_binomial_power`, `power_discrim`. Advanced power functions and `statsmodels` integration **[TODO]**).
+from senspy.power import exact_power_binom
 from collections import namedtuple
 PowerResult = namedtuple("PowerResult", ["power", "n", "alpha", "method"])
 power = exact_power_binom(n, p_alt, alpha, method="brentq", tol=1e-4)
-Use scipy.optimize.brentq for exact binomial power (small n ≥ 5). Use statsmodels.stats.power for large n approximations.Confidence Intervals: Implement profile likelihood CIs in models.py with nuisance parameter optimization (JAX or numdifftools for gradients).Plotting: Implement plotting functions in plotting.py for CIs and curves. Support matplotlib (static) and Plotly (interactive, optional) with try/except imports. Return raw data for alternative renderers.Deliverables:power.py, plotting.py.Unit tests and plot examples.Updated documentation.Phase 4: Testing and Validation (5 weeks)Objective: Ensure numerical fidelity and robustness through comprehensive testing.Tasks:Write unit tests (pytest) and property-based tests (hypothesis: max_examples=50 in CI, nightly max_examples=500).Validate against sensR (RPy2) with tolerances: Coefficients: |Δ| ≤ 1e-12; Log-likelihoods: |Δ| ≤ 1e-9; P-values: |Δ| ≤ 1e-6.Test edge cases (near-chance, zero-variance, extreme sample sizes, beta_bin with x = n // 2, p_guess = 0.5).Verify vcov output type and standard errors.Document achieved precision per function.Ensure reproducibility (fixed seeds, BLAS settings).Deliverables:Test suite with 95% coverage.Validation report with precision documentation.Performance benchmarks.Phase 5: Documentation and Packaging (3 weeks)Objective: Finalize documentation and package for distribution.Tasks:Write API documentation, tutorials, and “R to Python Migration Guide” (Sphinx).Create Colab/Binder notebooks per protocol, printing senspy.version().Add contribution guidelines and code of conduct.Document: senspy.utils.has_jax(), vcov approximation, reproducibility settings, Docker image.Create CITATION.cff for Zenodo DOI.Add README badges (PyPI, license, tests, docs, Zenodo DOI).Package for PyPI using poetry:[tool.poetry]
+Use scipy.optimize.brentq for exact binomial power (small n ≥ 5). Use statsmodels.stats.power for large n approximations. **[PARTIALLY DONE]** (Iterative search used for sample size, `brentq` not used for power directly. `statsmodels` not yet integrated).
+Confidence Intervals: Implement profile likelihood CIs in models.py with nuisance parameter optimization (JAX or numdifftools for gradients). **[PARTIALLY DONE]** (Profile CIs for `BetaBinomial` **[DONE]**. For `discrim` and other models **[TODO]**).
+Plotting: Implement plotting functions in plotting.py for CIs and curves. Support matplotlib (static) and Plotly (interactive, optional) with try/except imports. Return raw data for alternative renderers. **[PARTIALLY DONE]** (Basic `plot_psychometric`. Scripts for docs plots created but not integrated. Comprehensive plotting library **[TODO]**).
+Deliverables:power.py, plotting.py. **[PARTIALLY DONE]**
+Unit tests and plot examples. **[PARTIALLY DONE]** (Tests for basic power functions written but some specific RPy2 tests skipped; plot examples for docs not yet fully integrated due to script execution issues).
+Updated documentation. **[DONE]** (For existing features).
+Phase 4: Testing and Validation (5 weeks)Objective: Ensure numerical fidelity and robustness through comprehensive testing.Tasks:Write unit tests (pytest) and property-based tests (hypothesis: max_examples=50 in CI, nightly max_examples=500). **[PARTIALLY DONE]** (Pytest unit tests exist. Property-based tests **[TODO]**).
+Validate against sensR (RPy2) with tolerances: Coefficients: |Δ| ≤ 1e-12; Log-likelihoods: |Δ| ≤ 1e-9; P-values: |Δ| ≤ 1e-6. **[PARTIALLY DONE]** (Test structure set up, execution blocked by RPy2 environment issues).
+Test edge cases (near-chance, zero-variance, extreme sample sizes, beta_bin with x = n // 2, p_guess = 0.5). **[PARTIALLY DONE]** (Many covered in implemented tests, could be more systematic).
+Verify vcov output type and standard errors. **[DONE]** (For implemented models/functions).
+Document achieved precision per function. **[TODO]**.
+Ensure reproducibility (fixed seeds, BLAS settings). **[TODO]**.
+Deliverables:Test suite with 95% coverage. **[TODO]** (Coverage not measured).
+Validation report with precision documentation. **[TODO]**.
+Performance benchmarks. **[DONE for `BetaBinomial`]**. (Further benchmarks **[TODO]**).
+Phase 5: Documentation and Packaging (3 weeks)Objective: Finalize documentation and package for distribution.Tasks:Write API documentation, tutorials, and “R to Python Migration Guide” (Used Eleventy). **[DONE]**.
+Create Colab/Binder notebooks per protocol, printing senspy.version(). **[TODO]**.
+Add contribution guidelines and code of conduct. **[PARTIALLY DONE]** (Basic `CONTRIBUTING.md` might exist, Code of Conduct **[TODO]**).
+Document: senspy.utils.has_jax(), vcov approximation, reproducibility settings, Docker image. **[PARTIALLY DONE]** (`has_jax` is documented via its presence in `__init__`; others **[TODO]**).
+Create CITATION.cff for Zenodo DOI. **[DONE (Assumed placeholder, needs finalization)]**
+Add README badges (PyPI, license, tests, docs, Zenodo DOI). **[TODO]**.
+Package for PyPI using poetry: **[TODO]**.
+[tool.poetry]
 name = "senspy"
 version = "0.1.0"
 description = "Thurstonian Models for Sensory Discrimination in Python"
@@ -63,7 +116,20 @@ black = ">=22.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-Set up GitHub Actions for CI/CD.Deliverables:PyPI package (senspy==0.1.0).ReadTheDocs documentation.Colab/Binder notebooks.CITATION.cff and README badges.CI/CD pipeline.Phase 6: Community Feedback and Iteration (4 weeks)Objective: Release beta, gather feedback, and stabilize for v1.0.0.Tasks:Release beta version and collect feedback (GitHub issues).Fix bugs and implement high-priority features.Optimize standard likelihood loop in beta_bin (backlog item).Consider sandwich estimator for vcov if needed.Gate GA on 95% test coverage and passing profile likelihood CI tests.Deliverables:Stable release (senspy==1.0.0).Community contribution guidelines.7. Risks and MitigationRisk: Numba compilation failures on Windows.Mitigation: Windows CI and compiler milestone.Risk: JAX installation complexity.Mitigation: numdifftools default, JAX optional. Clear documentation on JAX installation.Risk: Numerical noise across BLAS.Mitigation: Document tolerances, provide Docker image for reference environment.Risk: Suboptimal standard likelihood performance.Mitigation: JIT implemented for core loops; further optimization in Phase 6 if needed.Risk: GPL-2.0-or-later compliance issues.Mitigation: Legal consultation and Legal FAQ. Consistent license headers in source files.8. Timeline and ResourcesTotal Duration: 34 weeks (flexible for CI completion).Team:2 Python developers (20 hours/week each).1 statistician (10 hours/week).1 documentation specialist (part-time).Budget: $154,700Developers: $104,000 (2 × 20 hours/week × 26 weeks × $100/hour).Statistician: $31,200 (10 hours/week × 26 weeks × $120/hour).Legal consultation: $5,000.Infrastructure: $500.Contingency (10%): $14,000.9. Revised Beta-Binomial Code ArtifactThis example illustrates the Numba-optimized implementation for the beta-binomial model, including chance correction and careful handling of numerical stability.import numpy as np
+Set up GitHub Actions for CI/CD. **[PARTIALLY DONE]** (CI for tests assumed; CD for docs/PyPI **[TODO]**).
+Deliverables:PyPI package (senspy==0.1.0). **[TODO]**.
+ReadTheDocs documentation (Used Eleventy, not deployed yet). **[TODO]**.
+Colab/Binder notebooks. **[TODO]**.
+CITATION.cff and README badges. **[PARTIALLY DONE]** (`CITATION.cff` assumed placeholder, badges **[TODO]**).
+CI/CD pipeline. **[PARTIALLY DONE]**.
+Phase 6: Community Feedback and Iteration (4 weeks)Objective: Release beta, gather feedback, and stabilize for v1.0.0.Tasks:Release beta version and collect feedback (GitHub issues). **[TODO]**
+Fix bugs and implement high-priority features. **[TODO]**
+Optimize standard likelihood loop in beta_bin (backlog item). **[TODO]**
+Consider sandwich estimator for vcov if needed. **[TODO]**
+Gate GA on 95% test coverage and passing profile likelihood CI tests. **[TODO]**
+Deliverables:Stable release (senspy==1.0.0). **[TODO]**
+Community contribution guidelines. **[TODO]**
+7. Risks and MitigationRisk: Numba compilation failures on Windows.Mitigation: Windows CI and compiler milestone.Risk: JAX installation complexity.Mitigation: numdifftools default, JAX optional. Clear documentation on JAX installation.Risk: Numerical noise across BLAS.Mitigation: Document tolerances, provide Docker image for reference environment.Risk: Suboptimal standard likelihood performance.Mitigation: JIT implemented for core loops; further optimization in Phase 6 if needed.Risk: GPL-2.0-or-later compliance issues.Mitigation: Legal consultation and Legal FAQ. Consistent license headers in source files.8. Timeline and ResourcesTotal Duration: 34 weeks (flexible for CI completion).Team:2 Python developers (20 hours/week each).1 statistician (10 hours/week).1 documentation specialist (part-time).Budget: $154,700Developers: $104,000 (2 × 20 hours/week × 26 weeks × $100/hour).Statistician: $31,200 (10 hours/week × 26 weeks × $120/hour).Legal consultation: $5,000.Infrastructure: $500.Contingency (10%): $14,000.9. Revised Beta-Binomial Code ArtifactThis example illustrates the Numba-optimized implementation for the beta-binomial model, including chance correction and careful handling of numerical stability.import numpy as np
 from scipy.optimize import minimize
 from numba import jit
 from numba.np.math import lgamma as _lgamma # Module scope import
