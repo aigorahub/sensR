@@ -1,5 +1,7 @@
 // eleventy.config.js
 module.exports = function(eleventyConfig) {
+  eleventyConfig.addPassthroughCopy("src/static/css"); // Passthrough for CSS
+
   return {
     dir: {
       input: "src",      // Source files
@@ -7,7 +9,7 @@ module.exports = function(eleventyConfig) {
       data: "_data",       // For global data
       output: "_site"      // Where the built site will go
     },
-    passthroughFileCopy: true, // Allow passthrough of static assets
+    passthroughFileCopy: true, // This might be redundant if addPassthroughCopy is used, but often kept.
     markdownTemplateEngine: "njk", // Use Nunjucks for Markdown files
     htmlTemplateEngine: "njk",     // Use Nunjucks for HTML files
     templateFormats: ["md", "njk", "html"]
