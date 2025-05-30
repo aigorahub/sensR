@@ -25,14 +25,22 @@ __all__ = [
     "dprime_compare", 
     "SDT",            
     "AUC",            # Add new function
+    # Add moved functions to __all__
+    "psyfun",
+    "psyinv",
+    "psyderiv",
+    "rescale",
 ]
 
-import scipy.optimize 
+import scipy.optimize
+from scipy.optimize import brentq # Added for psyinv
 from scipy.stats import binom, chi2 # For binomial logpmf and chi2.sf
-from senspy.links import psyfun 
+# from senspy.links import psyfun # REMOVED to break cycle
 import warnings # For handling warnings in par2prob_dod
 
-# Try to import scipy.derivative, fallback for older scipy or if not available
+# The existing numerical_derivative function in this file will be used by psyderiv.
+# No need to move _get_derivative_fallback or _get_derivative from links.py,
+# as numerical_derivative here is already more comprehensive.
 try:
     from scipy.derivative import derivative as numerical_derivative
 except ImportError:
@@ -482,8 +490,191 @@ def _init_tpar_sensr(num_categories: int) -> np.ndarray:
         return np.asarray(tpar_values)
 
 
-    p = mapping.get(method, 0.5)
+    p = mapping.get(method, 0.5) # mapping was defined above get_pguess
     return p ** 2 if double else p
+
+
+# --- Psychometric functions moved from links.py ---
+# These functions (psyfun, psyinv, psyderiv, rescale) and their helper _PC_FUNCTIONS_INTERNAL
+# are now part of discrimination.py
+
+_PC_FUNCTIONS_INTERNAL = { # Renamed from PC_FUNCTIONS (from links.py)
+    "2afc": two_afc,
+    "two_afc": two_afc, # alias
+    "triangle": triangle_pc,
+    "duotrio": duotrio_pc,
+    "3afc": three_afc_pc,
+    "three_afc": three_afc_pc, # alias
+    "tetrad": tetrad_pc,
+    "hexad": hexad_pc,
+    "twofive": twofive_pc,
+    "2-afc": two_afc, # sensR alias
+    "3-afc": three_afc_pc, # sensR alias
+    "2-out-of-5": twofive_pc, # sensR alias
+}
+
+def psyfun(dprime: float, method: str = "2afc") -> float:
+    """
+    Map d-prime to proportion correct for a given discrimination method.
+    (Moved from senspy.links)
+    """
+    method_lc = method.lower()
+    if method_lc not in _PC_FUNCTIONS_INTERNAL:
+        raise ValueError(f"Unknown method: {method}. Supported methods: {list(_PC_FUNCTIONS_INTERNAL.keys())}")
+    pc_func = _PC_FUNCTIONS_INTERNAL[method_lc]
+    return pc_func(dprime)
+
+def psyinv(pc: float, method: str = "2afc") -> float:
+    """
+    Map proportion correct to d-prime for a given discrimination method.
+    (Moved from senspy.links)
+    """
+    method_lc = method.lower()
+    if method_lc not in _PC_FUNCTIONS_INTERNAL:
+        raise ValueError(f"Unknown method: {method}. Supported methods: {list(_PC_FUNCTIONS_INTERNAL.keys())}")
+
+    pc_func = _PC_FUNCTIONS_INTERNAL[method_lc]
+    pguess = get_pguess(method_lc) # get_pguess is in this file
+
+    if not (pguess <= pc <= 1.0):
+        if pc < pguess - 1e-9 : # If significantly below pguess
+             warnings.warn(f"pc ({pc:.4f}) is below pguess ({pguess:.4f}) for method {method}. Returning d-prime = 0.", UserWarning)
+             return 0.0
+        pc = max(pc, pguess) # Clip to pguess if slightly below
+
+    if pc <= pguess: return 0.0
+    # Handle pc effectively being 1.0
+    if pc >= 1.0 - 1e-9: 
+        # Check if the function can actually reach 1.0; if not, dprime could be very large but finite.
+        # Test with a large dprime like 20. If pc_func(20) is still less than 1 (minus epsilon),
+        # it suggests the function asymptotes or reaches 1 very slowly.
+        if pc_func(20.0) < 1.0 - 1e-9:
+            # Try to find d-prime if pc is extremely high but function might reach it beyond 20
+            try: # Search in a higher range if pc is extremely close to 1.
+                return brentq(lambda d: pc_func(d) - pc, 20.0, 50.0, xtol=1e-6, rtol=1e-6)
+            except ValueError: # Root not bracketed or other brentq error
+                # This can happen if pc is 1.0 and pc_func(50.0) is still less than 1.0.
+                # Return a very large d-prime as an approximation of infinity or maximum practical d-prime.
+                return 50.0 
+        return np.inf # If pc_func(20) is already effectively 1.0
+
+    # Clip pc for brentq to avoid issues exactly at pguess or 1.0 after checks above
+    epsilon_brentq = 1e-9 
+    pc_adjusted = np.clip(pc, pguess + epsilon_brentq, 1.0 - epsilon_brentq)
+    
+    if abs(pc_adjusted - pguess) < epsilon_brentq : return 0.0 # Effectively at pguess
+
+    try:
+        lower_bound, upper_bound = 0.0, 20.0 # Initial search bracket
+        val_at_lower = pc_func(lower_bound) - pc_adjusted
+        val_at_upper = pc_func(upper_bound) - pc_adjusted
+
+        if val_at_lower * val_at_upper > 0: # Root not bracketed by [0, 20]
+            if val_at_upper < 0: # pc_adjusted is higher than pc_func(20.0)
+                # Attempt to extend the search interval upwards.
+                upper_bound = 50.0 # Extended upper bound for high pc values
+            elif val_at_lower > 0: # pc_adjusted is lower than pc_func(0.0)
+                 # This should ideally be caught by the pc <= pguess check earlier
+                 warnings.warn(f"Cannot bracket root for psyinv (pc_adjusted potentially too low): pc_func(0)={pc_func(0):.4f}, pc_adjusted={pc_adjusted:.4f}. Method {method}", UserWarning)
+                 return 0.0 
+        
+        return brentq(lambda d: pc_func(d) - pc_adjusted, lower_bound, upper_bound, xtol=1e-6, rtol=1e-6)
+    except ValueError as e: # brentq failed
+        warnings.warn(f"brentq failed in psyinv for pc={pc:.4f}, method={method}: {e}. pc_adjusted={pc_adjusted:.4f}. Trying wider search or returning boundary.", UserWarning)
+        # Fallback logic if initial brentq fails
+        # Check if pc_adjusted is at the boundaries of what the function can produce in a wide range
+        if pc_adjusted >= pc_func(50.0) - epsilon_brentq : return 50.0 # pc is very high
+        if pc_adjusted <= pc_func(0.0) + epsilon_brentq : return 0.0 # pc is near pguess
+        return np.nan # Default fallback if root cannot be found
+
+def psyderiv(dprime: float, method: str = "2afc") -> float:
+    """
+    Derivative of psyfun(dprime, method) with respect to d-prime.
+    (Moved from senspy.links)
+    """
+    method_lc = method.lower()
+    if method_lc not in _PC_FUNCTIONS_INTERNAL:
+        raise ValueError(f"Unknown method: {method}. Supported methods: {list(_PC_FUNCTIONS_INTERNAL.keys())}")
+    pc_func = _PC_FUNCTIONS_INTERNAL[method_lc]
+
+    if not np.isfinite(dprime): return 0.0 
+    
+    if dprime < 0: 
+        # Check if function is flat for dprime < 0 by comparing values
+        if abs(pc_func(dprime) - pc_func(max(dprime - 1e-3, dprime*1.1 if dprime<0 else dprime*0.9))) < 1e-9 :
+             return 0.0
+             
+    dx_val = max(abs(dprime) * 1e-5, 1e-7) if dprime != 0 else 1e-7
+    # Use the numerical_derivative function already defined in this file (discrimination.py)
+    # It handles scipy.derivative or its fallback.
+    return numerical_derivative(pc_func, dprime, dx=dx_val, n=1, order=3)
+
+def rescale(x: float, from_scale: str, to_scale: str, method: str = "2afc", std_err: float | None = None) -> dict:
+    """
+    Rescale a value between proportion correct (pc), proportion discriminated (pd), 
+    and d-prime (dp) scales. (Moved from senspy.links)
+    """
+    method_lc = method.lower()
+    if method_lc not in _PC_FUNCTIONS_INTERNAL: # Check against internal dict
+        raise ValueError(f"Unknown method: {method}. Supported methods: {list(_PC_FUNCTIONS_INTERNAL.keys())}")
+
+    valid_scales = {"dp", "pc", "pd"}
+    if from_scale not in valid_scales or to_scale not in valid_scales:
+        raise ValueError(f"Invalid scale. Choose from {list(valid_scales)}")
+
+    pguess = get_pguess(method_lc) # get_pguess is available in this file
+    val_pc, val_pd, val_d_prime = np.nan, np.nan, np.nan
+
+    if from_scale == "pc":
+        val_pc = x
+        val_d_prime = psyinv(val_pc, method=method_lc) # Uses moved psyinv
+        val_pd = (val_pc - pguess) / (1.0 - pguess) if (1.0 - pguess) != 0 and val_pc > pguess else 0.0
+    elif from_scale == "pd":
+        val_pd = x
+        val_pc = val_pd * (1.0 - pguess) + pguess
+        val_d_prime = psyinv(val_pc, method=method_lc) # Uses moved psyinv
+    elif from_scale == "dp":
+        val_d_prime = x
+        val_pc = psyfun(val_d_prime, method=method_lc) # Uses moved psyfun
+        val_pd = (val_pc - pguess) / (1.0 - pguess) if (1.0 - pguess) != 0 and val_pc > pguess else 0.0
+    
+    d_prime_for_deriv = val_d_prime # d_prime value used for derivative calculation
+    se_pc, se_pd, se_d_prime = np.nan, np.nan, np.nan
+
+    if std_err is not None:
+        if not np.isfinite(std_err) or std_err < 0:
+            raise ValueError("Input std_err must be a non-negative finite number.")
+        
+        # deriv_pc_dprime is d(pc)/d(dprime)
+        deriv_pc_dprime = psyderiv(d_prime_for_deriv, method=method_lc) # Uses moved psyderiv
+        
+        if not np.isfinite(deriv_pc_dprime) or abs(deriv_pc_dprime) < 1e-9:
+            # If derivative d(pc)/d(dprime) is 0 or inf, then d(dprime)/d(pc) is inf or 0 respectively
+            deriv_dprime_pc = np.inf if abs(deriv_pc_dprime) < 1e-9 else 0.0
+        else:
+            deriv_dprime_pc = 1.0 / deriv_pc_dprime
+
+        if from_scale == "pc":
+            se_pc = std_err
+            se_d_prime = se_pc * deriv_dprime_pc
+            se_pd = se_pc / (1.0 - pguess) if (1.0 - pguess) != 0 else np.inf
+        elif from_scale == "pd":
+            se_pd = std_err
+            se_pc = se_pd * (1.0 - pguess)
+            se_d_prime = se_pc * deriv_dprime_pc
+        elif from_scale == "dp": # from_scale is d_prime
+            se_d_prime = std_err
+            se_pc = se_d_prime * deriv_pc_dprime 
+            se_pd = se_pc / (1.0 - pguess) if (1.0 - pguess) != 0 else np.inf
+            
+    return {
+        "coefficients": {"pc": val_pc, "pd": val_pd, "d_prime": val_d_prime},
+        "std_errors": {"pc": se_pc, "pd": se_pd, "d_prime": se_d_prime},
+        "method": method_lc,
+        "input_scale": from_scale,
+        "output_scale": to_scale 
+    }
+# --- End of functions moved from senspy.links ---
 
 
 def AUC(d_prime: float, scale: float = 1.0) -> float:
