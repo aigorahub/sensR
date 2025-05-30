@@ -5,7 +5,7 @@ from scipy.stats import betabinom, chi2 # chi2 for confint, betabinom for simple
 from numba import jit
 from math import lgamma
 
-__all__ = ["BetaBinomial"]
+__all__ = ["BetaBinomial", "TwoACModel"]
 
 # Numba-optimized helper functions (from plan-to-port.md)
 @jit(nopython=True)
@@ -392,3 +392,179 @@ class BetaBinomial(BaseModel):
             
             results[param_name] = (lower_bound, upper_bound)
         return results
+
+
+# Helper function for TwoACModel log-likelihood
+# This is defined at the module level similar to _standard_loglik for BetaBinomial
+# It could also be a static method within the class if preferred, but module level is fine.
+def _loglik_twoAC_model(params_model: np.ndarray, h: int, f: int, n_signal: int, n_noise: int, epsilon: float = 1e-12) -> float:
+    """
+    Log-likelihood for the 2AC (Yes/No or Same/Different with bias) model.
+    params_model: [delta, tau]
+    h: hits
+    f: false alarms
+    n_signal: number of signal trials
+    n_noise: number of noise trials
+    epsilon: small value to prevent log(0)
+    """
+    delta, tau = params_model
+    
+    # Probabilities using scipy.stats.norm.cdf
+    # pHit = P(response="yes" | signal) = Phi(delta/2 - tau)
+    # pFA  = P(response="yes" | noise)  = Phi(-delta/2 - tau)
+    # Note: Original twoAC from discrimination.py uses norm.cdf(delta / 2 - tau) for pHit
+    # and norm.cdf(-delta / 2 - tau) for pFA. This seems to be a common formulation.
+    # Let's stick to that.
+    
+    pHit = scipy.stats.norm.cdf(delta / 2.0 - tau)
+    pFA = scipy.stats.norm.cdf(-delta / 2.0 - tau)
+
+    # Clip probabilities to avoid log(0)
+    pHit = np.clip(pHit, epsilon, 1.0 - epsilon)
+    pFA = np.clip(pFA, epsilon, 1.0 - epsilon)
+
+    # Binomial log-likelihood contributions
+    loglik = (
+        h * np.log(pHit) +
+        (n_signal - h) * np.log(1.0 - pHit) +
+        f * np.log(pFA) +
+        (n_noise - f) * np.log(1.0 - pFA)
+    )
+    return loglik
+
+
+@dataclass
+class TwoACModel(BaseModel):
+    """
+    Thurstonian model for 2-Alternative Choice (Yes/No) with response bias.
+    
+    Attributes:
+        delta (float): Sensitivity parameter.
+        tau (float): Bias parameter.
+        loglik (float): Log-likelihood of the fitted model.
+        vcov (np.ndarray): Variance-covariance matrix of the parameters.
+        convergence_status (bool): Whether the optimization converged.
+        n_obs (int): Number of observation pairs (typically 1 for this model structure).
+        params (np.ndarray): Raw parameter estimates from optimizer [delta, tau].
+    """
+    delta: float = field(default=0.0, init=False)
+    tau: float = field(default=0.0, init=False)
+    
+    # Attributes to be set by fit()
+    params: np.ndarray = field(default=None, init=False, repr=False) # [delta, tau]
+    loglik: float = field(default=None, init=False, repr=False)
+    vcov: np.ndarray = field(default=None, init=False, repr=False)
+    convergence_status: bool = field(default=None, init=False, repr=False)
+    n_obs: int = field(default=None, init=False, repr=False) # Number of (h,f,n_s,n_n) sets, usually 1
+
+    # Store input data for reference
+    hits: int = field(default=None, init=False, repr=False)
+    false_alarms: int = field(default=None, init=False, repr=False)
+    n_signal_trials: int = field(default=None, init=False, repr=False)
+    n_noise_trials: int = field(default=None, init=False, repr=False)
+
+    def fit(self, hits: int, false_alarms: int, n_signal_trials: int, n_noise_trials: int):
+        """
+        Fit the TwoACModel to data.
+
+        Args:
+            hits (int): Number of hits.
+            false_alarms (int): Number of false alarms.
+            n_signal_trials (int): Number of signal trials.
+            n_noise_trials (int): Number of noise trials.
+        """
+        if not (0 <= hits <= n_signal_trials and 0 <= false_alarms <= n_noise_trials):
+            raise ValueError("Number of hits/false_alarms must be between 0 and respective trial counts.")
+        if n_signal_trials <= 0 or n_noise_trials <= 0:
+            raise ValueError("Number of signal and noise trials must be positive.")
+
+        self.hits = hits
+        self.false_alarms = false_alarms
+        self.n_signal_trials = n_signal_trials
+        self.n_noise_trials = n_noise_trials
+        
+        # Objective function for minimization (negative log-likelihood)
+        def objective_func_twoac(params_to_opt): # params_to_opt will be [delta, tau]
+            return -_loglik_twoAC_model(params_to_opt, self.hits, self.false_alarms, 
+                                      self.n_signal_trials, self.n_noise_trials)
+
+        # Initial guesses (can be simple, e.g., 0,0 or derived if needed)
+        # sensR uses d' from ignoring bias, and tau=0 as initial.
+        # pH_obs = hits / n_signal_trials
+        # pFA_obs = false_alarms / n_noise_trials
+        # d_init = scipy.stats.norm.ppf(np.clip(pH_obs, 1e-5, 1-1e-5)) - \
+        #          scipy.stats.norm.ppf(np.clip(pFA_obs, 1e-5, 1-1e-5))
+        # c_init = -0.5 * (scipy.stats.norm.ppf(np.clip(pH_obs, 1e-5, 1-1e-5)) + \
+        #                 scipy.stats.norm.ppf(np.clip(pFA_obs, 1e-5, 1-1e-5)))
+        # tau_init_from_c = c_init * d_init / np.sqrt(d_init**2 + c_init**2) if (d_init**2+c_init**2)>0 else 0 # This is for a different tau definition
+        # The original twoAC function uses delta_init = 0, tau_init = 0. Let's stick to that for consistency.
+        initial_params = np.array([0.0, 0.0]) 
+        
+        # Bounds for parameters: delta >= 0, tau is unbounded (L-BFGS-B handles None for no bound)
+        param_bounds = [(0, None),  # delta >= 0
+                        (None, None)] # tau is unbounded
+
+        try:
+            result = scipy.optimize.minimize(
+                objective_func_twoac,
+                initial_params,
+                method="L-BFGS-B",
+                bounds=param_bounds,
+                hess='2-point' # Request Hessian approximation for vcov
+            )
+            
+            self.params = result.x
+            self.delta = self.params[0]
+            self.tau = self.params[1]
+            self.loglik = -result.fun 
+            self.convergence_status = result.success
+            self.n_obs = 1 # Typically, one set of (h, f, n_s, n_n) is fitted at a time.
+
+            if hasattr(result, 'hess_inv') and result.hess_inv is not None:
+                try:
+                    self.vcov = result.hess_inv.todense()
+                except Exception: # Broad catch if .todense() fails or other issue
+                    self.vcov = np.full((2, 2), np.nan) # Fallback
+            else:
+                self.vcov = np.full((2, 2), np.nan) # Fallback if Hessian not available
+
+        except Exception as e:
+            # Handle optimization failure
+            print(f"Optimization failed: {e}")
+            self.params = initial_params # Revert to initial if failed
+            self.delta = initial_params[0]
+            self.tau = initial_params[1]
+            self.loglik = -objective_func_twoac(initial_params)
+            self.vcov = np.full((2, 2), np.nan)
+            self.convergence_status = False
+            self.n_obs = 1 
+            # raise # Optionally re-raise
+
+    def summary(self) -> str:
+        """Prepare and return a summary of the fitted TwoACModel."""
+        if self.params is None: # Not fitted
+            return "Model has not been fitted yet."
+
+        se_delta_str, se_tau_str = 'N/A', 'N/A'
+        if self.vcov is not None and isinstance(self.vcov, np.ndarray) and self.vcov.shape == (2,2) and not np.all(np.isnan(self.vcov)):
+            if self.vcov[0, 0] >= 0:
+                se_delta_str = f"{np.sqrt(self.vcov[0, 0]):.4f}"
+            if self.vcov[1, 1] >= 0:
+                se_tau_str = f"{np.sqrt(self.vcov[1, 1]):.4f}"
+        
+        summary_str = f"TwoACModel Summary\n"
+        summary_str += f"--------------------\n"
+        summary_str += f"Coefficients:\n"
+        summary_str += f"  delta (sensitivity): {self.delta:.4f} (SE: {se_delta_str})\n"
+        summary_str += f"  tau (bias):          {self.tau:.4f} (SE: {se_tau_str})\n"
+        summary_str += f"Log-Likelihood: {self.loglik:.4f}\n"
+        summary_str += f"N Observations (sets): {self.n_obs}\n" # Number of (h,f,n_s,n_n) sets
+        summary_str += f"Convergence Status: {self.convergence_status}\n"
+        summary_str += f"Input Data:\n"
+        summary_str += f"  Hits: {self.hits}, False Alarms: {self.false_alarms}\n"
+        summary_str += f"  Signal Trials: {self.n_signal_trials}, Noise Trials: {self.n_noise_trials}\n"
+        
+        return summary_str
+
+# Ensure scipy.stats is available for _loglik_twoAC_model
+import scipy.stats
