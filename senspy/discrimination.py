@@ -19,9 +19,7 @@ __all__ = [
     "discrim_2afc", 
     "discrim",      
     "twoAC",        
-    # par2prob_dod, dod_nll, _init_tpar_sensr are removed as helpers are now in models.py
     "dod",          
-    # samediff_nll, _get_samediff_probs are removed
     "samediff",     
     "dprime_test",  
     "dprime_compare", 
@@ -92,7 +90,7 @@ def twofive_pc(dprime: float) -> float:
     for i, c in enumerate(_TWOFIVE_COEFFS): val += c * x ** i
     return min(max(val, 0.1), 1.0)
 
-def get_pguess(method: str) -> float: # Removed 'double: bool = False'
+def get_pguess(method: str) -> float:
     method = method.lower()
     mapping = {
         "duotrio": 0.5, "twoafc": 0.5, "threeafc": 1.0 / 3.0,
