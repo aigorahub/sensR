@@ -1,0 +1,78 @@
+/* documentation/src/static/css/style.css */
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    color: #333;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #007bff; /* Blue link color */
+    display: block;
+    padding: 5px 0;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+.main-content {
+    margin-left: 270px; /* Adjust based on sidebar width + padding */
+    padding: 20px;
+    width: calc(100% - 270px);
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+pre {
+    background-color: #eee;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+code {
+    font-family: monospace;
+    background-color: #f0f0f0; /* Slightly different for inline code */
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+pre code {
+    background-color: transparent; /* Avoid double background for code blocks */
+    padding: 0;
+}
+
+footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    font-size: 0.9em;
+    color: #777;
+}
