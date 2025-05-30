@@ -1,77 +1,69 @@
 import pytest
 import numpy as np
-import os # Added for setting R_HOME and R_LIBS_USER
+import os
+import subprocess
+import warnings
 
-# Explicitly set R_HOME *before* importing rpy2.robjects
-# This is a common requirement for rpy2 to correctly initialize R.
-if 'R_HOME' not in os.environ:
-    os.environ['R_HOME'] = '/usr/lib/R' # Standard R home on Linux
-
-# Explicitly set R_LIBS_USER for rpy2 to find user-installed packages
-r_libs_user = os.path.expanduser('~/R/libs')
-if 'R_LIBS_USER' not in os.environ: 
-    os.environ['R_LIBS_USER'] = r_libs_user
-elif r_libs_user not in os.environ['R_LIBS_USER']: 
-    os.environ['R_LIBS_USER'] = f"{r_libs_user}:{os.environ['R_LIBS_USER']}"
-
-# import rpy2.robjects as ro
-# from rpy2.robjects.packages import importr
-# from rpy2.robjects import numpy2ri, default_converter
-# from rpy2.robjects.conversion import localconverter
-# from rpy2.rinterface_lib.sexp import NULLType as RNULLType 
-import warnings 
-
-from senspy.models import BetaBinomial 
-
-# Original try-except block for rpy2, now fully commented out or simplified
-# try:
-#     # ro.r('library(stats)') 
-#     # sensR = importr('sensR')
-#     # rpy2_available = True
-#     # numpy2ri.activate() 
-#     pass # Ensure this block does nothing if uncommented partially
-# except Exception as e:
-#     print(f"RPy2 or sensR setup failed: {e}")
-#     sensR = None
-#     # rpy2_available = False # This was the end of the first try-except
-
-# Definitive state for rpy2 availability for test collection
+# RPy2 import and setup logic
 rpy2_available = False
-sensR = None 
-ro = None # Ensure ro is defined as None if not imported
-numpy2ri = None # Ensure this is defined as None
-default_converter = None # Ensure this is defined as None
-localconverter = None # Ensure this is defined as None
-RNULLType = None # Ensure this is defined as None
+sensR = None
+ro = None
+numpy2ri = None
+default_converter = None
+localconverter = None
+RNULLType = None
 
-
-# The commented block below was the second attempt at conditional import, also neutralized.
-# # try:
-#     import rpy2.robjects as ro
-#     from rpy2.robjects.packages import importr
-#     from rpy2.robjects import numpy2ri, default_converter
-#     from rpy2.robjects.conversion import localconverter
-#     from rpy2.rinterface_lib.sexp import NULLType as RNULLType
+try:
+    r_home_from_env_ci = os.environ.get('R_HOME_DIR_CI')
+    r_home_from_env = os.environ.get('R_HOME')
     
-#     if 'R_HOME' not in os.environ:
-#         os.environ['R_HOME'] = '/usr/lib/R' 
-    
-#     ro.r('library(stats)') 
-#     sensR = importr('sensR')
-#     numpy2ri.activate()
-#     rpy2_available = True
-#     print("RPy2 and sensR loaded successfully for tests.")
-# except Exception as e:
-#     print(f"RPy2 or sensR setup failed during test loading, tests depending on them will be skipped: {e}")
-#     sensR = None # Ensure it's None if import failed
-#     ro = None # also clear other rpy2 related names
-#     numpy2ri = None
-#     default_converter = None
-#     localconverter = None
-#     RNULLType = None
-#     rpy2_available = False # Explicitly set to False
+    r_home = None
+    if r_home_from_env_ci:
+        r_home = r_home_from_env_ci
+    elif r_home_from_env:
+        r_home = r_home_from_env
+    else:
+        try:
+            r_home_process = subprocess.run(["R", "RHOME"], capture_output=True, text=True, check=True)
+            r_home = r_home_process.stdout.strip()
+        except Exception as e:
+            warnings.warn(f"Failed to get R_HOME from subprocess: {e}. Falling back to default.")
+            r_home = '/usr/lib/R' # Default fallback
 
-from senspy.models import BetaBinomial # This import is fine here
+    if r_home:
+        os.environ['R_HOME'] = r_home
+    else:
+        warnings.warn("R_HOME could not be determined. RPy2 may not work.")
+
+    # Handle R_LIBS_USER
+    # In CI, packages are installed to the default site-library, so R_LIBS_USER might not be strictly needed
+    # or could point to where `actions/setup-r` and `install.packages` place things.
+    # For local testing, this might be more relevant if users have custom library paths.
+    # We will rely on R's default library paths for now, as modified by `actions/setup-r`.
+
+    import rpy2.robjects as ro
+    from rpy2.robjects.packages import importr
+    from rpy2.robjects import numpy2ri, default_converter
+    from rpy2.robjects.conversion import localconverter
+    from rpy2.rinterface_lib.sexp import NULLType as RNULLType
+    
+    ro.r('library(stats)')
+    sensR = importr('sensR') # Try to import sensR
+    numpy2ri.activate()
+    rpy2_available = True
+    print("RPy2 and sensR loaded successfully for tests in test_models.py.")
+
+except Exception as e:
+    warnings.warn(f"RPy2 or sensR setup failed in test_models.py: {e}. Tests depending on them will be skipped.")
+    sensR = None
+    ro = None
+    numpy2ri = None
+    default_converter = None
+    localconverter = None
+    RNULLType = None
+    rpy2_available = False
+
+from senspy.models import BetaBinomial
 
 test_params = [
     ([20], [50], False, None, "standard_single_group"),

@@ -1,43 +1,70 @@
 import pytest
 import numpy as np
 import os
+import subprocess
 import warnings
 
-# Attempt to set R_HOME and R_LIBS_USER *before* rpy2.robjects is imported
-# This is crucial for rpy2 to initialize R correctly in some environments.
-if 'R_HOME' not in os.environ:
-    # Try to find R_HOME using R RHOME if available
-    try:
-        import subprocess
-        r_home_path = subprocess.check_output(["R", "RHOME"], text=True).strip()
-        if r_home_path and os.path.isdir(r_home_path):
-            os.environ['R_HOME'] = r_home_path
-        else:
-            os.environ['R_HOME'] = '/usr/lib/R' # Fallback for typical Linux
-    except Exception:
-        os.environ['R_HOME'] = '/usr/lib/R' # Fallback
-
-r_libs_user_path = os.path.expanduser('~/R/libs')
-if 'R_LIBS_USER' not in os.environ:
-    os.environ['R_LIBS_USER'] = r_libs_user_path
-elif r_libs_user_path not in os.environ['R_LIBS_USER']:
-    os.environ['R_LIBS_USER'] = f"{r_libs_user_path}:{os.environ['R_LIBS_USER']}"
+# RPy2 import and setup logic
+rpy2_available = False
+sensR = None
+ro = None
+numpy2ri = None
+default_converter = None
+localconverter = None
+RNULLType = None
 
 try:
+    r_home_from_env_ci = os.environ.get('R_HOME_DIR_CI') # Set in CI from setup-r output
+    r_home_from_env = os.environ.get('R_HOME')
+
+    r_home = None
+    if r_home_from_env_ci:
+        r_home = r_home_from_env_ci
+    elif r_home_from_env:
+        r_home = r_home_from_env
+    else:
+        try:
+            # Try to get R_HOME from R itself
+            r_home_process = subprocess.run(["R", "RHOME"], capture_output=True, text=True, check=True)
+            r_home = r_home_process.stdout.strip()
+        except Exception as e:
+            warnings.warn(f"Failed to get R_HOME from subprocess: {e}. Falling back to default /usr/lib/R.")
+            r_home = '/usr/lib/R' # A common default on Linux
+
+    if r_home:
+        os.environ['R_HOME'] = r_home
+    else:
+        warnings.warn("R_HOME could not be determined. RPy2 might not initialize correctly.")
+
+    # Regarding R_LIBS_USER:
+    # In CI, packages (like sensR) are installed by R into its default library paths.
+    # `actions/setup-r` configures R environment such that these are found.
+    # So, explicitly setting R_LIBS_USER here might not be necessary for CI
+    # and could conflict if not aligned with where CI installs packages.
+    # For local testing, users might need to set R_LIBS_USER if sensR is in a non-default location.
+    # We'll rely on R's internal library path logic for now.
+
     import rpy2.robjects as ro
     from rpy2.robjects.packages import importr
     from rpy2.robjects import numpy2ri, default_converter
     from rpy2.robjects.conversion import localconverter
     from rpy2.rinterface_lib.sexp import NULLType as RNULLType
 
-    # Try to initialize R and load a base package
-    ro.r('library(stats)')
-    sensR = importr('sensR') # Attempt to import sensR
+    ro.r('library(stats)') # Load a base R package
+    sensR = importr('sensR') # Attempt to import the sensR package
+    numpy2ri.activate() # Activate converters
     rpy2_available = True
-    numpy2ri.activate()
+    print("RPy2 and sensR loaded successfully for tests in test_discrimination.py.")
+
 except Exception as e:
-    print(f"RPy2 or sensR setup failed: {e}")
+    warnings.warn(f"RPy2 or sensR setup failed in test_discrimination.py: {e}. Tests depending on RPy2 will be skipped.")
+    # Ensure all rpy2 related variables are None if setup fails
     sensR = None
+    ro = None
+    numpy2ri = None
+    default_converter = None
+    localconverter = None
+    RNULLType = None
     rpy2_available = False
 
 from scipy.stats import norm
