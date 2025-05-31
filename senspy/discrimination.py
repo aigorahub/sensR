@@ -110,13 +110,23 @@ def dod(same_counts: np.ndarray, diff_counts: np.ndarray,
         initial_tau=initial_tau, initial_d_prime=initial_d_prime,
         method=method, conf_level=conf_level
     )
+    # Reconstruct dict for backward compatibility, including initial_params_optim if available
+    initial_params_optim_val = None
+    if model.optim_result_obj and hasattr(model.optim_result_obj, 'x'):
+        # The model's fit method stores tpar and d_prime separately.
+        # We need to reconstruct the 'initial_params_optim' as it was defined before: (tpar_init, d_prime_init)
+        # This information is not directly stored in DoDModel in that specific format post-fit.
+        # For now, returning the optimized parameters of the internal representation.
+        # If the exact *initial guess* that was fed to the optimizer is needed, DoDModel.fit would need to store it.
+        initial_params_optim_val = model.optim_result_obj.x
+
     return {
         "d_prime": model.d_prime, "tau": model.tau,
         "se_d_prime": model.se_d_prime, "tpar": model.tpar,
         "se_tpar": model.se_tpar, "loglik": model.loglik,
         "vcov_optim_params": model.vcov_optim_params,
         "convergence_status": model.convergence_status,
-        "initial_params_optim": model.optim_result_obj.x if model.optim_result_obj and hasattr(model.optim_result_obj, 'x') else None,
+        "initial_params_optim": initial_params_optim_val,
         "optim_result": model.optim_result_obj,
         "same_counts": model.same_counts, "diff_counts": model.diff_counts,
         "method": method, "conf_level": model.conf_level_used
@@ -258,12 +268,17 @@ def samediff(nsamesame: int, ndiffsame: int, nsamediff: int, ndiffdiff: int,
         initial_tau=initial_tau, initial_delta=initial_delta,
         method=method, conf_level=conf_level
     )
+    # Reconstruct dict for backward compatibility
+    initial_params_val = None
+    if model.optim_result_obj and hasattr(model.optim_result_obj, 'x'):
+        initial_params_val = model.optim_result_obj.x # This is actually optimized params
+
     return {
         "tau": model.tau, "delta": model.delta,
         "se_tau": model.se_tau, "se_delta": model.se_delta,
         "loglik": model.loglik, "vcov": model.vcov,
         "convergence_status": model.convergence_status,
-        "initial_params": model.optim_result_obj.x if model.optim_result_obj and hasattr(model.optim_result_obj, 'x') else None,
+        "initial_params": initial_params_val, # Note: This is optimized params from model.
         "optim_result": model.optim_result_obj,
         "nsamesame": model.nsamesame, "ndiffsame": model.ndiffsame,
         "nsamediff": model.nsamediff, "ndiffdiff": model.ndiffdiff,
