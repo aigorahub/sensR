@@ -4,111 +4,183 @@
     "sensR_file": "R/betaBin.R",
     "senspy_module": "senspy.models",
     "senspy_function": "BetaBinomial",
-    "description": "Fits a beta-binomial model to overdispersed binomial data."
+    "description": "Fits a beta-binomial model. In senspy, use the BetaBinomial class.",
+    "status": "Ported"
   },
   {
     "sensR_function": "discrim",
     "sensR_file": "R/discrim.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "discrim",
-    "description": "General function for d-prime estimation from various discrimination methods (e.g., 2AFC, Triangle, Duo-Trio)."
+    "description": "General d-prime estimation. senspy.discrimination.discrim returns a dict; senspy.models.DiscriminationModel offers more features.",
+    "status": "Ported"
   },
   {
     "sensR_function": "twoAC",
     "sensR_file": "R/twoAC.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "twoAC",
-    "description": "Thurstonian model for 2-Alternative Choice (Yes/No) tasks, estimating sensitivity (delta) and bias (tau)."
+    "description": "Thurstonian model for 2AC tasks. senspy.discrimination.twoAC returns a dict; senspy.models.TwoACModel offers more features.",
+    "status": "Ported"
   },
   {
     "sensR_function": "dod",
     "sensR_file": "R/dod.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "dod",
-    "description": "Degree of Difference (DoD) analysis, estimating d-prime and boundary parameters (tau)."
+    "description": "Degree of Difference (DoD) analysis. senspy.discrimination.dod returns a dict; senspy.models.DoDModel offers more features.",
+    "status": "Ported"
   },
   {
     "sensR_function": "samediff",
     "sensR_file": "R/samediff.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "samediff",
-    "description": "Same-Different method analysis, estimating sensitivity (delta) and criterion (tau)."
+    "description": "Same-Different method analysis. senspy.discrimination.samediff returns a dict; senspy.models.SameDifferentModel offers more features.",
+    "status": "Ported"
   },
   {
     "sensR_function": "dprime_test",
     "sensR_file": "R/dprime_test.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "dprime_test",
-    "description": "Tests a d-prime value against a hypothesized value, possibly for multiple groups."
+    "description": "Tests a d-prime value. Functionality exists; model integration might differ.",
+    "status": "Ported"
   },
   {
     "sensR_function": "dprime_compare",
     "sensR_file": "R/dprime_compare.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "dprime_compare",
-    "description": "Compares d-prime values from multiple groups to test for equality."
+    "description": "Compares d-prime values. Functionality exists; model integration might differ.",
+    "status": "Ported"
   },
   {
     "sensR_function": "SDT",
     "sensR_file": "R/ROC.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "SDT",
-    "description": "Signal Detection Theory analysis for rating scales, calculating z(Hit rate), z(False alarm rate), and d-prime for each criterion."
+    "description": "Signal Detection Theory analysis for rating scales.",
+    "status": "Ported"
   },
   {
     "sensR_function": "AUC",
     "sensR_file": "R/ROC.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "AUC",
-    "description": "Calculates the Area Under the ROC Curve (AUC) from d-prime."
+    "description": "Calculates Area Under the ROC Curve (AUC) from d-prime.",
+    "status": "Ported"
   },
   {
     "sensR_function": "psyfun",
     "sensR_file": "R/links.R", 
-    "senspy_module": "senspy.links",
+    "senspy_module": "senspy.discrimination",
     "senspy_function": "psyfun",
-    "description": "Maps d-prime to proportion correct for various discrimination methods."
+    "description": "Maps d-prime to proportion correct. (Moved from senspy.links)",
+    "status": "Ported"
   },
   {
     "sensR_function": "psyinv",
     "sensR_file": "R/links.R",
-    "senspy_module": "senspy.links",
+    "senspy_module": "senspy.discrimination",
     "senspy_function": "psyinv",
-    "description": "Maps proportion correct to d-prime for various discrimination methods."
+    "description": "Maps proportion correct to d-prime. (Moved from senspy.links)",
+    "status": "Ported"
   },
   {
     "sensR_function": "psyderiv",
     "sensR_file": "R/links.R",
-    "senspy_module": "senspy.links",
+    "senspy_module": "senspy.discrimination",
     "senspy_function": "psyderiv",
-    "description": "Calculates the derivative of the psychometric function (psyfun) with respect to d-prime."
+    "description": "Calculates derivative of psyfun. (Moved from senspy.links)",
+    "status": "Ported"
   },
   {
     "sensR_function": "rescale",
     "sensR_file": "R/links.R",
-    "senspy_module": "senspy.links",
+    "senspy_module": "senspy.discrimination",
     "senspy_function": "rescale",
-    "description": "Rescales values between proportion correct (pc), proportion discriminated (pd), and d-prime (dp) scales, optionally transforming standard errors."
+    "description": "Rescales values between pc, pd, and d-prime. (Moved from senspy.links)",
+    "status": "Ported"
   },
   {
     "sensR_function": "getPguess",
     "sensR_file": "R/utils.R", 
     "senspy_module": "senspy.discrimination", 
     "senspy_function": "get_pguess",
-    "description": "Returns the chance performance (pguess) for a given discrimination method."
+    "description": "Returns chance performance (pguess).",
+    "status": "Ported"
   },
   {
     "sensR_function": "pc2pd",
     "sensR_file": "R/utils.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "pc2pd",
-    "description": "Converts proportion correct (pc) to proportion discriminated (pd)."
+    "description": "Converts proportion correct (pc) to proportion discriminated (pd).",
+    "status": "Ported"
   },
   {
     "sensR_function": "pd2pc",
     "sensR_file": "R/utils.R",
     "senspy_module": "senspy.discrimination",
     "senspy_function": "pd2pc",
-    "description": "Converts proportion discriminated (pd) to proportion correct (pc)."
+    "description": "Converts proportion discriminated (pd) to proportion correct (pc).",
+    "status": "Ported"
+  },
+  {
+    "sensR_function": "duotrio",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "duotrio_pc",
+    "description": "Calculates proportion correct for duo-trio. Used by psyfun.",
+    "status": "Partial"
+  },
+  {
+    "sensR_function": "threeAFC",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "three_afc_pc",
+    "description": "Calculates proportion correct for 3-AFC. Used by psyfun.",
+    "status": "Partial"
+  },
+  {
+    "sensR_function": "triangle",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "triangle_pc",
+    "description": "Calculates proportion correct for triangle. Used by psyfun.",
+    "status": "Partial"
+  },
+  {
+    "sensR_function": "tetrad",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "tetrad_pc",
+    "description": "Calculates proportion correct for tetrad. Used by psyfun.",
+    "status": "Partial"
+  },
+  {
+    "sensR_function": "hexad",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "hexad_pc",
+    "description": "Calculates proportion correct for hexad. Used by psyfun.",
+    "status": "Partial"
+  },
+  {
+    "sensR_function": "twoAFC",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "two_afc",
+    "description": "Calculates proportion correct for 2-AFC. Used by psyfun.",
+    "status": "Partial"
+  },
+  {
+    "sensR_function": "twofive",
+    "sensR_file": "R/discrim.R",
+    "senspy_module": "senspy.discrimination",
+    "senspy_function": "twofive_pc",
+    "description": "Calculates proportion correct for 2-out-of-5. Used by psyfun.",
+    "status": "Partial"
   }
 ]

@@ -10,9 +10,21 @@ tags: tutorial
 Welcome to `sensPy`! This library provides tools for sensory discrimination analysis, offering Python-based alternatives to many functions found in the R package `sensR`. This tutorial will walk you through a basic analysis of a sensory test to get you started.
 
 We'll cover:
-1.  Estimating d-prime (sensitivity) from raw count data using the `discrim` function.
-2.  Interpreting the results, including d-prime, p-value, and confidence intervals.
-3.  Converting d-prime to other common scales like Proportion Correct (Pc) and Proportion Discriminated (Pd) using the `rescale` function.
+1.  Installing `sensPy`.
+2.  Estimating d-prime (sensitivity) from raw count data using `senspy.discrimination.discrim`.
+3.  Understanding the model-based approach using `senspy.models.DiscriminationModel`.
+4.  Interpreting the results, including d-prime, p-value, and confidence intervals.
+5.  Converting d-prime to other common scales like Proportion Correct (Pc) and Proportion Discriminated (Pd) using `senspy.discrimination.rescale`.
+
+## Installation
+
+You can install `sensPy` directly from its GitHub repository using pip:
+
+```bash
+pip install git+https://github.com/aigorahub/sensPy.git
+```
+
+Make sure you have Python 3.8 or newer and pip installed.
 
 ## Scenario
 
@@ -22,11 +34,11 @@ Imagine you've conducted a **triangle test** to see if a new product formulation
 
 Let's analyze this data using `sensPy`.
 
-## Using `discrim` to Estimate d-prime
+## Using `discrim` to Estimate d-prime (Functional Approach)
 
-The `discrim` function in `senspy.discrimination` allows us to estimate d-prime from this kind of data.
+The `discrim` function in `senspy.discrimination` allows for a quick estimation of d-prime. This function now internally uses the `DiscriminationModel` (see next section) but returns a dictionary for backward compatibility.
 
-First, let's import the function and our data:
+First, let's import the function and define our data:
 
 ```python
 from senspy.discrimination import discrim
@@ -38,43 +50,72 @@ total_trials = 50
 test_method = "triangle"
 
 # Perform the analysis
-result = discrim(correct=correct_responses, total=total_trials, method=test_method)
+result_dict = discrim(correct=correct_responses, total=total_trials, method=test_method)
 
 # Let's look at the key results
-d_prime = result['dprime']
-p_value = result['p_value']
-ci_lower = result['lower_ci']
-ci_upper = result['upper_ci']
-pc_observed = result['pc_obs']
-pguess = result['pguess']
+d_prime = result_dict['dprime']
+p_value = result_dict['p_value']
+ci_lower = result_dict['lower_ci'] # Wald CI by default
+ci_upper = result_dict['upper_ci'] # Wald CI by default
+pc_observed = result_dict['pc_obs']
+pguess = result_dict['pguess']
 
+print(f"--- Results from discrim() function ---")
 print(f"Observed Proportion Correct (Pc): {pc_observed:.4f}")
 print(f"Chance Performance (Pguess) for {test_method}: {pguess:.4f}")
 print(f"Estimated d-prime: {d_prime:.4f}")
-print(f"95% Confidence Interval for d-prime: ({ci_lower:.4f}, {ci_upper:.4f})")
+print(f"95% Wald Confidence Interval for d-prime: ({ci_lower:.4f}, {ci_upper:.4f})")
 print(f"P-value (for H0: d-prime = 0): {p_value:.4f}")
 ```
 
 **Interpretation of Results:**
+The interpretation remains the same as described previously. The `discrim` function provides a direct way to get these key metrics.
 
-*   **Observed Proportion Correct (Pc)**: This is simply `correct_responses / total_trials`. In our case, 25/50 = 0.50.
-*   **Chance Performance (Pguess)**: For a triangle test, the probability of correctly identifying the odd sample purely by chance is 1/3 (approximately 0.3333). Our observed Pc (0.50) is above this.
-*   **Estimated d-prime**: This is the primary measure of sensitivity. A larger d-prime indicates better discriminability between the Test Product and Control. The output will show the estimated value.
-*   **Confidence Interval for d-prime**: This provides a range within which the true d-prime value is likely to lie (with 95% confidence by default).
-*   **P-value**: This tests the null hypothesis that d-prime is zero (i.e., no discriminable difference). 
-    *   If the p-value is small (typically < 0.05), we reject the null hypothesis and conclude that there is a statistically significant difference between the products.
-    *   If the p-value is larger, we don't have enough evidence to say they are different.
+## Using `DiscriminationModel` (Object-Oriented Approach)
 
-Running the code above would give you specific numerical values for these interpretations.
+`sensPy` now emphasizes an object-oriented approach using model classes available in `senspy.models`. This provides more flexibility and additional methods like `summary()` and `confint()` for different CI types.
+
+Let's re-analyze the same data using `DiscriminationModel`:
+
+```python
+from senspy.models import DiscriminationModel
+
+# Our scenario data remains the same
+# correct_responses = 25
+# total_trials = 50
+# test_method = "triangle"
+
+# Create and fit the model
+model = DiscriminationModel()
+model.fit(correct=correct_responses, total=total_trials, method=test_method)
+
+# Get a summary of the model
+print(f"\n--- Results from DiscriminationModel ---")
+print(model.summary())
+
+# Get confidence intervals (profile likelihood by default, if available)
+# Wald CIs are also available via model.results_dict or by specifying method_ci='wald'
+conf_intervals = model.confint(level=0.95, method_ci='profile') # Or 'wald'
+dprime_ci = conf_intervals.get('dprime', (np.nan, np.nan))
+
+print(f"Profile Likelihood 95% CI for d-prime: ({dprime_ci[0]:.4f}, {dprime_ci[1]:.4f})")
+# The model.dprime attribute holds the MLE estimate, also available in model.results_dict['dprime']
+# print(f"MLE d-prime from model: {model.dprime:.4f}")
+```
+
+**Advantages of the Model-Based Approach:**
+*   **Rich Output**: The `model.summary()` method provides a formatted summary of key results.
+*   **Flexible Confidence Intervals**: The `model.confint()` method allows specifying different CI calculation methods (e.g., 'profile' vs. 'wald'). Profile likelihood CIs are generally considered more accurate, especially for smaller sample sizes or when parameters are near boundaries.
+*   **Object State**: The fitted model object (`model`) retains all parameters, input data, and results as attributes for easy access.
 
 ## Using `rescale` to Convert d-prime
 
-Sometimes, d-prime is not the most intuitive scale. We can use the `rescale` function from `senspy.links` to convert our estimated d-prime to Proportion Correct (Pc) or Proportion Discriminated (Pd). Pc is the overall proportion correct expected for that d-prime, and Pd is the proportion of the population that can discriminate the products, adjusted for guessing.
+The `rescale` function, now in `senspy.discrimination`, can be used with the d-prime obtained from either method.
 
 ```python
-from senspy.links import rescale
+from senspy.discrimination import rescale # Updated import
 
-# Assuming 'd_prime' is the value obtained from the 'discrim' result above
+# Assuming 'd_prime' is the value obtained from the 'discrim' result or model.dprime
 # and 'test_method' is "triangle"
 
 # Convert d-prime to Pc
@@ -85,20 +126,24 @@ pc_estimate_from_dprime = rescaled_to_pc['coefficients']['pc']
 rescaled_to_pd = rescale(x=d_prime, from_scale="dp", to_scale="pd", method=test_method)
 pd_estimate_from_dprime = rescaled_to_pd['coefficients']['pd']
 
-print(f"\\n--- Rescaled Values for d-prime = {d_prime:.4f} ({test_method} method) ---")
+print(f"\n--- Rescaled Values for d-prime = {d_prime:.4f} ({test_method} method) ---")
 print(f"Equivalent Proportion Correct (Pc): {pc_estimate_from_dprime:.4f}")
 print(f"Equivalent Proportion Discriminated (Pd): {pd_estimate_from_dprime:.4f}")
 ```
 
 **Interpretation of Rescaled Values:**
+This remains the same. Pc should be close to your observed proportion correct, and Pd represents the proportion of discriminators adjusted for chance.
 
-*   **Equivalent Proportion Correct (Pc)**: This value should be close to our original `pc_obs` (0.50 in this scenario), as `discrim` finds the d-prime that best matches this observed Pc. Small differences can occur due to internal adjustments for numerical stability in `discrim` and `psyinv`.
-*   **Equivalent Proportion Discriminated (Pd)**: This tells us the proportion of discriminators in the population after accounting for chance success. For example, if Pd is 0.25, it means 25% of the population can distinguish the products beyond mere guessing.
+## Power Analysis
+
+`sensPy` also includes functions for power analysis in `senspy.power`. These functions, like `exact_binomial_power` and `power_discrim`, now return a `PowerResult` object (a namedtuple) which bundles the power, number of trials, alpha level, method type, and detailed parameters used in the calculation. For sample size calculations, functions like `sample_size_discrim` and `power_discrim_normal_approx` (when `power_target` is set) return the required number of trials.
 
 ## Conclusion
 
-This tutorial covered a basic workflow for analyzing data from a triangle test using `sensPy`:
-1.  Estimating d-prime and its statistical significance using `senspy.discrimination.discrim`.
-2.  Converting d-prime to more interpretable scales like Pc and Pd using `senspy.links.rescale`.
+This tutorial covered:
+1.  Installation of `sensPy`.
+2.  Estimating d-prime using the functional approach (`senspy.discrimination.discrim`).
+3.  Utilizing the object-oriented model-based approach (`senspy.models.DiscriminationModel`) for richer analysis and more robust confidence intervals.
+4.  Converting d-prime to other scales using `senspy.discrimination.rescale`.
 
-`sensPy` offers many more functions for various discrimination methods, model fitting (like `BetaBinomial` for overdispersed data), and advanced d-prime tests. Explore the documentation for other modules and functions to see how `sensPy` can assist in your sensory analyses!
+`sensPy` offers a growing suite of tools for sensory analysis, including various discrimination models (`BetaBinomial`, `TwoACModel`, `DoDModel`, `SameDifferentModel` in `senspy.models`), power calculation functions, and other utilities. Explore the documentation for other modules and functions to see how `sensPy` can assist in your sensory analyses!
