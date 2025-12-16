@@ -5,7 +5,6 @@ functions. The design follows the statsmodels pattern where functions return
 result objects with methods for inference.
 """
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 

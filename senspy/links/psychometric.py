@@ -25,6 +25,9 @@ from scipy import stats, integrate, optimize
 
 from senspy.core.types import Protocol, parse_protocol
 
+# Maximum d-prime value for numerical root-finding in inverse functions
+_MAX_DPRIME_SEARCH = 20.0
+
 
 @dataclass
 class Link:
@@ -115,7 +118,7 @@ def _duotrio_linkfun(pc: NDArray) -> NDArray:
             def objective(d):
                 return _duotrio_linkinv(np.array([d]))[0] - p
 
-            result[i] = optimize.brentq(objective, 0, 20)
+            result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
 
     return result
 
@@ -188,7 +191,7 @@ def _triangle_linkfun(pc: NDArray) -> NDArray:
             def objective(d):
                 return _triangle_linkinv(np.array([d]))[0] - p
 
-            result[i] = optimize.brentq(objective, 0, 20)
+            result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
 
     return result
 
@@ -262,7 +265,7 @@ def _threeafc_linkfun(pc: NDArray) -> NDArray:
             def objective(d):
                 return _threeafc_linkinv(np.array([d]))[0] - p
 
-            result[i] = optimize.brentq(objective, 0, 15)
+            result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
 
     return result
 
@@ -343,7 +346,7 @@ def _tetrad_linkfun(pc: NDArray) -> NDArray:
             def objective(d):
                 return _tetrad_linkinv(np.array([d]))[0] - p
 
-            result[i] = optimize.brentq(objective, 0, 15)
+            result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
 
     return result
 
@@ -447,7 +450,7 @@ def _hexad_linkfun(pc: NDArray) -> NDArray:
             def objective(d):
                 return _hexad_linkinv(np.array([d]))[0] - p
 
-            result[i] = optimize.brentq(objective, 0, 15)
+            result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
 
     return result
 
@@ -529,7 +532,7 @@ def _twofive_linkfun(pc: NDArray) -> NDArray:
                 return _twofive_linkinv(np.array([d]))[0] - p
 
             try:
-                result[i] = optimize.brentq(objective, 0, 15)
+                result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
             except ValueError:
                 result[i] = 0.0
 
@@ -594,7 +597,7 @@ def _twofivef_linkfun(pc: NDArray) -> NDArray:
                 return _twofivef_linkinv(np.array([d]))[0] - p
 
             try:
-                result[i] = optimize.brentq(objective, 0, 15)
+                result[i] = optimize.brentq(objective, 0, _MAX_DPRIME_SEARCH)
             except ValueError:
                 result[i] = 0.0
 
