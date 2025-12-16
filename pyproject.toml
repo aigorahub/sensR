@@ -33,6 +33,11 @@ hypothesis = ">=6.0"
 ruff = ">=0.1"
 black = ">=23.0"
 mypy = ">=1.0"
+
+[tool.poetry.group.rpy2]
+optional = true
+
+[tool.poetry.group.rpy2.dependencies]
 rpy2 = ">=3.5"
 
 [build-system]
