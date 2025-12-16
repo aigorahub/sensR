@@ -53,6 +53,22 @@ def golden_rescale_data(golden_sensr):
 
 
 @pytest.fixture
+def golden_power_data(golden_sensr):
+    """Load golden data for power function tests from sensR."""
+    if golden_sensr is not None:
+        return golden_sensr.get("power")
+    return None
+
+
+@pytest.fixture
+def golden_sample_size_data(golden_sensr):
+    """Load golden data for sample size function tests from sensR."""
+    if golden_sensr is not None:
+        return golden_sensr.get("sample_size")
+    return None
+
+
+@pytest.fixture
 def tolerance():
     """Standard numerical tolerances for tests.
 

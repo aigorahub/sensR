@@ -194,6 +194,168 @@ for (i in seq_along(rescale_cases)) {
 rescale_data$test_cases <- rescale_results
 
 # =============================================================================
+# Power functions (discrimPwr, d.primePwr)
+# =============================================================================
+
+cat("Generating power data...\n")
+
+power_data <- list()
+
+# discrimPwr test cases
+discrim_pwr_cases <- list(
+  list(pdA = 0.3, sample.size = 100, pGuess = 1/3, test = "difference"),
+  list(pdA = 0.4, sample.size = 50, pGuess = 1/2, test = "difference"),
+  list(pdA = 0.25, sample.size = 200, pGuess = 1/3, test = "difference"),
+  list(pdA = 0.1, sample.size = 100, pGuess = 1/3, pd0 = 0.3, test = "similarity")
+)
+
+discrim_pwr_results <- list()
+for (i in seq_along(discrim_pwr_cases)) {
+  tc <- discrim_pwr_cases[[i]]
+  pd0 <- if (is.null(tc$pd0)) 0 else tc$pd0
+
+  pwr_exact <- discrimPwr(pdA = tc$pdA, pd0 = pd0, sample.size = tc$sample.size,
+                          pGuess = tc$pGuess, test = tc$test, statistic = "exact")
+  pwr_normal <- discrimPwr(pdA = tc$pdA, pd0 = pd0, sample.size = tc$sample.size,
+                           pGuess = tc$pGuess, test = tc$test, statistic = "normal")
+  pwr_cont <- discrimPwr(pdA = tc$pdA, pd0 = pd0, sample.size = tc$sample.size,
+                         pGuess = tc$pGuess, test = tc$test, statistic = "cont.normal")
+
+  discrim_pwr_results[[i]] <- list(
+    input = list(
+      pd_a = tc$pdA,
+      pd_0 = pd0,
+      sample_size = tc$sample.size,
+      p_guess = tc$pGuess,
+      test = tc$test
+    ),
+    power = list(
+      exact = as.numeric(pwr_exact),
+      normal = as.numeric(pwr_normal),
+      cont_normal = as.numeric(pwr_cont)
+    )
+  )
+  cat(sprintf("  discrimPwr case %d: done\n", i))
+}
+power_data$discrim_power <- discrim_pwr_results
+
+# d.primePwr test cases
+dprime_pwr_cases <- list(
+  list(d.primeA = 1.5, sample.size = 100, method = "triangle", test = "difference"),
+  list(d.primeA = 1.0, sample.size = 50, method = "twoAFC", test = "difference"),
+  list(d.primeA = 2.0, sample.size = 80, method = "threeAFC", test = "difference"),
+  list(d.primeA = 1.0, sample.size = 100, method = "duotrio", test = "difference")
+)
+
+dprime_pwr_results <- list()
+for (i in seq_along(dprime_pwr_cases)) {
+  tc <- dprime_pwr_cases[[i]]
+
+  pwr_exact <- d.primePwr(d.primeA = tc$d.primeA, sample.size = tc$sample.size,
+                          method = tc$method, test = tc$test, statistic = "exact")
+  pwr_normal <- d.primePwr(d.primeA = tc$d.primeA, sample.size = tc$sample.size,
+                           method = tc$method, test = tc$test, statistic = "normal")
+
+  dprime_pwr_results[[i]] <- list(
+    input = list(
+      d_prime_a = tc$d.primeA,
+      d_prime_0 = 0,
+      sample_size = tc$sample.size,
+      method = tolower(tc$method),
+      test = tc$test
+    ),
+    power = list(
+      exact = as.numeric(pwr_exact),
+      normal = as.numeric(pwr_normal)
+    )
+  )
+  cat(sprintf("  d.primePwr case %d: done\n", i))
+}
+power_data$dprime_power <- dprime_pwr_results
+
+# =============================================================================
+# Sample size functions (discrimSS, d.primeSS)
+# =============================================================================
+
+cat("Generating sample size data...\n")
+
+sample_size_data <- list()
+
+# discrimSS test cases
+discrim_ss_cases <- list(
+  list(pdA = 0.3, pGuess = 1/3, target.power = 0.9, test = "difference"),
+  list(pdA = 0.4, pGuess = 1/2, target.power = 0.8, test = "difference"),
+  list(pdA = 0.25, pGuess = 1/3, target.power = 0.9, test = "difference")
+)
+
+discrim_ss_results <- list()
+for (i in seq_along(discrim_ss_cases)) {
+  tc <- discrim_ss_cases[[i]]
+
+  ss_exact <- discrimSS(pdA = tc$pdA, pGuess = tc$pGuess,
+                        target.power = tc$target.power, test = tc$test,
+                        statistic = "exact")
+  ss_normal <- discrimSS(pdA = tc$pdA, pGuess = tc$pGuess,
+                         target.power = tc$target.power, test = tc$test,
+                         statistic = "normal")
+  ss_cont <- discrimSS(pdA = tc$pdA, pGuess = tc$pGuess,
+                       target.power = tc$target.power, test = tc$test,
+                       statistic = "cont.normal")
+
+  discrim_ss_results[[i]] <- list(
+    input = list(
+      pd_a = tc$pdA,
+      pd_0 = 0,
+      target_power = tc$target.power,
+      p_guess = tc$pGuess,
+      test = tc$test
+    ),
+    sample_size = list(
+      exact = as.integer(ss_exact),
+      normal = as.integer(ss_normal),
+      cont_normal = as.integer(ss_cont)
+    )
+  )
+  cat(sprintf("  discrimSS case %d: done\n", i))
+}
+sample_size_data$discrim_sample_size <- discrim_ss_results
+
+# d.primeSS test cases
+dprime_ss_cases <- list(
+  list(d.primeA = 1.5, method = "triangle", target.power = 0.9, test = "difference"),
+  list(d.primeA = 1.0, method = "twoAFC", target.power = 0.8, test = "difference"),
+  list(d.primeA = 1.0, method = "triangle", target.power = 0.9, test = "difference")
+)
+
+dprime_ss_results <- list()
+for (i in seq_along(dprime_ss_cases)) {
+  tc <- dprime_ss_cases[[i]]
+
+  ss_exact <- d.primeSS(d.primeA = tc$d.primeA, method = tc$method,
+                        target.power = tc$target.power, test = tc$test,
+                        statistic = "exact")
+  ss_normal <- d.primeSS(d.primeA = tc$d.primeA, method = tc$method,
+                         target.power = tc$target.power, test = tc$test,
+                         statistic = "normal")
+
+  dprime_ss_results[[i]] <- list(
+    input = list(
+      d_prime_a = tc$d.primeA,
+      d_prime_0 = 0,
+      target_power = tc$target.power,
+      method = tolower(tc$method),
+      test = tc$test
+    ),
+    sample_size = list(
+      exact = as.integer(ss_exact),
+      normal = as.integer(ss_normal)
+    )
+  )
+  cat(sprintf("  d.primeSS case %d: done\n", i))
+}
+sample_size_data$dprime_sample_size <- dprime_ss_results
+
+# =============================================================================
 # Save to JSON
 # =============================================================================
 
@@ -206,7 +368,9 @@ output <- list(
   ),
   links = links_data,
   discrim = discrim_data,
-  rescale = rescale_data
+  rescale = rescale_data,
+  power = power_data,
+  sample_size = sample_size_data
 )
 
 output_path <- "golden_sensr.json"

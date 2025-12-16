@@ -47,6 +47,14 @@ from senspy.utils import (
 # Main analysis functions
 from senspy.discrim import discrim
 
+# Power and sample size functions
+from senspy.power import (
+    discrim_power,
+    dprime_power,
+    discrim_sample_size,
+    dprime_sample_size,
+)
+
 __all__ = [
     # Version info
     "__version__",
@@ -81,4 +89,9 @@ __all__ = [
     "rescale",
     # Analysis functions
     "discrim",
+    # Power and sample size
+    "discrim_power",
+    "dprime_power",
+    "discrim_sample_size",
+    "dprime_sample_size",
 ]
