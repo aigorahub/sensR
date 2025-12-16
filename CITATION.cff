@@ -1,11 +1,29 @@
 cff-version: 1.2.0
-title: "sensPy"
-version: "0.0.1"
-date-released: 2023-01-01
-repository: "https://github.com/example/sensPy"
+title: "sensPy: Thurstonian Models for Sensory Discrimination in Python"
+version: "0.0.1-dev"
+date-released: 2025-12-16
+repository-code: "https://github.com/aigorahub/sensPy"
+url: "https://github.com/aigorahub/sensPy"
+license: GPL-2.0-or-later
+type: software
 authors:
-  - name: sensPy Development Team
-    email: team@example.com
-doi: 10.0000/PLACEHOLDER
+  - name: Aigora
+    email: team@aigora.com
+keywords:
+  - sensory discrimination
+  - thurstonian models
+  - psychometrics
+  - d-prime
+  - statistics
 message: >-
-  If you use sensPy, please cite the project using the DOI from the release you used.
+  If you use sensPy in your research, please cite it using this metadata.
+  sensPy is a Python port of the sensR R package.
+references:
+  - type: software
+    title: "sensR: Thurstonian Models for Sensory Discrimination"
+    authors:
+      - family-names: Christensen
+        given-names: Rune Haubo Bojesen
+      - family-names: Brockhoff
+        given-names: Per Bruun
+    repository-code: "https://github.com/aigorahub/sensR"
