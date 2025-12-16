@@ -23,7 +23,6 @@ from senspy.core.types import Protocol
 class TestPsyFun:
     """Tests for psy_fun (d-prime to proportion correct)."""
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_twoafc_golden_data(self, golden_links_data, tolerance):
         """Test twoafc link function against sensR golden data."""
         if golden_links_data is None:
@@ -36,7 +35,6 @@ class TestPsyFun:
         result = psy_fun(d_prime, method="twoafc")
         np.testing.assert_allclose(result, expected, rtol=tolerance["probabilities"])
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_triangle_golden_data(self, golden_links_data, tolerance):
         """Test triangle link function against sensR golden data."""
         if golden_links_data is None:
@@ -49,7 +47,6 @@ class TestPsyFun:
         result = psy_fun(d_prime, method="triangle")
         np.testing.assert_allclose(result, expected, rtol=tolerance["probabilities"])
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_duotrio_golden_data(self, golden_links_data, tolerance):
         """Test duotrio link function against sensR golden data."""
         if golden_links_data is None:
@@ -62,7 +59,6 @@ class TestPsyFun:
         result = psy_fun(d_prime, method="duotrio")
         np.testing.assert_allclose(result, expected, rtol=tolerance["probabilities"])
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_threeafc_golden_data(self, golden_links_data, tolerance):
         """Test threeafc link function against sensR golden data."""
         if golden_links_data is None:
@@ -108,7 +104,6 @@ class TestPsyFun:
 class TestPsyInv:
     """Tests for psy_inv (proportion correct to d-prime)."""
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_twoafc_golden_data(self, golden_links_data, tolerance):
         """Test twoafc inverse against sensR golden data."""
         if golden_links_data is None:
@@ -121,7 +116,6 @@ class TestPsyInv:
         result = psy_inv(pc, method="twoafc")
         np.testing.assert_allclose(result, expected, rtol=tolerance["coefficients"])
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_triangle_golden_data(self, golden_links_data, tolerance):
         """Test triangle inverse against sensR golden data."""
         if golden_links_data is None:
@@ -154,7 +148,6 @@ class TestPsyInv:
 class TestPsyDeriv:
     """Tests for psy_deriv (derivative of psychometric function)."""
 
-    @pytest.mark.xfail(reason="Golden data needs validation against sensR via RPy2")
     def test_twoafc_golden_data(self, golden_links_data, tolerance):
         """Test twoafc derivative against sensR golden data."""
         if golden_links_data is None:

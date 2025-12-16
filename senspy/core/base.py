@@ -110,7 +110,7 @@ class DiscrimResult:
         ----------
         level : float, optional
             Confidence level (0 < level < 1). If None, uses the level
-            from the original analysis.
+            from the original analysis and returns the pre-computed CI.
         parameter : str, default "d_prime"
             Which parameter to compute CI for: "d_prime", "pc", or "pd".
 
@@ -118,6 +118,17 @@ class DiscrimResult:
         -------
         ndarray
             Array of shape (2,) with [lower, upper] bounds.
+
+        Notes
+        -----
+        When ``level`` matches the original analysis level (default), the
+        pre-computed CI is returned (using the method specified during
+        analysis: Clopper-Pearson for exact, profile likelihood for
+        likelihood, Wilson for score, or Wald for wald statistic).
+
+        When ``level`` differs from the original, a Wald approximation
+        is computed instead. This is faster but may be less accurate,
+        especially for small samples or extreme proportions.
 
         Examples
         --------
@@ -131,21 +142,30 @@ class DiscrimResult:
         if level is None:
             level = self.conf_level
 
-        alpha = 1 - level
-        z = stats.norm.ppf(1 - alpha / 2)
+        # Use pre-computed CI if level matches and CI is available
+        use_precomputed = level == self.conf_level
 
         if parameter == "d_prime":
+            if use_precomputed and self._ci_d_prime is not None:
+                return self._ci_d_prime.copy()
             estimate, se = self.d_prime, self.se_d_prime
             lower_bound = 0.0  # d-prime cannot be negative
         elif parameter == "pc":
+            if use_precomputed and self._ci_pc is not None:
+                return self._ci_pc.copy()
             estimate, se = self.pc, self.se_pc
             lower_bound = self.method.p_guess
         elif parameter == "pd":
+            if use_precomputed and self._ci_pd is not None:
+                return self._ci_pd.copy()
             estimate, se = self.pd, self.se_pd
             lower_bound = 0.0
         else:
             raise ValueError(f"Unknown parameter: {parameter}")
 
+        # Fall back to Wald CI if no pre-computed CI or different level
+        alpha = 1 - level
+        z = stats.norm.ppf(1 - alpha / 2)
         lower = max(lower_bound, estimate - z * se)
         upper = estimate + z * se
 

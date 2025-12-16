@@ -44,6 +44,9 @@ from senspy.utils import (
     rescale,
 )
 
+# Main analysis functions
+from senspy.discrim import discrim
+
 __all__ = [
     # Version info
     "__version__",
@@ -76,4 +79,6 @@ __all__ = [
     "pc_to_pd",
     "pd_to_pc",
     "rescale",
+    # Analysis functions
+    "discrim",
 ]

@@ -1,0 +1,416 @@
+{
+  "metadata": {
+    "generated_by": "sensR",
+    "sensR_version": "1.5.3",
+    "R_version": "R version 4.4.0 (2024-04-24 ucrt)",
+    "generated_at": "2025-12-16 20:54:48"
+  },
+  "links": {
+    "psy_fun": {
+      "duotrio": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.5, 0.5223, 0.5825, 0.6635, 0.7468, 0.8196, 0.8765]
+      },
+      "triangle": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.3333, 0.3558, 0.418, 0.5065, 0.6048, 0.6993, 0.7814]
+      },
+      "twoafc": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.5, 0.6382, 0.7602, 0.8556, 0.9214, 0.9615, 0.9831]
+      },
+      "threeafc": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.3333, 0.4826, 0.6337, 0.7658, 0.8658, 0.9314, 0.9688]
+      },
+      "tetrad": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.3333, 0.3777, 0.4938, 0.6409, 0.7777, 0.8797, 0.943]
+      },
+      "hexad": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.1, 0.1428, 0.2633, 0.4385, 0.6237, 0.7806, 0.89]
+      },
+      "twofive": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.1, 0.1286, 0.2086, 0.3273, 0.4632, 0.5962, 0.7124]
+      },
+      "twofivef": {
+        "d_prime": [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        "expected_pc": [0.4, 0.4491, 0.574, 0.7225, 0.8479, 0.93, 0.9729]
+      }
+    },
+    "psy_inv": {
+      "duotrio": {
+        "pc": [0.55, 0.65, 0.75, 0.85, 0.95],
+        "expected_d_prime": [0.7614, 1.4206, 2.02, 2.7493, 4.0724]
+      },
+      "triangle": {
+        "pc": [0.3833, 0.4833, 0.5833, 0.6833, 0.7833, 0.8833],
+        "expected_d_prime": [0.7551, 1.3779, 1.8912, 2.4114, 3.0129, 3.8408]
+      },
+      "twoafc": {
+        "pc": [0.55, 0.65, 0.75, 0.85, 0.95],
+        "expected_d_prime": [0.1777, 0.5449, 0.9539, 1.4657, 2.3262]
+      },
+      "threeafc": {
+        "pc": [0.3833, 0.4833, 0.5833, 0.6833, 0.7833, 0.8833],
+        "expected_d_prime": [0.1728, 0.5024, 0.8294, 1.1762, 1.5763, 2.1121]
+      },
+      "tetrad": {
+        "pc": [0.3833, 0.4833, 0.5833, 0.6833, 0.7833, 0.8833],
+        "expected_d_prime": [0.5319, 0.962, 1.3069, 1.6456, 2.0235, 2.5227]
+      },
+      "hexad": {
+        "pc": [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95],
+        "expected_d_prime": [0.5418, 0.9562, 1.2591, 1.5305, 1.7966, 2.0757, 2.3906, 2.7892, 3.4712]
+      },
+      "twofive": {
+        "pc": [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95],
+        "expected_d_prime": [0.6674, 1.189, 1.5858, 1.952, 2.3213, 2.7203, 3.1865, 3.8037, 4.9284]
+      },
+      "twofivef": {
+        "pc": [0.45, 0.55, 0.65, 0.75, 0.85, 0.95],
+        "expected_d_prime": [0.5045, 0.9165, 1.2541, 1.598, 2.0099, 2.6877]
+      }
+    },
+    "psy_deriv": {
+      "duotrio": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.0869, 0.1476, 0.1699, 0.1591, 0.1302]
+      },
+      "triangle": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.0882, 0.156, 0.192, 0.1967, 0.1786]
+      },
+      "twoafc": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.265, 0.2197, 0.1607, 0.1038, 0.0591]
+      },
+      "threeafc": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.3079, 0.2893, 0.2346, 0.1646, 0.1001]
+      },
+      "tetrad": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.1715, 0.2785, 0.2956, 0.2432, 0.1638]
+      },
+      "hexad": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.1641, 0.3092, 0.3756, 0.3521, 0.269]
+      },
+      "twofive": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.1101, 0.2052, 0.262, 0.2747, 0.2526]
+      },
+      "twofivef": {
+        "d_prime": [0.5, 1, 1.5, 2, 2.5],
+        "expected_deriv": [0.1885, 0.2922, 0.2856, 0.2094, 0.1208]
+      }
+    }
+  },
+  "discrim": {
+    "test_cases": [
+      {
+        "input": {
+          "correct": 80,
+          "total": 100,
+          "method": "triangle"
+        },
+        "estimates": {
+          "pc": 0.8,
+          "pd": 0.7,
+          "d_prime": 3.1286
+        },
+        "std_errors": {
+          "pc": 0.04,
+          "pd": 0.06,
+          "d_prime": 0.2853
+        },
+        "confidence_intervals": {
+          "pc": [0.7082, 0.8733],
+          "pd": [0.5622, 0.81],
+          "d_prime": [2.5498, 3.7386]
+        },
+        "p_values": {
+          "exact": 0,
+          "wald": 9.4336e-32,
+          "likelihood": 4.5215e-22,
+          "score": 2.0919e-23
+        }
+      },
+      {
+        "input": {
+          "correct": 60,
+          "total": 100,
+          "method": "triangle"
+        },
+        "estimates": {
+          "pc": 0.6,
+          "pd": 0.4,
+          "d_prime": 1.9756
+        },
+        "std_errors": {
+          "pc": 0.049,
+          "pd": 0.0735,
+          "d_prime": 0.2486
+        },
+        "confidence_intervals": {
+          "pc": [0.4972, 0.6967],
+          "pd": [0.2458, 0.5451],
+          "d_prime": [1.4516, 2.4853]
+        },
+        "p_values": {
+          "exact": 4.324e-08,
+          "wald": 2.615e-08,
+          "likelihood": 2.5633e-08,
+          "score": 7.7086e-09
+        }
+      },
+      {
+        "input": {
+          "correct": 40,
+          "total": 100,
+          "method": "triangle"
+        },
+        "estimates": {
+          "pc": 0.4,
+          "pd": 0.1,
+          "d_prime": 0.8791
+        },
+        "std_errors": {
+          "pc": 0.049,
+          "pd": 0.0735,
+          "d_prime": 0.3443
+        },
+        "confidence_intervals": {
+          "pc": [0.3333, 0.5028],
+          "pd": [0, 0.2542],
+          "d_prime": [0, 1.4809]
+        },
+        "p_values": {
+          "exact": 0.0966,
+          "wald": 0.0868,
+          "likelihood": 0.0817,
+          "score": 0.0786
+        }
+      },
+      {
+        "input": {
+          "correct": 75,
+          "total": 100,
+          "method": "twoafc"
+        },
+        "estimates": {
+          "pc": 0.75,
+          "pd": 0.5,
+          "d_prime": 0.9539
+        },
+        "std_errors": {
+          "pc": 0.0433,
+          "pd": 0.0866,
+          "d_prime": 0.1927
+        },
+        "confidence_intervals": {
+          "pc": [0.6534, 0.8312],
+          "pd": [0.3069, 0.6624],
+          "d_prime": [0.5581, 1.3562]
+        },
+        "p_values": {
+          "exact": 2.8181e-07,
+          "wald": 3.882e-09,
+          "likelihood": 1.5694e-07,
+          "score": 2.8665e-07
+        }
+      },
+      {
+        "input": {
+          "correct": 60,
+          "total": 100,
+          "method": "twoafc"
+        },
+        "estimates": {
+          "pc": 0.6,
+          "pd": 0.2,
+          "d_prime": 0.3583
+        },
+        "std_errors": {
+          "pc": 0.049,
+          "pd": 0.098,
+          "d_prime": 0.1793
+        },
+        "confidence_intervals": {
+          "pc": [0.5, 0.6967],
+          "pd": [0, 0.3934],
+          "d_prime": [0, 0.7282]
+        },
+        "p_values": {
+          "exact": 0.0284,
+          "wald": 0.0206,
+          "likelihood": 0.0224,
+          "score": 0.0228
+        }
+      },
+      {
+        "input": {
+          "correct": 70,
+          "total": 100,
+          "method": "duotrio"
+        },
+        "estimates": {
+          "pc": 0.7,
+          "pd": 0.4,
+          "d_prime": 1.7153
+        },
+        "std_errors": {
+          "pc": 0.0458,
+          "pd": 0.0917,
+          "d_prime": 0.2719
+        },
+        "confidence_intervals": {
+          "pc": [0.6002, 0.7876],
+          "pd": [0.2004, 0.5752],
+          "d_prime": [1.1164, 2.2676]
+        },
+        "p_values": {
+          "exact": 0,
+          "wald": 6.3748e-06,
+          "likelihood": 0,
+          "score": 0
+        }
+      },
+      {
+        "input": {
+          "correct": 50,
+          "total": 100,
+          "method": "threeafc"
+        },
+        "estimates": {
+          "pc": 0.5,
+          "pd": 0.25,
+          "d_prime": 0.5565
+        },
+        "std_errors": {
+          "pc": 0.05,
+          "pd": 0.075,
+          "d_prime": 0.1623
+        },
+        "confidence_intervals": {
+          "pc": [0.3983, 0.6017],
+          "pd": [0.0975, 0.4025],
+          "d_prime": [0.2232, 0.8908]
+        },
+        "p_values": {
+          "exact": 0.0004,
+          "wald": 0.0004,
+          "likelihood": 0.0003,
+          "score": 0.0002
+        }
+      },
+      {
+        "input": {
+          "correct": 65,
+          "total": 100,
+          "method": "tetrad"
+        },
+        "estimates": {
+          "pc": 0.65,
+          "pd": 0.475,
+          "d_prime": 1.5307
+        },
+        "std_errors": {
+          "pc": 0.0477,
+          "pd": 0.0715,
+          "d_prime": 0.1623
+        },
+        "confidence_intervals": {
+          "pc": [0.5482, 0.7427],
+          "pd": [0.3222, 0.6141],
+          "d_prime": [1.1887, 1.8618]
+        },
+        "p_values": {
+          "exact": 9.8822e-11,
+          "wald": 1.5776e-11,
+          "likelihood": 5.2857e-11,
+          "score": 9.2425e-12
+        }
+      }
+    ]
+  },
+  "rescale": {
+    "test_cases": [
+      {
+        "input": {
+          "type": "pc",
+          "value": 0.6,
+          "method": "triangle"
+        },
+        "output": {
+          "pc": 0.6,
+          "pd": 0.4,
+          "d_prime": 1.9756
+        }
+      },
+      {
+        "input": {
+          "type": "pc",
+          "value": 0.8,
+          "method": "triangle"
+        },
+        "output": {
+          "pc": 0.8,
+          "pd": 0.7,
+          "d_prime": 3.1286
+        }
+      },
+      {
+        "input": {
+          "type": "pc",
+          "value": 0.7,
+          "method": "twoafc"
+        },
+        "output": {
+          "pc": 0.7,
+          "pd": 0.4,
+          "d_prime": 0.7416
+        }
+      },
+      {
+        "input": {
+          "type": "pd",
+          "value": 0.5,
+          "method": "triangle"
+        },
+        "output": {
+          "pc": 0.6667,
+          "pd": 0.5,
+          "d_prime": 2.3214
+        }
+      },
+      {
+        "input": {
+          "type": "d_prime",
+          "value": 1.5,
+          "method": "triangle"
+        },
+        "output": {
+          "pc": 0.5065,
+          "pd": 0.2597,
+          "d_prime": 1.5
+        }
+      },
+      {
+        "input": {
+          "type": "d_prime",
+          "value": 2,
+          "method": "twoafc"
+        },
+        "output": {
+          "pc": 0.9214,
+          "pd": 0.8427,
+          "d_prime": 2
+        }
+      }
+    ]
+  }
+}
