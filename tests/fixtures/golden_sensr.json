@@ -3,7 +3,7 @@
     "generated_by": "sensR",
     "sensR_version": "1.5.3",
     "R_version": "R version 4.4.0 (2024-04-24 ucrt)",
-    "generated_at": "2025-12-16 20:54:48"
+    "generated_at": "2025-12-16 21:39:41"
   },
   "links": {
     "psy_fun": {
@@ -409,6 +409,207 @@
           "pc": 0.9214,
           "pd": 0.8427,
           "d_prime": 2
+        }
+      }
+    ]
+  },
+  "power": {
+    "discrim_power": [
+      {
+        "input": {
+          "pd_a": 0.3,
+          "pd_0": 0,
+          "sample_size": 100,
+          "p_guess": 0.3333,
+          "test": "difference"
+        },
+        "power": {
+          "exact": 0.9911,
+          "normal": 0.9929,
+          "cont_normal": 0.9907
+        }
+      },
+      {
+        "input": {
+          "pd_a": 0.4,
+          "pd_0": 0,
+          "sample_size": 50,
+          "p_guess": 0.5,
+          "test": "difference"
+        },
+        "power": {
+          "exact": 0.8594,
+          "normal": 0.9017,
+          "cont_normal": 0.8722
+        }
+      },
+      {
+        "input": {
+          "pd_a": 0.25,
+          "pd_0": 0,
+          "sample_size": 200,
+          "p_guess": 0.3333,
+          "test": "difference"
+        },
+        "power": {
+          "exact": 0.9989,
+          "normal": 0.9992,
+          "cont_normal": 0.999
+        }
+      },
+      {
+        "input": {
+          "pd_a": 0.1,
+          "pd_0": 0.3,
+          "sample_size": 100,
+          "p_guess": 0.3333,
+          "test": "similarity"
+        },
+        "power": {
+          "exact": 0.8211,
+          "normal": 0.8524,
+          "cont_normal": 0.8276
+        }
+      }
+    ],
+    "dprime_power": [
+      {
+        "input": {
+          "d_prime_a": 1.5,
+          "d_prime_0": 0,
+          "sample_size": 100,
+          "method": "triangle",
+          "test": "difference"
+        },
+        "power": {
+          "exact": 0.9665,
+          "normal": 0.9721
+        }
+      },
+      {
+        "input": {
+          "d_prime_a": 1,
+          "d_prime_0": 0,
+          "sample_size": 50,
+          "method": "twoafc",
+          "test": "difference"
+        },
+        "power": {
+          "exact": 0.9811,
+          "normal": 0.9914
+        }
+      },
+      {
+        "input": {
+          "d_prime_a": 2,
+          "d_prime_0": 0,
+          "sample_size": 80,
+          "method": "threeafc",
+          "test": "difference"
+        },
+        "power": {
+          "exact": 1,
+          "normal": 1
+        }
+      },
+      {
+        "input": {
+          "d_prime_a": 1,
+          "d_prime_0": 0,
+          "sample_size": 100,
+          "method": "duotrio",
+          "test": "difference"
+        },
+        "power": {
+          "exact": 0.4818,
+          "normal": 0.5019
+        }
+      }
+    ]
+  },
+  "sample_size": {
+    "discrim_sample_size": [
+      {
+        "input": {
+          "pd_a": 0.3,
+          "pd_0": 0,
+          "target_power": 0.9,
+          "p_guess": 0.3333,
+          "test": "difference"
+        },
+        "sample_size": {
+          "exact": 53,
+          "normal": 50,
+          "cont_normal": 55
+        }
+      },
+      {
+        "input": {
+          "pd_a": 0.4,
+          "pd_0": 0,
+          "target_power": 0.8,
+          "p_guess": 0.5,
+          "test": "difference"
+        },
+        "sample_size": {
+          "exact": 37,
+          "normal": 36,
+          "cont_normal": 41
+        }
+      },
+      {
+        "input": {
+          "pd_a": 0.25,
+          "pd_0": 0,
+          "target_power": 0.9,
+          "p_guess": 0.3333,
+          "test": "difference"
+        },
+        "sample_size": {
+          "exact": 79,
+          "normal": 72,
+          "cont_normal": 78
+        }
+      }
+    ],
+    "dprime_sample_size": [
+      {
+        "input": {
+          "d_prime_a": 1.5,
+          "d_prime_0": 0,
+          "target_power": 0.9,
+          "method": "triangle",
+          "test": "difference"
+        },
+        "sample_size": {
+          "exact": 71,
+          "normal": 67
+        }
+      },
+      {
+        "input": {
+          "d_prime_a": 1,
+          "d_prime_0": 0,
+          "target_power": 0.8,
+          "method": "twoafc",
+          "test": "difference"
+        },
+        "sample_size": {
+          "exact": 23,
+          "normal": 21
+        }
+      },
+      {
+        "input": {
+          "d_prime_a": 1,
+          "d_prime_0": 0,
+          "target_power": 0.9,
+          "method": "triangle",
+          "test": "difference"
+        },
+        "sample_size": {
+          "exact": 283,
+          "normal": 276
         }
       }
     ]
