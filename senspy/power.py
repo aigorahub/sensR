@@ -14,6 +14,18 @@ from senspy.links import psy_fun
 from senspy.utils import pd_to_pc, find_critical, delimit
 
 
+def _normalize_statistic(statistic: str, valid_options: set[str]) -> str:
+    """Normalize statistic string to canonical form.
+
+    Handles variations like "cont.normal", "cont_normal", "cont-normal".
+    """
+    normalized = statistic.lower().replace(".", "_").replace("-", "_")
+    if normalized not in valid_options:
+        options_str = ", ".join(f"'{opt}'" for opt in sorted(valid_options))
+        raise ValueError(f"'statistic' must be one of: {options_str}")
+    return normalized
+
+
 def _normal_power(
     pd_a: float,
     pd_0: float,
@@ -199,16 +211,14 @@ def discrim_power(
         raise ValueError("'pd_a' must be <= 'pd_0' for similarity tests")
 
     # Validate statistic
-    statistic = statistic.lower().replace(".", "").replace("_", "")
-    if statistic not in ("exact", "normal", "contnormal"):
-        raise ValueError(
-            "'statistic' must be 'exact', 'normal', or 'cont.normal'"
-        )
+    statistic = _normalize_statistic(
+        statistic, {"exact", "normal", "cont_normal"}
+    )
 
     # Compute power
     if statistic == "normal":
         return _normal_power(pd_a, pd_0, sample_size, alpha, p_guess, test, False)
-    elif statistic == "contnormal":
+    elif statistic == "cont_normal":
         return _normal_power(pd_a, pd_0, sample_size, alpha, p_guess, test, True)
     else:  # exact
         return _exact_power(pd_a, pd_0, sample_size, alpha, p_guess, test)
@@ -274,6 +284,10 @@ def dprime_power(
     # Parse protocol
     protocol = parse_protocol(method)
     p_guess = protocol.p_guess
+
+    # Defensive check (protocols should never have p_guess >= 1)
+    if p_guess >= 1:
+        raise ValueError("Protocol p_guess must be < 1")
 
     # Convert d-prime to pc, then to pd
     pc_a = psy_fun(d_prime_a, method=protocol)[0]
@@ -512,11 +526,9 @@ def discrim_sample_size(
         raise ValueError("'pd_a' must be < 'pd_0' for similarity tests")
 
     # Validate statistic
-    statistic = statistic.lower().replace(".", "_").replace("-", "_")
-    if statistic not in ("exact", "stable_exact", "normal", "cont_normal"):
-        raise ValueError(
-            "'statistic' must be 'exact', 'stable.exact', 'normal', or 'cont.normal'"
-        )
+    statistic = _normalize_statistic(
+        statistic, {"exact", "stable_exact", "normal", "cont_normal"}
+    )
 
     # Compute sample size
     if statistic == "normal":
@@ -597,6 +609,10 @@ def dprime_sample_size(
     # Parse protocol
     protocol = parse_protocol(method)
     p_guess = protocol.p_guess
+
+    # Defensive check (protocols should never have p_guess >= 1)
+    if p_guess >= 1:
+        raise ValueError("Protocol p_guess must be < 1")
 
     # Convert d-prime to pc, then to pd
     pc_a = psy_fun(d_prime_a, method=protocol)[0]
