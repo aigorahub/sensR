@@ -119,6 +119,17 @@ class DiscrimResult:
         ndarray
             Array of shape (2,) with [lower, upper] bounds.
 
+        Notes
+        -----
+        When ``level`` matches the original analysis level (default), the
+        pre-computed CI is returned (using the method specified during
+        analysis: Clopper-Pearson for exact, profile likelihood for
+        likelihood, Wilson for score, or Wald for wald statistic).
+
+        When ``level`` differs from the original, a Wald approximation
+        is computed instead. This is faster but may be less accurate,
+        especially for small samples or extreme proportions.
+
         Examples
         --------
         >>> result.confint()

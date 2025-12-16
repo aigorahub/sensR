@@ -7,13 +7,12 @@ the number of correct responses in forced-choice trials.
 Corresponds to sensR's discrim() function.
 """
 
-from typing import Literal
-
 import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
+from scipy.interpolate import interp1d
 
-from senspy.core.types import Protocol, Statistic, Alternative, parse_protocol
+from senspy.core.types import Protocol, Statistic, parse_protocol
 from senspy.core.base import DiscrimResult
 from senspy.links import psy_fun, psy_inv, psy_deriv
 from senspy.utils import pc_to_pd, pd_to_pc, delimit
@@ -77,8 +76,6 @@ def _confint_profile(
     lower, upper : float
         Confidence interval bounds.
     """
-    from scipy.interpolate import interp1d
-
     alpha = 1 - level
     cutoff = stats.norm.ppf([alpha / 2, 1 - alpha / 2])
 
@@ -365,9 +362,9 @@ def discrim(
         d_prime=d_prime_hat,
         pc=pc_hat,
         pd=pd_hat,
-        se_d_prime=se_d_prime if not np.isnan(se_d_prime) else 0.0,
+        se_d_prime=se_d_prime,  # NaN when undefined (at boundaries)
         se_pc=se_pc,
-        se_pd=se_pd if not np.isnan(se_pd) else 0.0,
+        se_pd=se_pd,  # NaN when undefined (at boundaries)
         p_value=float(p_value),
         statistic=float(stat_value),
         stat_type=stat_type,
