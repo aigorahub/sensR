@@ -90,7 +90,8 @@ def _confint_profile(
         ci_logit = interp(cutoff)
         ci = 1 / (1 + np.exp(-ci_logit))
         return float(ci[0]), float(ci[1])
-    except Exception:
+    except (ValueError, IndexError):
+        # Interpolation can fail with insufficient data or boundary cases
         return 0.0, 1.0
 
 
@@ -301,7 +302,14 @@ def discrim(
         if se_pc > 0:
             stat_value = (pc_hat - pc0) / np.sqrt(pc_hat * (1 - pc_hat) / total)
         else:
-            stat_value = 0.0
+            # SE is 0 when pc_hat is 0 or 1 (boundary cases)
+            # If pc_hat differs from pc0, we have extreme evidence
+            if pc_hat > pc0:
+                stat_value = np.inf
+            elif pc_hat < pc0:
+                stat_value = -np.inf
+            else:
+                stat_value = 0.0
 
         if test_lower == "difference":
             p_value = stats.norm.sf(stat_value)
@@ -317,17 +325,13 @@ def discrim(
     elif stat_type == Statistic.SCORE:
         # Score test (Wilson)
         pc0_bounded = delimit(pc0, lower=1e-8, upper=1 - 1e-8)[0]
+        stat_value = (pc_hat - pc0_bounded) / np.sqrt(
+            pc0_bounded * (1 - pc0_bounded) / total
+        )
 
         if test_lower == "difference":
-            # One-sided greater
-            stat_value = (pc_hat - pc0_bounded) / np.sqrt(
-                pc0_bounded * (1 - pc0_bounded) / total
-            )
             p_value = stats.norm.sf(stat_value)
         else:
-            stat_value = (pc_hat - pc0_bounded) / np.sqrt(
-                pc0_bounded * (1 - pc0_bounded) / total
-            )
             p_value = stats.norm.cdf(stat_value)
 
         # Wilson score CI

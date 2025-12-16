@@ -54,6 +54,15 @@ class TestDiscrimBasic:
         assert result.pd == 1.0
         assert result.d_prime > 0  # Should be very high
 
+    @pytest.mark.parametrize("stat", ["exact", "wald", "likelihood", "score"])
+    def test_perfect_performance_all_statistics(self, stat):
+        """Test that all statistics return significant p-value for perfect performance."""
+        result = discrim(correct=100, total=100, method="triangle", statistic=stat)
+
+        assert result.pc == 1.0
+        # Perfect performance should always be significant
+        assert result.p_value < 0.05, f"{stat} should be significant for perfect performance"
+
 
 class TestDiscrimStatistics:
     """Tests for different test statistics."""
