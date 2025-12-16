@@ -65,6 +65,14 @@ def _normal_power(
     sigma_0 = np.sqrt(pc_0 * (1 - pc_0) * sample_size)
     sigma_a = np.sqrt(pc_a * (1 - pc_a) * sample_size)
 
+    # Handle edge case: perfect discrimination (pc_a = 1 or 0)
+    # When sigma_a = 0, power is 1.0 for difference test, 0.0 for similarity
+    if sigma_a == 0:
+        if test == "difference":
+            return 1.0 if pc_a > pc_0 else 0.0
+        else:  # similarity
+            return 1.0 if pc_a < pc_0 else 0.0
+
     if test == "difference":
         lam = (stats.norm.ppf(1 - alpha) * sigma_0 + sample_size * (pc_0 - pc_a)) / sigma_a
         if continuity:
@@ -399,18 +407,13 @@ def _exact_sample_size(
     int
         Required sample size.
     """
-    # Get bounds from normal approximation
-    n_lower = _normal_sample_size(
+    # Get initial estimate from normal approximation
+    n_approx = _normal_sample_size(
         pd_a, pd_0, target_power, alpha, p_guess, test, continuity=True
     )
-    # Adjust lower bound down
-    n_lower = max(1, n_lower - 10)
-
-    n_upper = _normal_sample_size(
-        pd_a, pd_0, target_power, alpha, p_guess, test, continuity=True
-    )
-    # Adjust upper bound up
-    n_upper = n_upper + 20
+    # Set search bounds around the approximation
+    n_lower = max(1, n_approx - 10)
+    n_upper = n_approx + 20
 
     # Check bounds
     lower_power = _exact_power(pd_a, pd_0, n_lower, alpha, p_guess, test)

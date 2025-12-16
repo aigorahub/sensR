@@ -22,6 +22,18 @@ class TestDiscrimPower:
         # With 30% discriminators and n=100, power should be high
         assert power > 0.9
 
+    def test_perfect_discrimination_power(self):
+        """Test power with perfect discrimination (pd_a=1.0)."""
+        # Perfect discrimination should give power = 1.0 for difference test
+        power = discrim_power(pd_a=1.0, sample_size=50, p_guess=1/3, statistic="normal")
+        assert power == 1.0
+
+    def test_zero_effect_power(self):
+        """Test power with no effect (pd_a=0)."""
+        # No effect should give power = alpha (Type I error rate)
+        power = discrim_power(pd_a=0.0, sample_size=100, p_guess=1/3)
+        assert power == pytest.approx(0.05, abs=0.01)
+
     def test_power_increases_with_sample_size(self):
         """Test that power increases with sample size."""
         power_50 = discrim_power(pd_a=0.3, sample_size=50, p_guess=1/3)
@@ -130,13 +142,18 @@ class TestDiscrimSampleSize:
     def test_different_statistics(self):
         """Test different statistical methods."""
         n_exact = discrim_sample_size(pd_a=0.3, p_guess=1/3, statistic="exact")
+        n_stable = discrim_sample_size(pd_a=0.3, p_guess=1/3, statistic="stable.exact")
         n_normal = discrim_sample_size(pd_a=0.3, p_guess=1/3, statistic="normal")
         n_cont = discrim_sample_size(pd_a=0.3, p_guess=1/3, statistic="cont.normal")
 
         # All should be reasonable
         assert 30 < n_exact < 200
+        assert 30 < n_stable < 200
         assert 30 < n_normal < 200
         assert 30 < n_cont < 200
+
+        # Stable exact should be >= exact (more conservative)
+        assert n_stable >= n_exact
 
     def test_achieved_power_meets_target(self):
         """Test that computed n achieves target power."""
