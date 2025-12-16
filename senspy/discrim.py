@@ -340,6 +340,10 @@ def discrim(
         ci_lower_pc = center - margin
         ci_upper_pc = center + margin
 
+    else:
+        # Should not reach here if input validation is correct
+        raise ValueError(f"Unhandled statistic type: {stat_type}")
+
     # Bound CI to valid range
     ci_lower_pc = max(0, ci_lower_pc)
     ci_upper_pc = min(1, ci_upper_pc)
