@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(.venv/bin/python -m pytest:*)",
+      "Bash(~/.local/bin/uv venv:*)",
+      "Bash(~/.local/bin/uv pip install:*)"
     ]
   }
 }

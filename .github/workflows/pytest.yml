@@ -1,32 +1,32 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+      - uses: actions/checkout@v4
 
-      - name: Set up R
-        uses: actions/setup-r@v2
-        id: setup-r # Add id to reference outputs
-        with:
-          r-version: '4.1'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
 
-      - name: Show R HOME
-        run: echo "R_HOME=${{ steps.setup-r.outputs.r-home }}" >> $GITHUB_ENV
-        id: show_r_home
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
 
-      - name: Install R dependencies and sensR package
+      - name: Create venv and install dependencies
         run: |
-          R -e 'install.packages(c("MASS", "numDeriv", "multcomp", "mvtnorm", "survival", "TH.data", "xtable", "Matrix", "sandwich", "codetools", "zoo", "estimability"), repos="https://cloud.r-project.org/")'
-          R -e 'install.packages("sensR", repos=NULL, type="source")'
-        working-directory: ./sensR
+          uv venv .venv --python ${{ matrix.python-version }}
+          uv pip install -e .
+          uv pip install pytest pytest-cov
 
-      - uses: abatilo/actions-poetry@v2
-      - run: poetry install
-      - run: poetry run pytest
+      - name: Run tests
+        run: uv run pytest tests/ -v

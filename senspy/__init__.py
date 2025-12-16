@@ -3,11 +3,77 @@ sensPy: Thurstonian Models for Sensory Discrimination in Python
 
 A Python port of the R package sensR.
 
-This package is currently under development. See docs/PORTING_PLAN.md for
-the implementation roadmap.
+This package provides:
+- Psychometric link functions for sensory discrimination protocols
+- Utility functions for converting between pc, pd, and d-prime
+- Statistical utilities for binomial tests
+
+See docs/PORTING_PLAN.md for the full implementation roadmap.
 """
 
 __version__ = "0.0.1-dev"
 __author__ = "Aigora"
 
-# Public API will be exported here as modules are implemented
+# Core types and result classes
+from senspy.core.types import Protocol, Statistic, Alternative, parse_protocol
+from senspy.core.base import DiscrimResult, RescaleResult
+
+# Psychometric link functions
+from senspy.links import (
+    psy_fun,
+    psy_inv,
+    psy_deriv,
+    get_link,
+    duotrio_link,
+    triangle_link,
+    twoafc_link,
+    threeafc_link,
+    tetrad_link,
+    hexad_link,
+    twofive_link,
+    twofivef_link,
+)
+
+# Utility functions
+from senspy.utils import (
+    delimit,
+    normal_pvalue,
+    find_critical,
+    pc_to_pd,
+    pd_to_pc,
+    rescale,
+)
+
+__all__ = [
+    # Version info
+    "__version__",
+    "__author__",
+    # Core types
+    "Protocol",
+    "Statistic",
+    "Alternative",
+    "parse_protocol",
+    # Result classes
+    "DiscrimResult",
+    "RescaleResult",
+    # Link functions
+    "psy_fun",
+    "psy_inv",
+    "psy_deriv",
+    "get_link",
+    "duotrio_link",
+    "triangle_link",
+    "twoafc_link",
+    "threeafc_link",
+    "tetrad_link",
+    "hexad_link",
+    "twofive_link",
+    "twofivef_link",
+    # Utilities
+    "delimit",
+    "normal_pvalue",
+    "find_critical",
+    "pc_to_pd",
+    "pd_to_pc",
+    "rescale",
+]
