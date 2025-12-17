@@ -92,6 +92,20 @@ from senspy.dprime_tests import (
 # A-Not-A protocol
 from senspy.anota import anota, ANotAResult
 
+# ROC, AUC, and Signal Detection Theory
+from senspy.roc import sdt, roc, auc, ROCResult, AUCResult
+
+# Plotting functions (Plotly-based)
+from senspy.plotting import (
+    plot_roc,
+    plot_psychometric,
+    plot_psychometric_comparison,
+    plot_sdt_distributions,
+    plot_profile_likelihood,
+    plot_power_curve,
+    plot_sample_size_curve,
+)
+
 __all__ = [
     # Version info
     "__version__",
@@ -163,4 +177,18 @@ __all__ = [
     # A-Not-A protocol
     "anota",
     "ANotAResult",
+    # ROC, AUC, SDT
+    "sdt",
+    "roc",
+    "auc",
+    "ROCResult",
+    "AUCResult",
+    # Plotting
+    "plot_roc",
+    "plot_psychometric",
+    "plot_psychometric_comparison",
+    "plot_sdt_distributions",
+    "plot_profile_likelihood",
+    "plot_power_curve",
+    "plot_sample_size_curve",
 ]
