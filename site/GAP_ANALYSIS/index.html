@@ -1,0 +1,2791 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Thurstonian Models for Sensory Discrimination in Python">
+      
+      
+      
+        <link rel="canonical" href="https://aigorahub.github.io/sensPy/GAP_ANALYSIS/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>sensR to sensPy: Gap Analysis - sensPy</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sensr-to-senspy-gap-analysis" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sensPy" class="md-header__button md-logo" aria-label="sensPy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sensPy
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              sensR to sensPy: Gap Analysis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aigorahub/sensPy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aigorahub/sensPy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sensPy" class="md-nav__button md-logo" aria-label="sensPy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    sensPy
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aigorahub/sensPy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aigorahub/sensPy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/protocols/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discrimination Protocols
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/power/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/plotting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plotting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/discrimination/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discrimination
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/power/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power & Sample Size
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/roc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROC & AUC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plotting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plotting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    About
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-implementation-status-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Implementation Status Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Implementation Status Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-category-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Category Summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-visual-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Visual Progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-detailed-function-gap-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Detailed Function Gap Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Detailed Function Gap Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-link-functions-linksr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Link Functions (links.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-double-link-functions-doublelinksr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Double Link Functions (doublelinks.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-discrimination-analysis-discrimr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Discrimination Analysis (discrim.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-beta-binomial-model-betabinr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Beta-Binomial Model (betaBin.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-two-alternative-certainty-model-twoacr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Two-Alternative Certainty Model (twoAC.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-same-different-model-samediffr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Same-Different Model (samediff.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-degree-of-difference-model-dodr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 Degree-of-Difference Model (dod.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#28-power-analysis-powerr-newpowerr-dod_powerr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Power Analysis (power.R, newPower.R, dod_power.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#29-sample-size-samplesizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.9 Sample Size (sample.size.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#210-inference-testing-dprimetestr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.10 Inference &amp; Testing (d.primeTest.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#211-roc-auc-rocr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.11 ROC &amp; AUC (ROC.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#212-utilities-utilsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.12 Utilities (utils.R)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-feature-parity-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Feature Parity Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Feature Parity Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-protocol-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Protocol Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-statistical-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Statistical Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-analysis-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Analysis Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-visualization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Visualization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-integration-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Integration Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-priority-implementation-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Priority Implementation Queue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Priority Implementation Queue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-phase-0-foundation-priority-p0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Phase 0 (Foundation) - Priority P0
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-phase-1-core-models-priority-p1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Phase 1 (Core Models) - Priority P1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-phase-2-advanced-models-priority-p2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Phase 2 (Advanced Models) - Priority P2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-phase-3-polish-priority-p3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Phase 3 (Polish) - Priority P3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-a-mapping-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix A: Mapping Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Appendix A: Mapping Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a1-r-file-to-python-module-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A.1 R File to Python Module Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a2-r-function-name-to-python-name-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A.2 R Function Name to Python Name Conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-b-test-case-estimates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix B: Test Case Estimates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#document-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document History
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="sensr-to-senspy-gap-analysis">sensR to sensPy: Gap Analysis</h1>
+<p><strong>Version:</strong> 1.0
+<strong>Date:</strong> 2025-12-16
+<strong>Scope:</strong> Complete rewrite (Delete &amp; Rewrite approach)</p>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>This document provides a comprehensive gap analysis comparing the sensR R package (v1.5-3) against the current sensPy implementation. Following the decision to <strong>delete and rewrite</strong> the existing Python code, all functions are currently unimplemented.</p>
+<p><strong>Overall Status:</strong> 0 of 127 functions implemented (0%)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-implementation-status-overview">Implementation Status Overview</a></li>
+<li><a href="#2-detailed-function-gap-analysis">Detailed Function Gap Analysis</a></li>
+<li><a href="#3-feature-parity-checklist">Feature Parity Checklist</a></li>
+<li><a href="#4-priority-implementation-queue">Priority Implementation Queue</a></li>
+</ol>
+<hr />
+<h2 id="1-implementation-status-overview">1. Implementation Status Overview</h2>
+<h3 id="11-category-summary">1.1 Category Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Total Functions</th>
+<th>Implemented</th>
+<th>Missing</th>
+<th>% Complete</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Link Functions</td>
+<td>13</td>
+<td>0</td>
+<td>13</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Double Link Functions</td>
+<td>5</td>
+<td>0</td>
+<td>5</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Discrimination</td>
+<td>4</td>
+<td>0</td>
+<td>4</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Statistical Models</td>
+<td>12</td>
+<td>0</td>
+<td>12</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Power Analysis</td>
+<td>9</td>
+<td>0</td>
+<td>9</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Sample Size</td>
+<td>4</td>
+<td>0</td>
+<td>4</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Inference/Testing</td>
+<td>8</td>
+<td>0</td>
+<td>8</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>ROC/AUC</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Utilities</td>
+<td>14</td>
+<td>0</td>
+<td>14</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>S3 Methods</td>
+<td>52</td>
+<td>0</td>
+<td>52</td>
+<td>0%</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>127</strong></td>
+<td><strong>0</strong></td>
+<td><strong>127</strong></td>
+<td><strong>0%</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-visual-progress">1.2 Visual Progress</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Link Functions:        [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Double Links:          [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Discrimination:        [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Models:                [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Power Analysis:        [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Sample Size:           [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Inference:             [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>ROC/AUC:               [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Utilities:             [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>S3 Methods:            [░░░░░░░░░░░░░░░░░░░░]   0%
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>OVERALL:               [░░░░░░░░░░░░░░░░░░░░]   0%
+</code></pre></div>
+<hr />
+<h2 id="2-detailed-function-gap-analysis">2. Detailed Function Gap Analysis</h2>
+<h3 id="21-link-functions-linksr">2.1 Link Functions (<code>links.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>duotrio()</code></td>
+<td><code>DuoTrioLink</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td>Core - most used</td>
+</tr>
+<tr>
+<td><code>triangle()</code></td>
+<td><code>TriangleLink</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td>Core - most used</td>
+</tr>
+<tr>
+<td><code>twoAFC()</code></td>
+<td><code>TwoAFCLink</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td>Core - most used</td>
+</tr>
+<tr>
+<td><code>threeAFC()</code></td>
+<td><code>ThreeAFCLink</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tetrad()</code></td>
+<td><code>TetradLink</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hexad()</code></td>
+<td><code>HexadLink</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Less common</td>
+</tr>
+<tr>
+<td><code>twofive()</code></td>
+<td><code>TwoFiveLink</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Less common</td>
+</tr>
+<tr>
+<td><code>twofiveF()</code></td>
+<td><code>TwoFiveFLink</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Less common</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required Methods per Link:</strong>
+- <code>linkinv(eta)</code> - d-prime to probability
+- <code>linkfun(mu)</code> - probability to d-prime
+- <code>mu.eta(eta)</code> - derivative for delta method</p>
+<h3 id="22-double-link-functions-doublelinksr">2.2 Double Link Functions (<code>doublelinks.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>doubleduotrio()</code></td>
+<td><code>DoubleDuoTrioLink</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>doubletriangle()</code></td>
+<td><code>DoubleTriangleLink</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>doubletwoAFC()</code></td>
+<td><code>DoubleTwoAFCLink</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>doublethreeAFC()</code></td>
+<td><code>DoubleThreeAFCLink</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>doubletetrad()</code></td>
+<td><code>DoubleTetradLink</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-discrimination-analysis-discrimr">2.3 Discrimination Analysis (<code>discrim.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>discrim()</code></td>
+<td><code>discrim()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td>Main entry point</td>
+</tr>
+<tr>
+<td><code>AnotA()</code></td>
+<td><code>anota()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Specialized protocol</td>
+</tr>
+<tr>
+<td><code>discrimSim()</code></td>
+<td><code>discrim_sim()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Simulation</td>
+</tr>
+<tr>
+<td><code>profBinom()</code></td>
+<td><code>_prof_binom()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal helper</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required Features:</strong>
+- All statistics: exact, likelihood, Wald, score
+- Confidence intervals: Wald, profile likelihood
+- Profile computation for plotting</p>
+<h3 id="24-beta-binomial-model-betabinr">2.4 Beta-Binomial Model (<code>betaBin.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>betabin()</code></td>
+<td><code>BetaBinomial.fit()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td>Main fitting</td>
+</tr>
+<tr>
+<td><code>print.betabin</code></td>
+<td><code>BetaBinomial.__str__()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>summary.betabin</code></td>
+<td><code>BetaBinomial.summary()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>vcov.betabin</code></td>
+<td><code>BetaBinomial.vcov</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>logLik.betabin</code></td>
+<td><code>BetaBinomial.loglik</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="25-two-alternative-certainty-model-twoacr">2.5 Two-Alternative Certainty Model (<code>twoAC.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>twoAC()</code></td>
+<td><code>TwoAC.fit()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Main fitting</td>
+</tr>
+<tr>
+<td><code>twoACpwr()</code></td>
+<td><code>twoac_power()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>estimate.2AC()</code></td>
+<td><code>TwoAC._estimate()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>nll.2AC()</code></td>
+<td><code>TwoAC._nll()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>LRtest.2AC()</code></td>
+<td><code>TwoAC.lr_test()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>profile.twoAC</code></td>
+<td><code>TwoAC.profile()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>confint.twoAC</code></td>
+<td><code>TwoAC.confint()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clm2twoAC()</code></td>
+<td><code>clm_to_twoac()</code></td>
+<td>❌ Missing</td>
+<td>P3</td>
+<td>Integration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="26-same-different-model-samediffr">2.6 Same-Different Model (<code>samediff.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>samediff()</code></td>
+<td><code>SameDiff.fit()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Main fitting</td>
+</tr>
+<tr>
+<td><code>samediffSim()</code></td>
+<td><code>samediff_sim()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>samediffPwr()</code></td>
+<td><code>samediff_power()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>profile.samediff</code></td>
+<td><code>SameDiff.profile()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>confint.samediff</code></td>
+<td><code>SameDiff.confint()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>summary.samediff</code></td>
+<td><code>SameDiff.summary()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="27-degree-of-difference-model-dodr">2.7 Degree-of-Difference Model (<code>dod.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dod()</code></td>
+<td><code>DOD.fit()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Main fitting</td>
+</tr>
+<tr>
+<td><code>dod_fit()</code></td>
+<td><code>DOD._fit()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>dodControl()</code></td>
+<td><code>DODControl</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Config dataclass</td>
+</tr>
+<tr>
+<td><code>dodSim()</code></td>
+<td><code>dod_sim()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>optimal_tau()</code></td>
+<td><code>optimal_tau()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>par2prob_dod()</code></td>
+<td><code>_par_to_prob_dod()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>dod_nll()</code></td>
+<td><code>_dod_nll()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>confint.dod_fit</code></td>
+<td><code>DOD.confint()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="28-power-analysis-powerr-newpowerr-dod_powerr">2.8 Power Analysis (<code>power.R</code>, <code>newPower.R</code>, <code>dod_power.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>discrimPwr()</code></td>
+<td><code>discrim_power()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Main power</td>
+</tr>
+<tr>
+<td><code>d.primePwr()</code></td>
+<td><code>dprime_power()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>d.primePwr2()</code></td>
+<td><code>dprime_power2()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Alternative</td>
+</tr>
+<tr>
+<td><code>normalPwr()</code></td>
+<td><code>_normal_power()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>pdPwr()</code></td>
+<td><code>_pd_power()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>binomPwr()</code></td>
+<td><code>_binom_power()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>dodPwr()</code></td>
+<td><code>dod_power()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>DOD specific</td>
+</tr>
+<tr>
+<td><code>dodPwr_internal()</code></td>
+<td><code>_dod_power_internal()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>testPwrArgs()</code></td>
+<td><code>_test_power_args()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Validation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="29-sample-size-samplesizer">2.9 Sample Size (<code>sample.size.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>discrimSS()</code></td>
+<td><code>discrim_sample_size()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>d.primeSS()</code></td>
+<td><code>dprime_sample_size()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>normalSS()</code></td>
+<td><code>_normal_sample_size()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>pdSS()</code></td>
+<td><code>_pd_sample_size()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="210-inference-testing-dprimetestr">2.10 Inference &amp; Testing (<code>d.primeTest.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dprime_test()</code></td>
+<td><code>dprime_test()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dprime_compare()</code></td>
+<td><code>dprime_compare()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>posthoc()</code></td>
+<td><code>posthoc()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dprime_table()</code></td>
+<td><code>_dprime_table()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>dprime_estim()</code></td>
+<td><code>_dprime_estim()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>dprime_nll()</code></td>
+<td><code>_dprime_nll()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>dprime_testStat()</code></td>
+<td><code>_dprime_test_stat()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>getPosthoc()</code></td>
+<td><code>_get_posthoc()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Internal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="211-roc-auc-rocr">2.11 ROC &amp; AUC (<code>ROC.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SDT()</code></td>
+<td><code>sdt_transform()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ROC()</code></td>
+<td><code>roc_curve()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Generic</td>
+</tr>
+<tr>
+<td><code>ROC.default()</code></td>
+<td><code>roc_default()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ROC.anota()</code></td>
+<td><code>roc_anota()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td><code>AUC()</code></td>
+<td><code>auc()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Generic</td>
+</tr>
+<tr>
+<td><code>AUC.default()</code></td>
+<td><code>auc_default()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="212-utilities-utilsr">2.12 Utilities (<code>utils.R</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>R Function</th>
+<th>Python Target</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getPguess()</code></td>
+<td><code>get_p_guess()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>getFamily()</code></td>
+<td><code>get_link()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rescale()</code></td>
+<td><code>rescale()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td>Core utility</td>
+</tr>
+<tr>
+<td><code>pc2pd()</code></td>
+<td><code>pc_to_pd()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>pd2pc()</code></td>
+<td><code>pd_to_pc()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>psyfun()</code></td>
+<td><code>psy_fun()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>psyinv()</code></td>
+<td><code>psy_inv()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>psyderiv()</code></td>
+<td><code>psy_deriv()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>findcr()</code></td>
+<td><code>find_critical()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>test.crit()</code></td>
+<td><code>_test_crit()</code></td>
+<td>❌ Missing</td>
+<td>P1</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>delimit()</code></td>
+<td><code>delimit()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>normalPvalue()</code></td>
+<td><code>normal_pvalue()</code></td>
+<td>❌ Missing</td>
+<td>P0</td>
+<td></td>
+</tr>
+<tr>
+<td><code>lrp_binom()</code></td>
+<td><code>_lr_pvalue_binom()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td><code>Waldp_binom()</code></td>
+<td><code>_wald_pvalue_binom()</code></td>
+<td>❌ Missing</td>
+<td>P2</td>
+<td>Internal</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-feature-parity-checklist">3. Feature Parity Checklist</h2>
+<h3 id="31-protocol-support">3.1 Protocol Support</h3>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Single</th>
+<th>Double</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Duo-trio</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>Triangle</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>Tetrad</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>2-AFC</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>3-AFC</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>Hexad</td>
+<td>❌</td>
+<td>N/A</td>
+<td>No double version in R</td>
+</tr>
+<tr>
+<td>2/5</td>
+<td>❌</td>
+<td>N/A</td>
+<td>No double version in R</td>
+</tr>
+<tr>
+<td>2/5F</td>
+<td>❌</td>
+<td>N/A</td>
+<td>No double version in R</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-statistical-methods">3.2 Statistical Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>discrim</th>
+<th>betabin</th>
+<th>twoAC</th>
+<th>samediff</th>
+<th>dod</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ML Estimation</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Wald CI</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Profile CI</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>LR Test</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Wald Test</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Score Test</td>
+<td>❌</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-analysis-features">3.3 Analysis Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Power Analysis</td>
+<td>❌</td>
+<td>All methods</td>
+</tr>
+<tr>
+<td>Sample Size</td>
+<td>❌</td>
+<td>All methods</td>
+</tr>
+<tr>
+<td>Simulation</td>
+<td>❌</td>
+<td>discrimSim, dodSim, etc.</td>
+</tr>
+<tr>
+<td>d-prime Tests</td>
+<td>❌</td>
+<td>dprime_test, dprime_compare</td>
+</tr>
+<tr>
+<td>Post-hoc</td>
+<td>❌</td>
+<td>With letter displays</td>
+</tr>
+<tr>
+<td>ROC/AUC</td>
+<td>❌</td>
+<td>SDT transform</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-visualization">3.4 Visualization</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Profile plots</td>
+<td>❌</td>
+<td>plot.discrim, etc.</td>
+</tr>
+<tr>
+<td>Psychometric curves</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>ROC curves</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>Diagnostic plots</td>
+<td>❌</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-integration-features">3.5 Integration Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pandas integration</td>
+<td>❌</td>
+<td>DataFrames for input/output</td>
+</tr>
+<tr>
+<td>NumPy arrays</td>
+<td>❌</td>
+<td>Vector operations</td>
+</tr>
+<tr>
+<td>matplotlib plots</td>
+<td>❌</td>
+<td>Publication quality</td>
+</tr>
+<tr>
+<td>Numba acceleration</td>
+<td>❌</td>
+<td>Performance critical paths</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-priority-implementation-queue">4. Priority Implementation Queue</h2>
+<h3 id="41-phase-0-foundation-priority-p0">4.1 Phase 0 (Foundation) - Priority P0</h3>
+<p>Must be implemented first as dependencies for everything else:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>1. senspy/core/types.py          # Type definitions
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>2. senspy/core/base.py           # Base classes
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>3. senspy/utils/stats.py         # delimit, normalPvalue
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>4. senspy/utils/transforms.py    # pc2pd, pd2pc, rescale
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>5. senspy/links/psychometric.py  # All 8 single link functions
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>6. senspy/__init__.py            # Public API
+</code></pre></div>
+<p><strong>Estimated Test Cases:</strong> ~150 unit tests, ~100 golden data tests</p>
+<h3 id="42-phase-1-core-models-priority-p1">4.2 Phase 1 (Core Models) - Priority P1</h3>
+<p>Core discrimination analysis and statistical models:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>7. senspy/discrimination/discrim.py   # discrim()
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>8. senspy/models/betabinomial.py      # BetaBinomial
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>9. senspy/power/discrim_power.py      # discrimPwr, d.primePwr
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>10. senspy/power/sample_size.py       # discrimSS, d.primeSS
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>11. senspy/inference/dprime_tests.py  # dprime_test, dprime_compare
+</code></pre></div>
+<p><strong>Estimated Test Cases:</strong> ~200 unit tests, ~150 golden data tests</p>
+<h3 id="43-phase-2-advanced-models-priority-p2">4.3 Phase 2 (Advanced Models) - Priority P2</h3>
+<p>Specialized models and advanced features:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>12. senspy/links/double.py            # 5 double link functions
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>13. senspy/models/twoac.py            # TwoAC
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>14. senspy/models/samediff.py         # SameDiff
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>15. senspy/models/dod.py              # DOD
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>16. senspy/power/dod_power.py         # dodPwr
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>17. senspy/discrimination/anota.py    # AnotA
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>18. senspy/roc/                       # SDT, ROC, AUC
+</code></pre></div>
+<p><strong>Estimated Test Cases:</strong> ~300 unit tests, ~200 golden data tests</p>
+<h3 id="44-phase-3-polish-priority-p3">4.4 Phase 3 (Polish) - Priority P3</h3>
+<p>Visualization and integration:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>19. senspy/plotting/psychometric.py   # Psychometric curves
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>20. senspy/plotting/profile.py        # Profile plots
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>21. senspy/plotting/roc.py            # ROC curves
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>22. senspy/datasets/                  # Example datasets
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>23. Documentation                     # Sphinx docs
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>24. Tutorials                         # Jupyter notebooks
+</code></pre></div>
+<p><strong>Estimated Test Cases:</strong> ~100 integration tests, visual comparison tests</p>
+<hr />
+<h2 id="appendix-a-mapping-reference">Appendix A: Mapping Reference</h2>
+<h3 id="a1-r-file-to-python-module-mapping">A.1 R File to Python Module Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>R Source File</th>
+<th>Python Module</th>
+<th>Functions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>links.R</code></td>
+<td><code>senspy.links.psychometric</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>doublelinks.R</code></td>
+<td><code>senspy.links.double</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>discrim.R</code></td>
+<td><code>senspy.discrimination.discrim</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>betaBin.R</code></td>
+<td><code>senspy.models.betabinomial</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>twoAC.R</code></td>
+<td><code>senspy.models.twoac</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>samediff.R</code></td>
+<td><code>senspy.models.samediff</code></td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>dod.R</code></td>
+<td><code>senspy.models.dod</code></td>
+<td>8+</td>
+</tr>
+<tr>
+<td><code>dod_power.R</code></td>
+<td><code>senspy.power.dod_power</code></td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>ROC.R</code></td>
+<td><code>senspy.roc</code></td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>power.R</code></td>
+<td><code>senspy.power.discrim_power</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>newPower.R</code></td>
+<td><code>senspy.power.discrim_power</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>sample.size.R</code></td>
+<td><code>senspy.power.sample_size</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>d.primeTest.R</code></td>
+<td><code>senspy.inference.dprime_tests</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>utils.R</code></td>
+<td><code>senspy.utils</code></td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a2-r-function-name-to-python-name-conventions">A.2 R Function Name to Python Name Conventions</h3>
+<table>
+<thead>
+<tr>
+<th>R Convention</th>
+<th>Python Convention</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>camelCase</code></td>
+<td><code>snake_case</code></td>
+<td><code>getPguess</code> → <code>get_p_guess</code></td>
+</tr>
+<tr>
+<td><code>dot.separated</code></td>
+<td><code>snake_case</code></td>
+<td><code>d.prime</code> → <code>d_prime</code></td>
+</tr>
+<tr>
+<td><code>S3.method</code></td>
+<td><code>class.method()</code></td>
+<td><code>print.discrim</code> → <code>Discrim.__str__()</code></td>
+</tr>
+<tr>
+<td><code>internal_</code></td>
+<td><code>_private</code></td>
+<td><code>dod_nll_internal</code> → <code>_dod_nll</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="appendix-b-test-case-estimates">Appendix B: Test Case Estimates</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Unit Tests</th>
+<th>Golden Tests</th>
+<th>Property Tests</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Links</td>
+<td>80</td>
+<td>60</td>
+<td>30</td>
+<td>170</td>
+</tr>
+<tr>
+<td>Discrimination</td>
+<td>40</td>
+<td>50</td>
+<td>10</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Models</td>
+<td>120</td>
+<td>100</td>
+<td>20</td>
+<td>240</td>
+</tr>
+<tr>
+<td>Power</td>
+<td>60</td>
+<td>80</td>
+<td>10</td>
+<td>150</td>
+</tr>
+<tr>
+<td>Inference</td>
+<td>40</td>
+<td>50</td>
+<td>10</td>
+<td>100</td>
+</tr>
+<tr>
+<td>ROC</td>
+<td>20</td>
+<td>30</td>
+<td>5</td>
+<td>55</td>
+</tr>
+<tr>
+<td>Utilities</td>
+<td>60</td>
+<td>30</td>
+<td>20</td>
+<td>110</td>
+</tr>
+<tr>
+<td>Integration</td>
+<td>30</td>
+<td>-</td>
+<td>-</td>
+<td>30</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>450</strong></td>
+<td><strong>400</strong></td>
+<td><strong>105</strong></td>
+<td><strong>955</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="document-history">Document History</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2025-12-16</td>
+<td>Claude</td>
+<td>Initial gap analysis</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
