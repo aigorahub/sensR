@@ -18,7 +18,7 @@ from typing import Literal
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 from scipy import optimize
-from scipy.special import comb
+from scipy.special import comb, xlogy
 from scipy.stats import norm
 
 from senspy.core.types import Protocol, parse_protocol
@@ -253,6 +253,31 @@ def dprime_table(
     return rows
 
 
+def _safe_binomial_loglik(x: float, n: float, p: float) -> float:
+    """Compute binomial log-likelihood safely, handling edge cases.
+
+    Uses xlogy to handle 0*log(0) = 0 and clips p to avoid log(0).
+
+    Parameters
+    ----------
+    x : float
+        Number of successes.
+    n : float
+        Number of trials.
+    p : float
+        Probability of success.
+
+    Returns
+    -------
+    float
+        Log-likelihood value.
+    """
+    # Clip p to avoid exact 0 or 1
+    p = np.clip(p, 1e-10, 1 - 1e-10)
+    # xlogy(x, y) = x * log(y), with xlogy(0, 0) = 0
+    return float(xlogy(x, p) + xlogy(n - x, 1 - p))
+
+
 def _dprime_nll(dp: float, data: list[DprimeTableRow]) -> float:
     """Negative log-likelihood under common d-prime model.
 
@@ -270,9 +295,9 @@ def _dprime_nll(dp: float, data: list[DprimeTableRow]) -> float:
     """
     nll = 0.0
     for row in data:
-        p = psy_fun(dp, row.protocol)
+        p = psy_fun(dp, row.protocol).item()
         # Binomial log-likelihood (up to constant)
-        log_lik = row.correct * np.log(p) + (row.total - row.correct) * np.log(1 - p)
+        log_lik = _safe_binomial_loglik(row.correct, row.total, p)
         nll -= log_lik
     return nll
 
@@ -637,9 +662,8 @@ def _p_adjust(pvals: NDArray, method: str = "holm") -> NDArray:
 def _get_letters(signifs: dict[str, bool]) -> dict[str, str]:
     """Generate compact letter display for pairwise comparisons.
 
-    Uses greedy graph coloring: groups that are significantly different
-    get different letters, groups that are not significantly different
-    may share the same letter.
+    In CLD, groups that share ANY letter are NOT significantly different.
+    This uses a greedy clique cover on the non-significance graph.
 
     Parameters
     ----------
@@ -663,30 +687,63 @@ def _get_letters(signifs: dict[str, bool]) -> dict[str, str]:
     if n == 0:
         return {}
 
-    # Build conflict matrix (True if significantly different)
-    conflicts = [[False] * n for _ in range(n)]
+    # Build non-significance adjacency (True if NOT significantly different)
+    # A group is always non-significant with itself
+    non_sig = [[True] * n for _ in range(n)]
     for comp_name, is_sig in signifs.items():
         if is_sig:
             parts = comp_name.split(" - ")
             i = groups.index(parts[0])
             j = groups.index(parts[1])
-            conflicts[i][j] = True
-            conflicts[j][i] = True
+            non_sig[i][j] = False
+            non_sig[j][i] = False
 
-    # Greedy graph coloring: assign each group the lowest letter
-    # not used by any significantly different (conflicting) group
-    colors = [-1] * n
+    # Each group gets a set of letters
+    letters = [set() for _ in range(n)]
+    current_letter = 0
+
+    # Greedy clique cover: find maximal cliques in non-significance graph
+    # and assign the same letter to all members of each clique
+    uncovered_pairs = set()
     for i in range(n):
-        # Find colors used by conflicting groups
-        used_colors = {colors[j] for j in range(n) if conflicts[i][j] and colors[j] != -1}
-        # Assign lowest available color
-        color = 0
-        while color in used_colors:
-            color += 1
-        colors[i] = color
+        for j in range(i + 1, n):
+            if non_sig[i][j]:
+                uncovered_pairs.add((i, j))
 
-    # Convert colors to letters
-    return {groups[i]: chr(ord("a") + colors[i]) for i in range(n)}
+    while uncovered_pairs:
+        # Find a maximal clique starting from an uncovered pair
+        pair = next(iter(uncovered_pairs))
+        clique = {pair[0], pair[1]}
+
+        # Try to extend the clique
+        for k in range(n):
+            if k not in clique:
+                # Check if k is non-significant with all clique members
+                if all(non_sig[k][m] for m in clique):
+                    clique.add(k)
+
+        # Assign current letter to all clique members
+        letter = chr(ord("a") + current_letter)
+        for member in clique:
+            letters[member].add(letter)
+
+        # Remove covered pairs
+        pairs_to_remove = set()
+        for p in uncovered_pairs:
+            if p[0] in clique and p[1] in clique:
+                pairs_to_remove.add(p)
+        uncovered_pairs -= pairs_to_remove
+
+        current_letter += 1
+
+    # Ensure every group has at least one letter
+    for i in range(n):
+        if not letters[i]:
+            letters[i].add(chr(ord("a") + current_letter))
+            current_letter += 1
+
+    # Convert sets to sorted strings
+    return {groups[i]: "".join(sorted(letters[i])) for i in range(n)}
 
 
 def posthoc(
@@ -776,12 +833,13 @@ def posthoc(
                 ).fun
 
                 # NLL under alternative (separate d-primes)
-                nll_i = -data[i].correct * np.log(data[i].p_hat) - (
-                    data[i].total - data[i].correct
-                ) * np.log(1 - data[i].p_hat)
-                nll_j = -data[j].correct * np.log(data[j].p_hat) - (
-                    data[j].total - data[j].correct
-                ) * np.log(1 - data[j].p_hat)
+                # Use safe log-likelihood to handle perfect scores
+                nll_i = -_safe_binomial_loglik(
+                    data[i].correct, data[i].total, data[i].p_hat
+                )
+                nll_j = -_safe_binomial_loglik(
+                    data[j].correct, data[j].total, data[j].p_hat
+                )
                 nll_alt = nll_i + nll_j
 
                 LR = -2 * (nll_alt - nll_0)

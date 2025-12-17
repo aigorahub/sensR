@@ -1376,7 +1376,8 @@ def dod_power(
                         if hasattr(p_val, 'item'):
                             p_val = p_val.item()
                         pvals[i] = p_val
-            except Exception:
+            except (ValueError, RuntimeError, np.linalg.LinAlgError):
+                # Optimization or numerical errors - skip this simulation
                 pass
 
         else:  # likelihood or Pearson
@@ -1394,7 +1395,8 @@ def dod_power(
                     if hasattr(p_val, 'item'):
                         p_val = p_val.item()
                     pvals[i] = p_val
-            except Exception:
+            except (ValueError, RuntimeError, np.linalg.LinAlgError):
+                # Optimization or numerical errors - skip this simulation
                 pass
 
     # Compute power
