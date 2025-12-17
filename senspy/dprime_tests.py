@@ -637,6 +637,10 @@ def _p_adjust(pvals: NDArray, method: str = "holm") -> NDArray:
 def _get_letters(signifs: dict[str, bool]) -> dict[str, str]:
     """Generate compact letter display for pairwise comparisons.
 
+    Uses greedy graph coloring: groups that are significantly different
+    get different letters, groups that are not significantly different
+    may share the same letter.
+
     Parameters
     ----------
     signifs : dict[str, bool]
@@ -659,26 +663,30 @@ def _get_letters(signifs: dict[str, bool]) -> dict[str, str]:
     if n == 0:
         return {}
 
-    # Initialize letter matrix (groups x letters)
-    # Start with all groups sharing letter 'a'
-    letters = ["a"] * n
-    letter_idx = 0
-
-    # Process significant differences
+    # Build conflict matrix (True if significantly different)
+    conflicts = [[False] * n for _ in range(n)]
     for comp_name, is_sig in signifs.items():
         if is_sig:
             parts = comp_name.split(" - ")
             i = groups.index(parts[0])
             j = groups.index(parts[1])
+            conflicts[i][j] = True
+            conflicts[j][i] = True
 
-            # Groups i and j need different letters
-            if letters[i] == letters[j]:
-                # Add a new letter to one of them
-                letter_idx += 1
-                new_letter = chr(ord("a") + letter_idx)
-                letters[j] = letters[j] + new_letter
+    # Greedy graph coloring: assign each group the lowest letter
+    # not used by any significantly different (conflicting) group
+    colors = [-1] * n
+    for i in range(n):
+        # Find colors used by conflicting groups
+        used_colors = {colors[j] for j in range(n) if conflicts[i][j] and colors[j] != -1}
+        # Assign lowest available color
+        color = 0
+        while color in used_colors:
+            color += 1
+        colors[i] = color
 
-    return {groups[i]: letters[i] for i in range(n)}
+    # Convert colors to letters
+    return {groups[i]: chr(ord("a") + colors[i]) for i in range(n)}
 
 
 def posthoc(

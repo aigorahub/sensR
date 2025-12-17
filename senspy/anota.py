@@ -146,8 +146,11 @@ def anota(
     # Var(z(p)) ≈ p(1-p) / [n * φ(z(p))^2] where φ is std normal pdf
     def var_probit(p, n):
         """Variance of probit-transformed proportion."""
-        if p <= 0 or p >= 1:
-            p = np.clip(p, 0.01, 0.99)
+        # Use same 1/(2n) correction as safe_probit for consistency
+        if p <= 0:
+            p = 0.5 / n
+        elif p >= 1:
+            p = (n - 0.5) / n
         z = stats.norm.ppf(p)
         phi = stats.norm.pdf(z)
         if phi < 1e-10:
