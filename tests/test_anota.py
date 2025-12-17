@@ -63,15 +63,15 @@ class TestAnotA:
 class TestAnotAValidation:
     """Tests for input validation."""
 
-    def test_x1_ge_n1_raises(self):
-        """Test that x1 >= n1 raises error."""
-        with pytest.raises(ValueError, match="x1 must be smaller than n1"):
-            anota(x1=100, n1=100, x2=70, n2=100)
+    def test_x1_exceeds_n1_raises(self):
+        """Test that x1 > n1 raises error."""
+        with pytest.raises(ValueError, match="x1 cannot exceed n1"):
+            anota(x1=101, n1=100, x2=70, n2=100)
 
-    def test_x2_ge_n2_raises(self):
-        """Test that x2 >= n2 raises error."""
-        with pytest.raises(ValueError, match="x2 must be smaller than n2"):
-            anota(x1=80, n1=100, x2=100, n2=100)
+    def test_x2_exceeds_n2_raises(self):
+        """Test that x2 > n2 raises error."""
+        with pytest.raises(ValueError, match="x2 cannot exceed n2"):
+            anota(x1=80, n1=100, x2=101, n2=100)
 
     def test_negative_values_raise(self):
         """Test that negative values raise error."""
@@ -86,6 +86,31 @@ class TestAnotAValidation:
 
 class TestAnotAEdgeCases:
     """Tests for edge cases."""
+
+    def test_perfect_hit_rate(self):
+        """Test perfect hit rate (x1 = n1)."""
+        result = anota(x1=100, n1=100, x2=70, n2=100)
+
+        assert result.hit_rate == 1.0
+        assert result.d_prime > 2.0
+        assert np.isfinite(result.d_prime)
+
+    def test_perfect_correct_rejection(self):
+        """Test perfect correct rejection rate (x2 = n2)."""
+        result = anota(x1=80, n1=100, x2=100, n2=100)
+
+        assert result.false_alarm_rate == 0.0
+        assert result.d_prime > 2.0
+        assert np.isfinite(result.d_prime)
+
+    def test_perfect_discrimination(self):
+        """Test perfect discrimination (x1=n1 and x2=n2)."""
+        result = anota(x1=100, n1=100, x2=100, n2=100)
+
+        assert result.hit_rate == 1.0
+        assert result.false_alarm_rate == 0.0
+        assert result.d_prime > 4.0
+        assert np.isfinite(result.d_prime)
 
     def test_near_perfect_discrimination(self):
         """Test near-perfect hit and correct rejection rates."""

@@ -114,10 +114,10 @@ def anota(
 
     x1, n1, x2, n2 = int(x1), int(n1), int(x2), int(n2)
 
-    if x1 >= n1:
-        raise ValueError("x1 must be smaller than n1")
-    if x2 >= n2:
-        raise ValueError("x2 must be smaller than n2")
+    if x1 > n1:
+        raise ValueError("x1 cannot exceed n1")
+    if x2 > n2:
+        raise ValueError("x2 cannot exceed n2")
 
     # Compute hit rate and false alarm rate
     hit_rate = x1 / n1
@@ -128,8 +128,8 @@ def anota(
     # Need to handle edge cases where rates are 0 or 1
     def safe_probit(p, n):
         """Compute probit with adjustment for extreme values."""
-        # Apply Hautus (1995) correction: use (x + 0.5)/(n + 1)
-        # This avoids infinite z-scores
+        # Apply 1/(2n) correction (Macmillan & Kaplan, 1985)
+        # This avoids infinite z-scores at p=0 or p=1
         if p <= 0:
             p = 0.5 / n
         elif p >= 1:

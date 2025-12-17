@@ -951,8 +951,9 @@ def dod(
         from scipy.stats import mannwhitneyu
 
         # Create pseudo-data for Wilcoxon test
-        same_ranks = np.repeat(np.arange(1, nlev + 1), diff_arr.astype(int))
-        diff_ranks = np.repeat(np.arange(1, nlev + 1), same_arr.astype(int))
+        # Expand rating categories by their counts for each pair type
+        diff_pair_ratings = np.repeat(np.arange(1, nlev + 1), diff_arr.astype(int))
+        same_pair_ratings = np.repeat(np.arange(1, nlev + 1), same_arr.astype(int))
 
         if alternative == "two.sided":
             alt_mwu = "two-sided"
@@ -962,7 +963,8 @@ def dod(
             alt_mwu = "less"
 
         try:
-            mwu_result = mannwhitneyu(same_ranks, diff_ranks, alternative=alt_mwu)
+            # Test if diff-pair ratings are stochastically greater than same-pair ratings
+            mwu_result = mannwhitneyu(diff_pair_ratings, same_pair_ratings, alternative=alt_mwu)
             stat_value = mwu_result.statistic
             p_value = mwu_result.pvalue
         except ValueError:
@@ -1344,8 +1346,9 @@ def dod_power(
             from scipy.stats import mannwhitneyu
 
             nlev = data.shape[1]
-            same_ranks = np.repeat(np.arange(1, nlev + 1), diff_sim.astype(int))
-            diff_ranks = np.repeat(np.arange(1, nlev + 1), same_sim.astype(int))
+            # Expand rating categories by their counts for each pair type
+            diff_pair_ratings = np.repeat(np.arange(1, nlev + 1), diff_sim.astype(int))
+            same_pair_ratings = np.repeat(np.arange(1, nlev + 1), same_sim.astype(int))
 
             if alt == "two.sided":
                 alt_mwu = "two-sided"
@@ -1355,7 +1358,8 @@ def dod_power(
                 alt_mwu = "less"
 
             try:
-                mwu_result = mannwhitneyu(same_ranks, diff_ranks, alternative=alt_mwu)
+                # Test if diff-pair ratings are stochastically greater than same-pair ratings
+                mwu_result = mannwhitneyu(diff_pair_ratings, same_pair_ratings, alternative=alt_mwu)
                 pvals[i] = mwu_result.pvalue
             except ValueError:
                 pass
