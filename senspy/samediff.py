@@ -11,7 +11,6 @@ Data format: (same_same, diff_same, same_diff, diff_diff)
 - diff_diff: Different response to different samples
 """
 
-import warnings
 from dataclasses import dataclass
 
 import numpy as np
@@ -100,7 +99,7 @@ def _ll_samediff(tau: float, delta: float, ss: float, ds: float, sd: float, dd: 
     tau : float
         Threshold parameter (must be > 0).
     delta : float
-        D-prime parameter (must be > 0).
+        D-prime parameter (must be >= 0).
     ss, ds, sd, dd : float
         Data counts.
 
@@ -109,7 +108,7 @@ def _ll_samediff(tau: float, delta: float, ss: float, ds: float, sd: float, dd: 
     float
         Log-likelihood value.
     """
-    if tau <= 0 or delta <= 0:
+    if tau <= 0 or delta < 0:
         return -np.inf
 
     sqrt2 = np.sqrt(2)
@@ -406,11 +405,12 @@ def samediff(
         # Case 1.3: No different-sample data -> optimize tau, delta = NA
         delta = np.nan
 
-        # Optimize tau
+        # Optimize tau with bounds to enforce positivity
         result = optimize.minimize(
             lambda t: -_ll_delta_inf(t[0], ss, ds),
             x0=[1.0],
-            method="BFGS",
+            method="L-BFGS-B",
+            bounds=[(1e-6, None)],
         )
         tau = result.x[0]
         log_lik = _ll_delta_inf(tau, ss, ds)
@@ -448,10 +448,12 @@ def samediff(
         # Case 3: sd = 0 -> delta = Inf, optimize tau
         delta = np.inf
 
+        # Optimize tau with bounds to enforce positivity
         result = optimize.minimize(
             lambda t: -_ll_delta_inf(t[0], ss, ds),
             x0=[1.0],
-            method="BFGS",
+            method="L-BFGS-B",
+            bounds=[(1e-6, None)],
         )
         tau = result.x[0]
         log_lik = _ll_delta_inf(tau, ss, ds)
@@ -474,18 +476,24 @@ def samediff(
         delta = 0.0
 
         def neg_ll_delta_zero(t):
-            return -_ll_samediff(t[0], 1e-4, ss, ds, sd, dd)
+            return -_ll_samediff(t[0], 0.0, ss, ds, sd, dd)
 
-        result = optimize.minimize(neg_ll_delta_zero, x0=[1.0], method="BFGS")
+        # Optimize tau with bounds to enforce positivity
+        result = optimize.minimize(
+            neg_ll_delta_zero,
+            x0=[1.0],
+            method="L-BFGS-B",
+            bounds=[(1e-6, None)],
+        )
         tau = result.x[0]
-        log_lik = _ll_samediff(tau, 1e-4, ss, ds, sd, dd)
+        log_lik = _ll_samediff(tau, 0.0, ss, ds, sd, dd)
         conv = 0 if result.success else 1
 
         if vcov:
             eps = 1e-5
-            ll_p = _ll_samediff(tau + eps, 1e-4, ss, ds, sd, dd)
-            ll_m = _ll_samediff(tau - eps, 1e-4, ss, ds, sd, dd)
-            ll_0 = _ll_samediff(tau, 1e-4, ss, ds, sd, dd)
+            ll_p = _ll_samediff(tau + eps, 0.0, ss, ds, sd, dd)
+            ll_m = _ll_samediff(tau - eps, 0.0, ss, ds, sd, dd)
+            ll_0 = _ll_samediff(tau, 0.0, ss, ds, sd, dd)
             hess = (ll_p - 2 * ll_0 + ll_m) / (eps ** 2)
             if hess < 0:
                 vcov_mat[0, 0] = -1 / hess
