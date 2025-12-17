@@ -38,6 +38,31 @@ Thank you for considering contributing to sensPy! This project is a Python port 
 2. Update documentation as needed
 3. Submit a pull request with a clear description
 
+## Call for Testers
+
+We're actively seeking testers to help validate sensPy against the R package sensR. This is one of the most valuable contributions you can make!
+
+### How to Help with Validation
+
+1. **Set up both environments**: Have R with sensR and Python with sensPy installed
+2. **Run parallel analyses**: Execute the same analysis in both packages
+3. **Compare outputs**: Check d-prime estimates, confidence intervals, p-values, etc.
+4. **Report discrepancies**: Open a [GitHub Issue](https://github.com/aigorahub/sensPy/issues) with:
+   - The function/method tested
+   - Input parameters used
+   - Output from sensR (R code + results)
+   - Output from sensPy (Python code + results)
+   - The numerical difference observed
+
+### Priority Areas for Testing
+
+- Edge cases (very small or large sample sizes, extreme proportions)
+- All protocol variants (especially double protocols)
+- Power and sample size calculations
+- Beta-binomial and DOD models
+
+**To connect with the Aigora team:** Email [info@aigora.com](mailto:info@aigora.com)
+
 ## Questions?
 
 Open an issue to discuss ideas before submitting pull requests.

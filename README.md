@@ -9,6 +9,16 @@ A Python port of the R package `sensR` for Thurstonian models in sensory discrim
 
 ---
 
+> **⚠️ Beta Software Disclaimer**
+>
+> This package is currently in **Beta** and under active development. While we strive for numerical parity with the R package sensR, **results have not been exhaustively validated** and may contain errors.
+>
+> **Do not use this software for production systems or critical decision-making without independent validation.** This software is provided "as is" without warranty of any kind. See the [LICENSE](LICENSE) file for full terms.
+>
+> We welcome testers to compare outputs against sensR and report discrepancies—see [Call for Testers](#call-for-testers) below.
+
+---
+
 ## About
 
 sensPy provides a comprehensive Python implementation of [sensR](https://cran.r-project.org/package=sensR), the R package for sensory discrimination methods. This project ensures:
@@ -135,6 +145,18 @@ If you use sensPy in your research, please cite:
   url = {https://github.com/aigorahub/sensPy}
 }
 ```
+
+## Call for Testers
+
+We're actively seeking testers to help validate sensPy against the R package sensR. If you have experience with sensR, your help would be invaluable!
+
+**How you can help:**
+- Run parallel analyses in both sensPy and sensR
+- Compare numerical outputs (d-prime estimates, confidence intervals, p-values)
+- Report any discrepancies via [GitHub Issues](https://github.com/aigorahub/sensPy/issues)
+- Test edge cases and unusual parameter combinations
+
+**To connect with the Aigora team:** Email [info@aigora.com](mailto:info@aigora.com)
 
 ## Acknowledgments
 

@@ -1,6 +1,15 @@
 """
 sensPy: Thurstonian Models for Sensory Discrimination in Python
 
+.. warning::
+    **BETA SOFTWARE** - This package is currently in Beta and under active
+    development. While we strive for numerical parity with the R package sensR,
+    results should be independently validated before use in production systems
+    or critical decision-making. We welcome testers to compare outputs against
+    sensR and report any discrepancies.
+
+    Contact info@aigora.com to connect with the Aigora team.
+
 A Python port of the R package sensR providing:
 - Discrimination analysis (discrim, betabin, twoac, samediff, dod)
 - Psychometric link functions for all standard protocols
