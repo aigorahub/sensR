@@ -161,8 +161,9 @@ def auc(
         Standard error of d-prime. If provided, confidence intervals
         are computed.
     scale : float, default 1.0
-        Scale parameter (ratio of noise to signal standard deviation).
-        Must be positive.
+        Scale parameter (ratio of signal to noise standard deviation).
+        When scale=1, assumes equal-variance SDT. When scale>1, the signal
+        distribution has larger variance. Must be positive.
     ci_alpha : float, default 0.05
         Significance level for confidence interval (e.g., 0.05 for 95% CI).
 
@@ -280,7 +281,9 @@ def roc(
         Standard error of d-prime. If provided, confidence bands
         are computed.
     scale : float, default 1.0
-        Scale parameter (ratio of noise to signal standard deviation).
+        Scale parameter (ratio of signal to noise standard deviation).
+        When scale=1, assumes equal-variance SDT. When scale>1, the signal
+        distribution has larger variance.
     n_points : int, default 1000
         Number of points to generate on the ROC curve.
     se_type : {"CI", "SE"}, default "CI"

@@ -33,6 +33,18 @@ COLORS = {
     "reference": "#7f7f7f",
 }
 
+# Color sequence for multi-series plots (Plotly's default D3 category10)
+COLOR_SEQUENCE = [
+    "#1f77b4",  # blue
+    "#ff7f0e",  # orange
+    "#2ca02c",  # green
+    "#d62728",  # red
+    "#9467bd",  # purple
+    "#8c564b",  # brown
+    "#e377c2",  # pink
+    "#7f7f7f",  # gray
+]
+
 
 def plot_roc(
     roc_result: ROCResult | None = None,
@@ -318,18 +330,6 @@ def plot_psychometric_comparison(
     if methods is None:
         methods = ["triangle", "duotrio", "twoAFC", "threeAFC", "tetrad"]
 
-    # Plotly's default color sequence
-    colors = [
-        "#1f77b4",
-        "#ff7f0e",
-        "#2ca02c",
-        "#d62728",
-        "#9467bd",
-        "#8c564b",
-        "#e377c2",
-        "#7f7f7f",
-    ]
-
     d_values = np.linspace(d_prime_range[0], d_prime_range[1], n_points)
 
     fig = go.Figure()
@@ -337,7 +337,7 @@ def plot_psychometric_comparison(
     for i, method in enumerate(methods):
         link = get_link(method)
         pc_values = link.linkinv(d_values)
-        color = colors[i % len(colors)]
+        color = COLOR_SEQUENCE[i % len(COLOR_SEQUENCE)]
 
         fig.add_trace(
             go.Scatter(
