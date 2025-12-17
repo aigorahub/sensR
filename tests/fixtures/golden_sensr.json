@@ -3,7 +3,7 @@
     "generated_by": "sensR",
     "sensR_version": "1.5.3",
     "R_version": "R version 4.4.0 (2024-04-24 ucrt)",
-    "generated_at": "2025-12-17 08:59:03"
+    "generated_at": "2025-12-17 09:32:38"
   },
   "links": {
     "psy_fun": {
@@ -673,6 +673,61 @@
         "pd": 0.29788208787,
         "d_prime": 1.6311100378
       }
+    }
+  },
+  "twoac": {
+    "simple_case": {
+      "input": {
+        "data": [2, 2, 6]
+      },
+      "tau": 0.41597262683,
+      "d_prime": 0.77425953607,
+      "se_tau": 0.2674310847,
+      "se_d_prime": 0.54167372031,
+      "log_likelihood": -9.5027053923,
+      "vcov": [
+        [0.071519385064, 0.021672251418],
+        [0.021672251418, 0.29341041928]
+      ]
+    },
+    "large_case": {
+      "input": {
+        "data": [15, 15, 20],
+        "statistic": "likelihood"
+      },
+      "tau": 0.54995061321,
+      "d_prime": 0.19166370397,
+      "se_tau": 0.12483489799,
+      "se_d_prime": 0.22653269495,
+      "p_value": 0.39721687818,
+      "confint_dprime": [-0.25179387182, 0.63655774715]
+    },
+    "wald_case": {
+      "input": {
+        "data": [15, 15, 20],
+        "statistic": "Wald"
+      },
+      "tau": 0.54995061321,
+      "d_prime": 0.19166370397,
+      "p_value": 0.39751077298,
+      "confint_dprime": [-0.25179387182, 0.63655774715]
+    },
+    "negative_dprime": {
+      "input": {
+        "data": [6, 2, 2]
+      },
+      "tau": 0.41597262683,
+      "d_prime": -0.77425953607
+    },
+    "similarity_test": {
+      "input": {
+        "data": [15, 15, 20],
+        "d_prime_0": 0.5,
+        "alternative": "less"
+      },
+      "tau": 0.54995061321,
+      "d_prime": 0.19166370397,
+      "p_value": 0.08702218365
     }
   }
 }

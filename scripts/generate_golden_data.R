@@ -446,6 +446,99 @@ betabin_data$corrected_triangle <- list(
 cat("  betabin corrected triangle: done\n")
 
 # =============================================================================
+# 2-AC models (twoAC)
+# =============================================================================
+
+cat("Generating 2-AC data...\n")
+
+twoac_data <- list()
+
+# Simple case from tests: [2, 2, 6]
+res_simple <- twoAC(c(2, 2, 6))
+vcov_simple <- vcov(res_simple)
+se_simple <- sqrt(diag(vcov_simple))
+# Access coefficients matrix directly
+coef_simple <- res_simple$coefficients
+
+twoac_data$simple_case <- list(
+  input = list(
+    data = c(2, 2, 6)
+  ),
+  tau = as.numeric(coef_simple["tau", "Estimate"]),
+  d_prime = as.numeric(coef_simple["d.prime", "Estimate"]),
+  se_tau = as.numeric(coef_simple["tau", "Std. Error"]),
+  se_d_prime = as.numeric(coef_simple["d.prime", "Std. Error"]),
+  log_likelihood = as.numeric(logLik(res_simple)),
+  vcov = as.matrix(vcov_simple)
+)
+cat("  twoAC simple case: done\n")
+
+# Larger sample case with likelihood test
+res_large <- twoAC(c(15, 15, 20), statistic = "likelihood")
+coef_large <- res_large$coefficients
+ci_large <- confint(res_large)
+
+twoac_data$large_case <- list(
+  input = list(
+    data = c(15, 15, 20),
+    statistic = "likelihood"
+  ),
+  tau = as.numeric(coef_large["tau", "Estimate"]),
+  d_prime = as.numeric(coef_large["d.prime", "Estimate"]),
+  se_tau = as.numeric(coef_large["tau", "Std. Error"]),
+  se_d_prime = as.numeric(coef_large["d.prime", "Std. Error"]),
+  p_value = as.numeric(res_large$p.value),
+  confint_dprime = as.numeric(ci_large["d.prime", ])
+)
+cat("  twoAC large case: done\n")
+
+# Wald statistic case
+res_wald <- twoAC(c(15, 15, 20), statistic = "Wald")
+coef_wald <- res_wald$coefficients
+ci_wald <- confint(res_wald)
+
+twoac_data$wald_case <- list(
+  input = list(
+    data = c(15, 15, 20),
+    statistic = "Wald"
+  ),
+  tau = as.numeric(coef_wald["tau", "Estimate"]),
+  d_prime = as.numeric(coef_wald["d.prime", "Estimate"]),
+  p_value = as.numeric(res_wald$p.value),
+  confint_dprime = as.numeric(ci_wald["d.prime", ])
+)
+cat("  twoAC wald case: done\n")
+
+# Negative d-prime case (prefer A > prefer B)
+res_neg <- twoAC(c(6, 2, 2))
+coef_neg <- res_neg$coefficients
+
+twoac_data$negative_dprime <- list(
+  input = list(
+    data = c(6, 2, 2)
+  ),
+  tau = as.numeric(coef_neg["tau", "Estimate"]),
+  d_prime = as.numeric(coef_neg["d.prime", "Estimate"])
+)
+cat("  twoAC negative d-prime: done\n")
+
+# Non-zero d_prime_0 for similarity testing
+res_sim <- twoAC(c(15, 15, 20), d.prime0 = 0.5, alternative = "less")
+coef_sim <- res_sim$coefficients
+
+twoac_data$similarity_test <- list(
+  input = list(
+    data = c(15, 15, 20),
+    d_prime_0 = 0.5,
+    alternative = "less"
+  ),
+  tau = as.numeric(coef_sim["tau", "Estimate"]),
+  d_prime = as.numeric(coef_sim["d.prime", "Estimate"]),
+  p_value = as.numeric(res_sim$p.value)
+)
+cat("  twoAC similarity test: done\n")
+
+# =============================================================================
 # Save to JSON
 # =============================================================================
 
@@ -461,7 +554,8 @@ output <- list(
   rescale = rescale_data,
   power = power_data,
   sample_size = sample_size_data,
-  betabin = betabin_data
+  betabin = betabin_data,
+  twoac = twoac_data
 )
 
 output_path <- "golden_sensr.json"
