@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 from numpy.typing import ArrayLike
-from scipy import optimize, stats
+from scipy import interpolate, optimize, stats
 
 from senspy.utils import normal_pvalue
 
@@ -217,13 +217,30 @@ def _estimate_2ac(data: np.ndarray, compute_vcov: bool = True) -> dict:
 
 
 def _compute_hessian_2ac(tau: float, d_prime: float, data: np.ndarray, eps: float = 1e-5) -> np.ndarray:
-    """Compute Hessian of negative log-likelihood numerically."""
+    """Compute Hessian of negative log-likelihood numerically.
+
+    Uses central differences with bounds checking to ensure tau remains positive
+    during finite difference steps.
+    """
+    # Ensure eps is small enough that tau - eps remains positive
+    # Use one-sided differences if tau is too small
+    tau_eps = min(eps, tau / 2) if tau > 2 * eps else tau / 2
+    if tau_eps < 1e-10:
+        raise ValueError("tau too small for stable Hessian computation")
+
     def nll(params):
-        return _nll_2ac(params[0], params[1], data)
+        # Ensure tau stays positive
+        t, d = params[0], params[1]
+        if t <= 0:
+            return np.inf
+        return _nll_2ac(t, d, data)
 
     x = np.array([tau, d_prime])
     n = 2
     hess = np.zeros((n, n))
+
+    # Use different step sizes for tau (index 0) and d_prime (index 1)
+    eps_vec = np.array([tau_eps, eps])
 
     for i in range(n):
         for j in range(i, n):
@@ -232,16 +249,25 @@ def _compute_hessian_2ac(tau: float, d_prime: float, data: np.ndarray, eps: floa
             x_mp = x.copy()
             x_mm = x.copy()
 
-            x_pp[i] += eps
-            x_pp[j] += eps
-            x_pm[i] += eps
-            x_pm[j] -= eps
-            x_mp[i] -= eps
-            x_mp[j] += eps
-            x_mm[i] -= eps
-            x_mm[j] -= eps
+            x_pp[i] += eps_vec[i]
+            x_pp[j] += eps_vec[j]
+            x_pm[i] += eps_vec[i]
+            x_pm[j] -= eps_vec[j]
+            x_mp[i] -= eps_vec[i]
+            x_mp[j] += eps_vec[j]
+            x_mm[i] -= eps_vec[i]
+            x_mm[j] -= eps_vec[j]
 
-            hess[i, j] = (nll(x_pp) - nll(x_pm) - nll(x_mp) + nll(x_mm)) / (4 * eps * eps)
+            nll_pp = nll(x_pp)
+            nll_pm = nll(x_pm)
+            nll_mp = nll(x_mp)
+            nll_mm = nll(x_mm)
+
+            # Check for invalid values
+            if any(np.isinf([nll_pp, nll_pm, nll_mp, nll_mm])):
+                raise ValueError("Hessian computation encountered invalid likelihood values")
+
+            hess[i, j] = (nll_pp - nll_pm - nll_mp + nll_mm) / (4 * eps_vec[i] * eps_vec[j])
             hess[j, i] = hess[i, j]
 
     return hess
@@ -319,15 +345,35 @@ def _profile_confint_2ac(
     data: np.ndarray,
     log_lik_max: float,
     d_prime_hat: float,
+    se_d_prime: float | None = None,
     level: float = 0.95,
     n_steps: int = 100,
 ) -> np.ndarray:
-    """Compute profile likelihood confidence interval for d-prime."""
-    # Estimate SE roughly for range determination
-    est = _estimate_2ac(data, compute_vcov=True)
-    if est["vcov"] is not None:
-        se = np.sqrt(est["vcov"][1, 1])
-        d_range = [d_prime_hat - 4 * se, d_prime_hat + 4 * se]
+    """Compute profile likelihood confidence interval for d-prime.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Counts (n_A, n_no_pref, n_B).
+    log_lik_max : float
+        Log-likelihood at the MLE.
+    d_prime_hat : float
+        MLE of d-prime.
+    se_d_prime : float | None
+        Pre-calculated standard error of d-prime (to avoid redundant computation).
+    level : float
+        Confidence level.
+    n_steps : int
+        Number of steps for profile likelihood grid.
+
+    Returns
+    -------
+    np.ndarray
+        Confidence interval [lower, upper].
+    """
+    # Determine search range using SE if available
+    if se_d_prime is not None and np.isfinite(se_d_prime) and se_d_prime > 0:
+        d_range = [d_prime_hat - 4 * se_d_prime, d_prime_hat + 4 * se_d_prime]
     else:
         # Default range
         d_range = [d_prime_hat - 3, d_prime_hat + 3]
@@ -350,8 +396,6 @@ def _profile_confint_2ac(
     # Find CI by interpolation
     # Sort by lroot for interpolation (lroot should be monotonically decreasing with d_seq)
     try:
-        from scipy import interpolate
-
         # Sort by lroot value
         idx = np.argsort(lroot)
         lroot_sorted = lroot[idx]
@@ -375,7 +419,8 @@ def _profile_confint_2ac(
             lower, upper = upper, lower
 
         return np.array([lower, upper])
-    except Exception:
+    except (ValueError, RuntimeError, IndexError) as e:
+        warnings.warn(f"Profile CI interpolation failed: {e}")
         return np.array([np.nan, np.nan])
 
 
@@ -478,7 +523,7 @@ def twoac(
             result.confint = _wald_confint_2ac(d_prime, se_d_prime, conf_level)
         else:  # likelihood
             result.confint = _profile_confint_2ac(
-                data, est["log_likelihood"], d_prime, conf_level
+                data, est["log_likelihood"], d_prime, se_d_prime, conf_level
             )
 
     return result

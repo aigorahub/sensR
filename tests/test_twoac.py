@@ -289,3 +289,64 @@ class TestTwoACGoldenValidation:
 
         assert result.se_tau == pytest.approx(expected["se_tau"], rel=1e-2)
         assert result.se_d_prime == pytest.approx(expected["se_d_prime"], rel=1e-2)
+
+    def test_large_case_matches_sensr(self, golden_twoac_data):
+        """Test large sample case matches sensR."""
+        if golden_twoac_data is None:
+            pytest.skip("Golden data not available")
+
+        expected = golden_twoac_data["large_case"]
+        result = twoac([15, 15, 20], statistic="likelihood")
+
+        assert result.tau == pytest.approx(expected["tau"], rel=1e-3)
+        assert result.d_prime == pytest.approx(expected["d_prime"], rel=1e-3)
+        assert result.se_tau == pytest.approx(expected["se_tau"], rel=1e-2)
+        assert result.se_d_prime == pytest.approx(expected["se_d_prime"], rel=1e-2)
+        assert result.p_value == pytest.approx(expected["p_value"], rel=1e-2)
+
+    def test_large_case_confint_matches_sensr(self, golden_twoac_data):
+        """Test large sample case CI matches sensR."""
+        if golden_twoac_data is None:
+            pytest.skip("Golden data not available")
+
+        expected = golden_twoac_data["large_case"]
+        result = twoac([15, 15, 20], statistic="likelihood")
+
+        assert result.confint is not None
+        assert result.confint[0] == pytest.approx(expected["confint_dprime"][0], rel=1e-2)
+        assert result.confint[1] == pytest.approx(expected["confint_dprime"][1], rel=1e-2)
+
+    def test_wald_case_matches_sensr(self, golden_twoac_data):
+        """Test Wald statistic case matches sensR."""
+        if golden_twoac_data is None:
+            pytest.skip("Golden data not available")
+
+        expected = golden_twoac_data["wald_case"]
+        result = twoac([15, 15, 20], statistic="wald")
+
+        assert result.tau == pytest.approx(expected["tau"], rel=1e-3)
+        assert result.d_prime == pytest.approx(expected["d_prime"], rel=1e-3)
+        assert result.p_value == pytest.approx(expected["p_value"], rel=1e-2)
+
+    def test_negative_dprime_matches_sensr(self, golden_twoac_data):
+        """Test negative d-prime case matches sensR."""
+        if golden_twoac_data is None:
+            pytest.skip("Golden data not available")
+
+        expected = golden_twoac_data["negative_dprime"]
+        result = twoac([6, 2, 2])
+
+        assert result.tau == pytest.approx(expected["tau"], rel=1e-3)
+        assert result.d_prime == pytest.approx(expected["d_prime"], rel=1e-3)
+
+    def test_similarity_test_matches_sensr(self, golden_twoac_data):
+        """Test similarity test p-value matches sensR."""
+        if golden_twoac_data is None:
+            pytest.skip("Golden data not available")
+
+        expected = golden_twoac_data["similarity_test"]
+        result = twoac([15, 15, 20], d_prime_0=0.5, alternative="less")
+
+        assert result.tau == pytest.approx(expected["tau"], rel=1e-3)
+        assert result.d_prime == pytest.approx(expected["d_prime"], rel=1e-3)
+        assert result.p_value == pytest.approx(expected["p_value"], rel=1e-2)
