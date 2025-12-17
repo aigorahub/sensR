@@ -77,6 +77,14 @@ def golden_betabin_data(golden_sensr):
 
 
 @pytest.fixture
+def golden_twoac_data(golden_sensr):
+    """Load golden data for 2-AC tests from sensR."""
+    if golden_sensr is not None:
+        return golden_sensr.get("twoac")
+    return None
+
+
+@pytest.fixture
 def tolerance():
     """Standard numerical tolerances for tests.
 

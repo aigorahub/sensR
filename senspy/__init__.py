@@ -58,6 +58,9 @@ from senspy.power import (
 # Beta-binomial model
 from senspy.betabin import betabin, BetaBinomialResult, BetaBinomialSummary
 
+# 2-AC protocol
+from senspy.twoac import twoac, TwoACResult
+
 __all__ = [
     # Version info
     "__version__",
@@ -101,4 +104,7 @@ __all__ = [
     "betabin",
     "BetaBinomialResult",
     "BetaBinomialSummary",
+    # 2-AC protocol
+    "twoac",
+    "TwoACResult",
 ]
