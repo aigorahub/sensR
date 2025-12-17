@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "senspy"
-version = "0.0.1-dev"
+version = "0.1.0"
 description = "Python port of the sensR package for Thurstonian models in sensory discrimination"
 authors = ["Aigora <team@aigora.com>"]
 license = "GPL-2.0-or-later"

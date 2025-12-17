@@ -1,17 +1,15 @@
 """
 sensPy: Thurstonian Models for Sensory Discrimination in Python
 
-A Python port of the R package sensR.
-
-This package provides:
-- Psychometric link functions for sensory discrimination protocols
-- Utility functions for converting between pc, pd, and d-prime
-- Statistical utilities for binomial tests
-
-See docs/PORTING_PLAN.md for the full implementation roadmap.
+A Python port of the R package sensR providing:
+- Discrimination analysis (discrim, betabin, twoac, samediff, dod)
+- Psychometric link functions for all standard protocols
+- Power analysis and sample size calculation
+- D-prime inference and comparison tools
+- ROC/AUC analysis and visualization
 """
 
-__version__ = "0.0.1-dev"
+__version__ = "0.1.0"
 __author__ = "Aigora"
 
 # Core types and result classes
