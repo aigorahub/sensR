@@ -206,7 +206,10 @@ def dprime_table(
     if np.any(correct > total):
         raise ValueError("correct cannot exceed total")
 
-    valid_protocols = ["triangle", "duotrio", "threeAFC", "twoAFC", "tetrad"]
+    valid_protocols = [
+        "triangle", "duotrio", "threeAFC", "twoAFC", "tetrad",
+        "hexad", "twofive", "twofiveF"
+    ]
     for p in protocol:
         if p not in valid_protocols:
             raise ValueError(f"Invalid protocol: {p}. Must be one of {valid_protocols}")
@@ -329,10 +332,11 @@ def _dprime_estim(
             )
 
         # Inverse variance weighting
-        w = se_dprimes**2
-        w_prime = w / np.sum(w)
-        d_exp = np.sum(dprimes / w) / np.sum(1 / w)
-        se_exp = np.sqrt(np.sum(w_prime**2 * w))
+        # variance = se^2, weights = 1/variance
+        variance = se_dprimes**2
+        sum_inv_var = np.sum(1 / variance)
+        d_exp = np.sum(dprimes / variance) / sum_inv_var
+        se_exp = np.sqrt(1 / sum_inv_var)
 
         return d_exp, se_exp, None
 
