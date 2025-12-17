@@ -16,7 +16,6 @@ from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from scipy import stats
 
 if TYPE_CHECKING:
@@ -699,24 +698,23 @@ def plot_sample_size_curve(
         )
     )
 
-    # Mark target power
-    if target_power in p_values or True:
-        # Interpolate to find sample size at target power
-        target_n = np.interp(target_power, p_values, n_values)
-        fig.add_vline(
-            x=target_power,
-            line_dash="dash",
-            line_color=COLORS["secondary"],
-        )
-        fig.add_annotation(
-            x=target_power,
-            y=target_n,
-            text=f"N = {target_n:.0f}",
-            showarrow=True,
-            arrowhead=2,
-            ax=40,
-            ay=-40,
-        )
+    # Mark target power (always show interpolated point)
+    # Interpolate to find sample size at target power
+    target_n = np.interp(target_power, p_values, n_values)
+    fig.add_vline(
+        x=target_power,
+        line_dash="dash",
+        line_color=COLORS["secondary"],
+    )
+    fig.add_annotation(
+        x=target_power,
+        y=target_n,
+        text=f"N = {target_n:.0f}",
+        showarrow=True,
+        arrowhead=2,
+        ax=40,
+        ay=-40,
+    )
 
     fig.update_layout(
         title=title,

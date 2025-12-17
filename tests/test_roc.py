@@ -50,6 +50,27 @@ class TestSDT:
         result = sdt(table, method="probit")
         assert_allclose(result[:, 2], 0, atol=1e-10)
 
+    def test_extreme_proportions(self):
+        """Test that extreme proportions (near 0 or 1) don't produce inf."""
+        # Table where first category has 0 counts (would give cp=0)
+        table = np.array([[0, 10, 90], [90, 10, 0]])
+        result = sdt(table, method="probit")
+        # Should not have any inf values due to clipping
+        assert np.all(np.isfinite(result))
+
+    def test_zero_row_raises(self):
+        """Test that a row summing to zero raises ValueError."""
+        table = np.array([[0, 0, 0], [10, 20, 30]])
+        with pytest.raises(ValueError, match="Row sums to zero"):
+            sdt(table)
+
+    def test_logit_extreme_proportions(self):
+        """Test logit method also handles extreme proportions."""
+        table = np.array([[0, 10, 90], [90, 10, 0]])
+        result = sdt(table, method="logit")
+        # Should not have any inf values
+        assert np.all(np.isfinite(result))
+
 
 class TestAUC:
     """Tests for Area Under the ROC Curve."""

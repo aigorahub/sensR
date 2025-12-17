@@ -77,27 +77,44 @@ def sdt(
     if method not in ("probit", "logit"):
         raise ValueError(f"method '{method}' not recognized; use 'probit' or 'logit'")
 
-    def transform_row(x: NDArray) -> NDArray:
-        """Apply cumulative transform to a row."""
+    def transform_row(x: NDArray, n: int) -> NDArray:
+        """Apply cumulative transform to a row.
+
+        Uses the 1/(2n) correction from Macmillan & Creelman (2005) to
+        handle extreme proportions (0 or 1) that would otherwise produce
+        infinite z-scores.
+        """
         cs = np.cumsum(x)
         total = cs[-1]
 
-        if method == "probit":
-            # Cumulative proportions (excluding last point which is always 1)
-            cp = cs[:-1] / total
-            return stats.norm.ppf(cp)
-        else:  # logit
-            return np.log(cs[:-1] / (total - cs[:-1]))
+        if total == 0:
+            raise ValueError("Row sums to zero; cannot compute proportions")
 
-    # Apply transform to each row
-    z_signal = transform_row(table[0, :])  # z(Hit rate)
-    z_noise = transform_row(table[1, :])  # z(False alarm rate)
+        # Cumulative proportions (excluding last point which is always 1)
+        cp = cs[:-1] / total
+
+        # Apply 1/(2n) correction to avoid 0 and 1 (Macmillan & Creelman, 2005)
+        # This prevents infinite z-scores
+        min_p = 0.5 / n
+        max_p = 1 - 0.5 / n
+        cp_clipped = np.clip(cp, min_p, max_p)
+
+        if method == "probit":
+            return stats.norm.ppf(cp_clipped)
+        else:  # logit
+            # logit(p) = log(p / (1-p))
+            return np.log(cp_clipped / (1 - cp_clipped))
+
+    # Apply transform to each row (pass total count for correction)
+    n_signal = int(table[0, :].sum())
+    n_noise = int(table[1, :].sum())
+    z_signal = transform_row(table[0, :], n_signal)  # z(Hit rate)
+    z_noise = transform_row(table[1, :], n_noise)  # z(False alarm rate)
 
     # Compute d-prime at each criterion
     d_prime = z_signal - z_noise
 
     # Build result matrix
-    n_criteria = table.shape[1] - 1
     result = np.column_stack([z_signal, z_noise, d_prime])
 
     return result
