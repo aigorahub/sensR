@@ -14,3 +14,15 @@ dist/
 
 # Misc
 .DS_Store
+
+# Build outputs
+site/
+
+# Test/cache
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
