@@ -19,7 +19,18 @@ from senspy.links.psychometric import (
     twofivef_link,
 )
 
+from senspy.links.double import (
+    get_double_link,
+    double_twoafc_link,
+    double_duotrio_link,
+    double_triangle_link,
+    double_threeafc_link,
+    double_tetrad_link,
+    DoubleLinkResult,
+)
+
 __all__ = [
+    # Single protocols
     "psy_fun",
     "psy_inv",
     "psy_deriv",
@@ -32,4 +43,12 @@ __all__ = [
     "hexad_link",
     "twofive_link",
     "twofivef_link",
+    # Double protocols
+    "get_double_link",
+    "double_twoafc_link",
+    "double_duotrio_link",
+    "double_triangle_link",
+    "double_threeafc_link",
+    "double_tetrad_link",
+    "DoubleLinkResult",
 ]

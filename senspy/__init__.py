@@ -32,6 +32,14 @@ from senspy.links import (
     hexad_link,
     twofive_link,
     twofivef_link,
+    # Double protocols
+    get_double_link,
+    double_twoafc_link,
+    double_duotrio_link,
+    double_triangle_link,
+    double_threeafc_link,
+    double_tetrad_link,
+    DoubleLinkResult,
 )
 
 # Utility functions
@@ -106,6 +114,12 @@ from senspy.plotting import (
     plot_sample_size_curve,
 )
 
+# Simulation functions
+from senspy.simulation import discrim_sim, samediff_sim, SameDiffSimResult
+
+# Protocol-specific power functions
+from senspy.protocol_power import samediff_power, twoac_power, TwoACPowerResult
+
 __all__ = [
     # Version info
     "__version__",
@@ -131,6 +145,14 @@ __all__ = [
     "hexad_link",
     "twofive_link",
     "twofivef_link",
+    # Double protocol links
+    "get_double_link",
+    "double_twoafc_link",
+    "double_duotrio_link",
+    "double_triangle_link",
+    "double_threeafc_link",
+    "double_tetrad_link",
+    "DoubleLinkResult",
     # Utilities
     "delimit",
     "normal_pvalue",
@@ -191,4 +213,12 @@ __all__ = [
     "plot_profile_likelihood",
     "plot_power_curve",
     "plot_sample_size_curve",
+    # Simulation
+    "discrim_sim",
+    "samediff_sim",
+    "SameDiffSimResult",
+    # Protocol-specific power
+    "samediff_power",
+    "twoac_power",
+    "TwoACPowerResult",
 ]
