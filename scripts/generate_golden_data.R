@@ -356,6 +356,96 @@ for (i in seq_along(dprime_ss_cases)) {
 sample_size_data$dprime_sample_size <- dprime_ss_results
 
 # =============================================================================
+# Beta-binomial models (betabin)
+# =============================================================================
+
+cat("Generating beta-binomial data...\n")
+
+betabin_data <- list()
+
+# Test data from sensR documentation
+x <- c(3, 2, 6, 8, 3, 4, 6, 0, 9, 9, 0, 2, 1, 2, 8, 9, 5, 7)
+n <- c(10, 9, 8, 9, 8, 6, 9, 10, 10, 10, 9, 9, 10, 10, 10, 10, 9, 10)
+dat <- data.frame(x, n)
+
+# Chance-corrected duotrio
+bb_corr_duotrio <- betabin(dat, method = "duotrio", corrected = TRUE)
+summ_corr_duotrio <- summary(bb_corr_duotrio)
+
+betabin_data$corrected_duotrio <- list(
+  input = list(
+    x = x,
+    n = n,
+    method = "duotrio",
+    corrected = TRUE
+  ),
+  coefficients = list(
+    mu = as.numeric(coef(bb_corr_duotrio)["mu"]),
+    gamma = as.numeric(coef(bb_corr_duotrio)["gamma"])
+  ),
+  log_likelihood = as.numeric(logLik(bb_corr_duotrio)),
+  summary = list(
+    pc = summ_corr_duotrio$coefficients["pc", "Estimate"],
+    pd = summ_corr_duotrio$coefficients["pd", "Estimate"],
+    d_prime = summ_corr_duotrio$coefficients["d-prime", "Estimate"],
+    se_mu = summ_corr_duotrio$coefficients["mu", "Std. Error"],
+    se_gamma = summ_corr_duotrio$coefficients["gamma", "Std. Error"]
+  ),
+  lr_overdispersion = list(
+    g2 = summ_corr_duotrio$LR.OD,
+    p_value = summ_corr_duotrio$p.value.OD
+  ),
+  lr_association = list(
+    g2 = summ_corr_duotrio$LR.null,
+    p_value = summ_corr_duotrio$p.value.null
+  )
+)
+cat("  betabin corrected duotrio: done\n")
+
+# Un-corrected duotrio
+bb_uncorr_duotrio <- betabin(dat, method = "duotrio", corrected = FALSE)
+summ_uncorr_duotrio <- summary(bb_uncorr_duotrio)
+
+betabin_data$uncorrected_duotrio <- list(
+  input = list(
+    x = x,
+    n = n,
+    method = "duotrio",
+    corrected = FALSE
+  ),
+  coefficients = list(
+    mu = as.numeric(coef(bb_uncorr_duotrio)["mu"]),
+    gamma = as.numeric(coef(bb_uncorr_duotrio)["gamma"])
+  ),
+  log_likelihood = as.numeric(logLik(bb_uncorr_duotrio))
+)
+cat("  betabin uncorrected duotrio: done\n")
+
+# Corrected triangle
+bb_corr_triangle <- betabin(dat, method = "triangle", corrected = TRUE)
+summ_corr_triangle <- summary(bb_corr_triangle)
+
+betabin_data$corrected_triangle <- list(
+  input = list(
+    x = x,
+    n = n,
+    method = "triangle",
+    corrected = TRUE
+  ),
+  coefficients = list(
+    mu = as.numeric(coef(bb_corr_triangle)["mu"]),
+    gamma = as.numeric(coef(bb_corr_triangle)["gamma"])
+  ),
+  log_likelihood = as.numeric(logLik(bb_corr_triangle)),
+  summary = list(
+    pc = summ_corr_triangle$coefficients["pc", "Estimate"],
+    pd = summ_corr_triangle$coefficients["pd", "Estimate"],
+    d_prime = summ_corr_triangle$coefficients["d-prime", "Estimate"]
+  )
+)
+cat("  betabin corrected triangle: done\n")
+
+# =============================================================================
 # Save to JSON
 # =============================================================================
 
@@ -370,11 +460,12 @@ output <- list(
   discrim = discrim_data,
   rescale = rescale_data,
   power = power_data,
-  sample_size = sample_size_data
+  sample_size = sample_size_data,
+  betabin = betabin_data
 )
 
 output_path <- "golden_sensr.json"
-write_json(output, output_path, pretty = TRUE, auto_unbox = TRUE)
+write_json(output, output_path, pretty = TRUE, auto_unbox = TRUE, digits = 10)
 
 cat(sprintf("\nGolden data written to: %s\n", output_path))
 cat("Done!\n")

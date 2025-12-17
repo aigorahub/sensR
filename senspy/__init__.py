@@ -55,6 +55,9 @@ from senspy.power import (
     dprime_sample_size,
 )
 
+# Beta-binomial model
+from senspy.betabin import betabin, BetaBinomialResult, BetaBinomialSummary
+
 __all__ = [
     # Version info
     "__version__",
@@ -94,4 +97,8 @@ __all__ = [
     "dprime_power",
     "discrim_sample_size",
     "dprime_sample_size",
+    # Beta-binomial model
+    "betabin",
+    "BetaBinomialResult",
+    "BetaBinomialSummary",
 ]
