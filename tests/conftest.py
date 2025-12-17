@@ -69,6 +69,14 @@ def golden_sample_size_data(golden_sensr):
 
 
 @pytest.fixture
+def golden_betabin_data(golden_sensr):
+    """Load golden data for beta-binomial tests from sensR."""
+    if golden_sensr is not None:
+        return golden_sensr.get("betabin")
+    return None
+
+
+@pytest.fixture
 def tolerance():
     """Standard numerical tolerances for tests.
 
