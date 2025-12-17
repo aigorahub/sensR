@@ -3,7 +3,7 @@
     "generated_by": "sensR",
     "sensR_version": "1.5.3",
     "R_version": "R version 4.4.0 (2024-04-24 ucrt)",
-    "generated_at": "2025-12-17 09:32:38"
+    "generated_at": "2025-12-17 09:58:37"
   },
   "links": {
     "psy_fun": {
@@ -728,6 +728,49 @@
       "tau": 0.54995061321,
       "d_prime": 0.19166370397,
       "p_value": 0.08702218365
+    }
+  },
+  "samediff": {
+    "simple_case": {
+      "input": {
+        "ss": 8,
+        "ds": 5,
+        "sd": 4,
+        "dd": 9
+      },
+      "tau": 1.2295508916,
+      "delta": 1.8849964801,
+      "se_tau": 0.34900448096,
+      "se_delta": 0.70351563805,
+      "log_likelihood": -16.6857627579,
+      "vcov": [
+        [0.12180412773, 0.14842132492],
+        [0.14842132492, 0.49493425298]
+      ]
+    },
+    "boundary_sd_zero": {
+      "input": {
+        "ss": 8,
+        "ds": 5,
+        "sd": 0,
+        "dd": 9
+      },
+      "tau": 1.2295508938,
+      "delta": "Inf",
+      "log_likelihood": -8.6616197514
+    },
+    "large_case": {
+      "input": {
+        "ss": 80,
+        "ds": 50,
+        "sd": 40,
+        "dd": 90
+      },
+      "tau": 1.2295508916,
+      "delta": 1.8849964801,
+      "se_tau": 0.11036490734,
+      "se_delta": 0.22247117858,
+      "log_likelihood": -166.8576275789
     }
   }
 }

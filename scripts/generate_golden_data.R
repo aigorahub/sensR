@@ -539,6 +539,72 @@ twoac_data$similarity_test <- list(
 cat("  twoAC similarity test: done\n")
 
 # =============================================================================
+# Same-Different models (samediff)
+# =============================================================================
+
+cat("Generating Same-Different data...\n")
+
+samediff_data <- list()
+
+# Simple case from sensR documentation: samediff(8, 5, 4, 9)
+res_simple <- samediff(8, 5, 4, 9)
+vcov_simple <- vcov(res_simple)
+se_simple <- sqrt(diag(vcov_simple))
+
+samediff_data$simple_case <- list(
+  input = list(
+    ss = 8,
+    ds = 5,
+    sd = 4,
+    dd = 9
+  ),
+  tau = as.numeric(coef(res_simple)["tau"]),
+  delta = as.numeric(coef(res_simple)["delta"]),
+  se_tau = as.numeric(se_simple["tau"]),
+  se_delta = as.numeric(se_simple["delta"]),
+  log_likelihood = as.numeric(logLik(res_simple)),
+  vcov = as.matrix(vcov_simple)
+)
+cat("  samediff simple case: done\n")
+
+# Boundary case: sd = 0 -> delta = Inf
+res_sd_zero <- samediff(8, 5, 0, 9)
+vcov_sd_zero <- vcov(res_sd_zero)
+
+samediff_data$boundary_sd_zero <- list(
+  input = list(
+    ss = 8,
+    ds = 5,
+    sd = 0,
+    dd = 9
+  ),
+  tau = as.numeric(coef(res_sd_zero)["tau"]),
+  delta = as.numeric(coef(res_sd_zero)["delta"]),
+  log_likelihood = as.numeric(logLik(res_sd_zero))
+)
+cat("  samediff boundary sd=0: done\n")
+
+# Larger sample case
+res_large <- samediff(80, 50, 40, 90)
+vcov_large <- vcov(res_large)
+se_large <- sqrt(diag(vcov_large))
+
+samediff_data$large_case <- list(
+  input = list(
+    ss = 80,
+    ds = 50,
+    sd = 40,
+    dd = 90
+  ),
+  tau = as.numeric(coef(res_large)["tau"]),
+  delta = as.numeric(coef(res_large)["delta"]),
+  se_tau = as.numeric(se_large["tau"]),
+  se_delta = as.numeric(se_large["delta"]),
+  log_likelihood = as.numeric(logLik(res_large))
+)
+cat("  samediff large case: done\n")
+
+# =============================================================================
 # Save to JSON
 # =============================================================================
 
@@ -555,7 +621,8 @@ output <- list(
   power = power_data,
   sample_size = sample_size_data,
   betabin = betabin_data,
-  twoac = twoac_data
+  twoac = twoac_data,
+  samediff = samediff_data
 )
 
 output_path <- "golden_sensr.json"

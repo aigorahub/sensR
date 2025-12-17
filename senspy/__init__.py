@@ -61,6 +61,9 @@ from senspy.betabin import betabin, BetaBinomialResult, BetaBinomialSummary
 # 2-AC protocol
 from senspy.twoac import twoac, TwoACResult
 
+# Same-Different protocol
+from senspy.samediff import samediff, SameDiffResult
+
 __all__ = [
     # Version info
     "__version__",
@@ -107,4 +110,7 @@ __all__ = [
     # 2-AC protocol
     "twoac",
     "TwoACResult",
+    # Same-Different protocol
+    "samediff",
+    "SameDiffResult",
 ]
