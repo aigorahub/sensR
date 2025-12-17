@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "sensPy: Thurstonian Models for Sensory Discrimination in Python"
-version: "0.0.1-dev"
+version: "0.1.0"
 date-released: 2025-12-16
 repository-code: "https://github.com/aigorahub/sensPy"
 url: "https://github.com/aigorahub/sensPy"
