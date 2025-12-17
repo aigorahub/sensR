@@ -3,6 +3,7 @@
 A Python port of the R package `sensR` for Thurstonian models in sensory discrimination analysis.
 
 [![CI](https://github.com/aigorahub/sensPy/actions/workflows/pytest.yml/badge.svg)](https://github.com/aigorahub/sensPy/actions/workflows/pytest.yml)
+[![codecov](https://codecov.io/gh/aigorahub/sensPy/graph/badge.svg)](https://codecov.io/gh/aigorahub/sensPy)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 

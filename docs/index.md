@@ -53,14 +53,15 @@ uv pip install senspy
 
 ## Supported Protocols
 
-| Protocol | Method | Guessing Prob |
-|----------|--------|---------------|
-| Triangle | `"triangle"` | 1/3 |
-| Duo-trio | `"duotrio"` | 1/2 |
-| 2-AFC | `"twoAFC"` | 1/2 |
-| 3-AFC | `"threeAFC"` | 1/3 |
-| Tetrad | `"tetrad"` | 1/3 |
-| Hexad | `"hexad"` | 1/10 |
+| Protocol | Method | Guessing Prob | Double |
+|----------|--------|---------------|--------|
+| Triangle | `"triangle"` | 1/3 | ✓ |
+| Duo-trio | `"duotrio"` | 1/2 | ✓ |
+| 2-AFC | `"twoAFC"` | 1/2 | ✓ |
+| 3-AFC | `"threeAFC"` | 1/3 | ✓ |
+| Tetrad | `"tetrad"` | 1/3 | ✓ |
+| Hexad | `"hexad"` | 1/10 | - |
+| 2-out-of-5 | `"twofive"` | 1/10 | - |
 
 ## License
 

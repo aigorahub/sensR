@@ -5,14 +5,17 @@ All notable changes to sensPy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2025-12-17
 
 ### Added
 
 - Initial release of sensPy
 - Complete port of sensR (R package v1.5-3) to Python
 - Psychometric link functions for all major protocols:
-  - Triangle, Duo-trio, 2-AFC, 3-AFC, Tetrad, Hexad, Twofive, TwofiveF
+  - Single: Triangle, Duo-trio, 2-AFC, 3-AFC, Tetrad, Hexad, Twofive, TwofiveF
+  - Double: Double-triangle, Double-duotrio, Double-2AFC, Double-3AFC, Double-tetrad
+- Simulation functions: `discrim_sim()`, `samediff_sim()`, `dod_sim()`
+- Protocol-specific power: `samediff_power()`, `twoac_power()`
 - Core discrimination analysis (`discrim()`)
 - Beta-binomial model for replicated data (`betabin()`)
 - Two-Alternative Certainty model (`twoac()`)
