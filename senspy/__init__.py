@@ -64,6 +64,34 @@ from senspy.twoac import twoac, TwoACResult
 # Same-Different protocol
 from senspy.samediff import samediff, SameDiffResult
 
+# Degree of Difference (DOD) model
+from senspy.dod import (
+    dod,
+    dod_fit,
+    dod_sim,
+    dod_power,
+    DODResult,
+    DODFitResult,
+    DODControl,
+    DODPowerResult,
+    par2prob_dod,
+    optimal_tau,
+)
+
+# D-prime hypothesis tests
+from senspy.dprime_tests import (
+    dprime_test,
+    dprime_compare,
+    posthoc,
+    dprime_table,
+    DprimeTestResult,
+    DprimeCompareResult,
+    PosthocResult,
+)
+
+# A-Not-A protocol
+from senspy.anota import anota, ANotAResult
+
 __all__ = [
     # Version info
     "__version__",
@@ -113,4 +141,26 @@ __all__ = [
     # Same-Different protocol
     "samediff",
     "SameDiffResult",
+    # DOD model
+    "dod",
+    "dod_fit",
+    "dod_sim",
+    "dod_power",
+    "DODResult",
+    "DODFitResult",
+    "DODControl",
+    "DODPowerResult",
+    "par2prob_dod",
+    "optimal_tau",
+    # D-prime hypothesis tests
+    "dprime_test",
+    "dprime_compare",
+    "posthoc",
+    "dprime_table",
+    "DprimeTestResult",
+    "DprimeCompareResult",
+    "PosthocResult",
+    # A-Not-A protocol
+    "anota",
+    "ANotAResult",
 ]
