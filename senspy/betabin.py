@@ -4,8 +4,8 @@ This module implements the beta-binomial model and chance-corrected
 beta-binomial model for replicated discrimination tests with overdispersion.
 """
 
+import warnings
 from dataclasses import dataclass, field
-from typing import Literal
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -296,6 +296,19 @@ def _log_likelihood_standard(
     return -ll  # Return negative for minimization
 
 
+def _logsumexp(log_values: np.ndarray) -> float:
+    """Compute log(sum(exp(log_values))) in a numerically stable way.
+
+    This is equivalent to scipy.special.logsumexp but inlined for clarity.
+    """
+    if len(log_values) == 0:
+        return -np.inf
+    max_val = np.max(log_values)
+    if np.isinf(max_val):
+        return max_val
+    return max_val + np.log(np.sum(np.exp(log_values - max_val)))
+
+
 def _log_likelihood_corrected(
     params: np.ndarray, x: np.ndarray, n: np.ndarray, p_guess: float
 ) -> float:
@@ -306,6 +319,9 @@ def _log_likelihood_corrected(
 
     The formula follows sensR's nllAux pattern where the (1-pGuess)^(n-x) * pGuess^x
     terms are factored out and accounted for separately in Factor.
+
+    All computations are done in log-space to prevent numerical underflow
+    for small gamma values (large alpha/beta).
 
     Parameters
     ----------
@@ -329,20 +345,23 @@ def _log_likelihood_corrected(
     ll = 0.0
     N = len(x)
 
-    # Ratio for probability calculation: (1-pGuess)/pGuess
-    ratio = (1 - p_guess) / p_guess
+    # Log of ratio for probability calculation: log((1-pGuess)/pGuess)
+    log_ratio = np.log(1 - p_guess) - np.log(p_guess)
 
     for j in range(N):
         xj, nj = int(x[j]), int(n[j])
         # Sum over possible true correct counts (i = number of true discriminations)
-        # Using the factored form: choose(x,i) * ratio^i * beta(a+i, b+n-x)
-        total = 0.0
+        # Using log-space: log(choose(x,i)) + i*log(ratio) + log(beta(a+i, b+n-x))
+        # where log(beta(a,b)) = betaln(a,b)
+        log_terms = np.zeros(xj + 1)
         for i in range(xj + 1):
-            coeff = special.comb(xj, i, exact=True)
-            prob_term = ratio ** i
-            beta_term = special.beta(alpha + i, nj - xj + beta)
-            total += coeff * prob_term * beta_term
-        ll += np.log(total) if total > 0 else -np.inf
+            log_coeff = special.gammaln(xj + 1) - special.gammaln(i + 1) - special.gammaln(xj - i + 1)
+            log_prob = i * log_ratio
+            log_beta = special.betaln(alpha + i, nj - xj + beta)
+            log_terms[i] = log_coeff + log_prob + log_beta
+
+        # Use logsumexp for numerically stable summation
+        ll += _logsumexp(log_terms)
 
     # Subtract the common Beta(alpha, beta) term (N times)
     ll -= N * special.betaln(alpha, beta)
@@ -422,8 +441,8 @@ def betabin(
     link = get_link(method_str)
     p_guess = link.p_guess
 
-    # Set up bounds
-    lower = np.array([1e-6, 1e-3 if corrected else 1e-6])
+    # Set up bounds (log-space arithmetic allows small gamma values)
+    lower = np.array([1e-6, 1e-6])
     upper = np.array([1 - 1e-6, 1 - 1e-6])
 
     # Define objective function
@@ -459,13 +478,11 @@ def betabin(
             grad[i] = (objective(params_plus) - objective(params_minus)) / (2 * eps)
 
         if np.max(np.abs(grad)) > grad_tol:
-            import warnings
             warnings.warn(
                 f"Optimizer terminated with max|gradient|: {np.max(np.abs(grad)):.2e}",
                 stacklevel=2,
             )
     else:
-        import warnings
         warnings.warn("Parameters at boundary occurred", stacklevel=2)
 
     # Compute variance-covariance matrix
@@ -513,8 +530,6 @@ def _compute_hessian(func, x, eps=1e-5):
     """Compute Hessian matrix numerically using finite differences."""
     n = len(x)
     hess = np.zeros((n, n))
-
-    f0 = func(x)
 
     for i in range(n):
         for j in range(i, n):

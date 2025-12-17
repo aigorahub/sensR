@@ -238,12 +238,43 @@ class TestBetabinEdgeCases:
 
     def test_dataframe_input(self):
         """Test that DataFrame-like input works."""
-        # Use a dict with array-like values (similar to DataFrame behavior)
-        import pandas as pd
+        pd = pytest.importorskip("pandas")
 
         df = pd.DataFrame({"successes": TEST_X, "trials": TEST_N})
         result = betabin(df.values, method="duotrio", corrected=True)
         assert isinstance(result, BetaBinomialResult)
+
+
+class TestBetabinNumericalStability:
+    """Tests for numerical stability."""
+
+    def test_small_gamma_does_not_underflow(self):
+        """Test that small gamma values don't cause underflow in corrected model."""
+        # This test verifies the log-space arithmetic fix
+        # Small gamma = large alpha/beta, which previously caused beta() underflow
+        from senspy.betabin import _log_likelihood_corrected
+
+        # Parameters that would cause underflow with linear-space beta()
+        params = np.array([0.5, 0.001])  # gamma = 0.001 -> alpha ~ 500
+        x = np.array([5.0, 6.0, 7.0, 5.0])
+        n = np.array([10.0, 10.0, 10.0, 10.0])
+        p_guess = 0.5
+
+        # Should return finite value, not inf
+        nll = _log_likelihood_corrected(params, x, n, p_guess)
+        assert np.isfinite(nll), f"Got non-finite value: {nll}"
+
+    def test_very_small_gamma_corrected_model(self):
+        """Test corrected model fitting with low dispersion data."""
+        # Data with low variability (should result in small gamma)
+        x = np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5])
+        n = np.array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10])
+        data = np.column_stack([x, n])
+
+        # Should fit without numerical errors
+        result = betabin(data, method="duotrio", corrected=True)
+        assert np.isfinite(result.log_likelihood)
+        assert 0 < result.gamma < 1
 
 
 class TestBetabinLogLikelihood:
