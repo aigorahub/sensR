@@ -605,6 +605,110 @@ samediff_data$large_case <- list(
 cat("  samediff large case: done\n")
 
 # =============================================================================
+# DOD models (dod)
+# =============================================================================
+
+cat("Generating DOD data...\n")
+
+dod_data <- list()
+
+# Simple case with seed for reproducibility
+set.seed(127)
+dprime <- 1
+data_simple <- dodSim(d.prime = dprime, sample.size = 100, method = "equi.prob")
+res_simple <- dod(same = data_simple[1, ], diff = data_simple[2, ])
+
+dod_data$simple_case <- list(
+  input = list(
+    same = as.numeric(data_simple[1, ]),
+    diff = as.numeric(data_simple[2, ])
+  ),
+  d_prime = as.numeric(res_simple$d.prime),
+  tau = as.numeric(res_simple$tau),
+  logLik = as.numeric(res_simple$logLik),
+  p_value = as.numeric(res_simple$p.value),
+  stat_value = as.numeric(res_simple$stat.value),
+  se_d_prime = as.numeric(res_simple$coefficients["d.prime", "Std. Error"])
+)
+cat("  dod simple case: done\n")
+
+# Wald statistic case
+res_wald <- dod(same = data_simple[1, ], diff = data_simple[2, ], statistic = "Wald")
+
+dod_data$wald_case <- list(
+  input = list(
+    same = as.numeric(data_simple[1, ]),
+    diff = as.numeric(data_simple[2, ]),
+    statistic = "Wald"
+  ),
+  d_prime = as.numeric(res_wald$d.prime),
+  tau = as.numeric(res_wald$tau),
+  stat_value = as.numeric(res_wald$stat.value),
+  p_value = as.numeric(res_wald$p.value)
+)
+cat("  dod wald case: done\n")
+
+# Large d-prime case
+set.seed(127)
+data_large <- dodSim(d.prime = 3, sample.size = 100, method = "equi.prob")
+res_large <- dod(same = data_large[1, ], diff = data_large[2, ])
+
+dod_data$large_d_prime <- list(
+  input = list(
+    same = as.numeric(data_large[1, ]),
+    diff = as.numeric(data_large[2, ])
+  ),
+  d_prime = as.numeric(res_large$d.prime),
+  tau = as.numeric(res_large$tau),
+  logLik = as.numeric(res_large$logLik)
+)
+cat("  dod large d-prime: done\n")
+
+# =============================================================================
+# dprime_test and dprime_compare
+# =============================================================================
+
+cat("Generating dprime_test and dprime_compare data...\n")
+
+dprime_tests_data <- list()
+
+# dprime_test simple case
+correct <- c(60, 45, 55)
+total <- c(100, 100, 100)
+protocol <- c("triangle", "duotrio", "twoAFC")
+
+res_test <- dprime_test(correct, total, protocol, statistic = "likelihood")
+dprime_tests_data$dprime_test_simple <- list(
+  input = list(
+    correct = correct,
+    total = total,
+    protocol = protocol,
+    statistic = "likelihood"
+  ),
+  d_prime = as.numeric(res_test$coefficients[1, 1]),
+  se_d_prime = as.numeric(res_test$coefficients[1, 2]),
+  stat_value = as.numeric(res_test$stat.value),
+  p_value = as.numeric(res_test$p.value)
+)
+cat("  dprime_test simple: done\n")
+
+# dprime_compare simple case
+res_compare <- dprime_compare(correct, total, protocol, statistic = "likelihood")
+dprime_tests_data$dprime_compare_simple <- list(
+  input = list(
+    correct = correct,
+    total = total,
+    protocol = protocol,
+    statistic = "likelihood"
+  ),
+  d_prime = as.numeric(res_compare$coefficients[1, 1]),
+  stat_value = as.numeric(res_compare$stat.value),
+  df = as.integer(res_compare$df),
+  p_value = as.numeric(res_compare$p.value)
+)
+cat("  dprime_compare simple: done\n")
+
+# =============================================================================
 # Save to JSON
 # =============================================================================
 
@@ -622,7 +726,9 @@ output <- list(
   sample_size = sample_size_data,
   betabin = betabin_data,
   twoac = twoac_data,
-  samediff = samediff_data
+  samediff = samediff_data,
+  dod = dod_data,
+  dprime_tests = dprime_tests_data
 )
 
 output_path <- "golden_sensr.json"

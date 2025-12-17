@@ -93,6 +93,22 @@ def golden_samediff_data(golden_sensr):
 
 
 @pytest.fixture
+def golden_dod_data(golden_sensr):
+    """Load golden data for DOD tests from sensR."""
+    if golden_sensr is not None:
+        return golden_sensr.get("dod")
+    return None
+
+
+@pytest.fixture
+def golden_dprime_tests_data(golden_sensr):
+    """Load golden data for dprime_test/dprime_compare tests from sensR."""
+    if golden_sensr is not None:
+        return golden_sensr.get("dprime_tests")
+    return None
+
+
+@pytest.fixture
 def tolerance():
     """Standard numerical tolerances for tests.
 

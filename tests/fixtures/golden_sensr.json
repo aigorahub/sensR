@@ -3,7 +3,7 @@
     "generated_by": "sensR",
     "sensR_version": "1.5.3",
     "R_version": "R version 4.4.0 (2024-04-24 ucrt)",
-    "generated_at": "2025-12-17 09:58:37"
+    "generated_at": "2025-12-17 10:45:22"
   },
   "links": {
     "psy_fun": {
@@ -771,6 +771,66 @@
       "se_tau": 0.11036490734,
       "se_delta": 0.22247117858,
       "log_likelihood": -166.8576275789
+    }
+  },
+  "dod": {
+    "simple_case": {
+      "input": {
+        "same": [25, 22, 33, 20],
+        "diff": [18, 22, 30, 30]
+      },
+      "d_prime": 0.9515471427,
+      "tau": [0.42949242525, 0.90508014503, 1.8055551857],
+      "logLik": -273.4189373178,
+      "p_value": 0.047727118372,
+      "stat_value": 1.6673026663,
+      "se_d_prime": 0.30880597486
+    },
+    "wald_case": {
+      "input": {
+        "same": [25, 22, 33, 20],
+        "diff": [18, 22, 30, 30],
+        "statistic": "Wald"
+      },
+      "d_prime": 0.9515471427,
+      "tau": [0.42949242525, 0.90508014503, 1.8055551857],
+      "stat_value": 3.0813754272,
+      "p_value": 0.0010302333704
+    },
+    "large_d_prime": {
+      "input": {
+        "same": [49, 36, 14, 1],
+        "diff": [5, 16, 29, 50]
+      },
+      "d_prime": 3.2608450553,
+      "tau": [0.93577547321, 2.063665051, 3.2918248374],
+      "logLik": -219.2272037323
+    }
+  },
+  "dprime_tests": {
+    "dprime_test_simple": {
+      "input": {
+        "correct": [60, 45, 55],
+        "total": [100, 100, 100],
+        "protocol": ["triangle", "duotrio", "twoAFC"],
+        "statistic": "likelihood"
+      },
+      "d_prime": 0.35844864684,
+      "se_d_prime": 0.22234236855,
+      "stat_value": 1.4730032876,
+      "p_value": 0.070375074654
+    },
+    "dprime_compare_simple": {
+      "input": {
+        "correct": [60, 45, 55],
+        "total": [100, 100, 100],
+        "protocol": ["triangle", "duotrio", "twoAFC"],
+        "statistic": "likelihood"
+      },
+      "d_prime": 0.35844864684,
+      "stat_value": 29.5019579403,
+      "df": 2,
+      "p_value": 3.9240201659e-07
     }
   }
 }
