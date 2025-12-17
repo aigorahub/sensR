@@ -17,6 +17,7 @@ from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
+from scipy import stats
 
 from senspy.links import psy_fun, get_double_link
 from senspy.utils import delimit
@@ -214,8 +215,6 @@ def samediff_sim(
     Christensen, R.H.B., Brockhoff, P.B. (2009). Estimation and inference in
         the same-different test. Food, Quality and Preference, 20, pp. 514-520.
     """
-    from scipy import stats
-
     # Set up random number generator
     rng = np.random.default_rng(random_state)
 

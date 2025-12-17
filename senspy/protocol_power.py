@@ -13,10 +13,12 @@ from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy import stats
+from scipy import optimize, stats
+from scipy.special import gammaln
 
 from senspy.simulation import samediff_sim
 from senspy.samediff import samediff
+from senspy.twoac import _estimate_2ac, _nll_2ac
 
 
 def samediff_power(
@@ -124,8 +126,6 @@ def samediff_power(
 
             # Profile likelihood at delta=0
             # When delta=0, optimize over tau only
-            from scipy import optimize
-
             def nll_delta_zero(t):
                 if t <= 0:
                     return np.inf
@@ -142,7 +142,7 @@ def samediff_power(
             try:
                 res = optimize.minimize_scalar(nll_delta_zero, bounds=(1e-6, 20), method="bounded")
                 ll_null = -res.fun
-            except Exception:
+            except (ValueError, RuntimeError):
                 continue
 
             # Likelihood ratio statistic
@@ -154,7 +154,7 @@ def samediff_power(
             lroot = np.sqrt(lr_stat) if delta_hat > 0 else -np.sqrt(lr_stat)
             p_values[i] = stats.norm.sf(lroot)
 
-        except Exception:
+        except (ValueError, RuntimeError, np.linalg.LinAlgError):
             # Skip datasets where estimation fails
             continue
 
@@ -260,9 +260,6 @@ def twoac_power(
         the Thurstonian model for the 2-AC protocol. Food Quality and
         Preference, 24(1), pp.119-128.
     """
-    from senspy.twoac import _estimate_2ac, _nll_2ac
-    from scipy import optimize
-
     # Validate inputs
     if tau <= 0:
         raise ValueError("'tau' must be positive")
@@ -293,8 +290,6 @@ def twoac_power(
     pvec = np.array([p1, p2, p3])
 
     # Compute multinomial probabilities for each outcome
-    from scipy.special import gammaln
-
     def log_dmultinom(x, prob):
         """Log multinomial probability."""
         n = np.sum(x)

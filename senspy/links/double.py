@@ -13,6 +13,7 @@ Ennis, J.M. & Jesionka, V. (2011). The power of sensory discrimination methods
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable
 
 import numpy as np
 from numpy.typing import NDArray
@@ -23,9 +24,9 @@ from scipy import integrate, optimize, stats
 class DoubleLinkResult:
     """Result from double link function operations."""
 
-    linkinv: callable
-    linkfun: callable
-    mu_eta: callable
+    linkinv: Callable[[NDArray | float], NDArray | float]
+    linkfun: Callable[[NDArray | float], NDArray | float]
+    mu_eta: Callable[[NDArray | float], NDArray | float]
     p_guess: float
     name: str
 
@@ -223,8 +224,8 @@ def double_triangle_link() -> DoubleLinkResult:
         result = np.zeros_like(eta)
 
         ok = (eta > 0) & (eta < 20)
-        result[eta <= 0] = p_guess
-        result[eta >= 20] = 1.0
+        # Derivative is 0 at boundaries (flat regions of the psychometric function)
+        # result already initialized to 0 for eta <= 0 and eta >= 20
 
         if np.any(ok):
             d = eta[ok]
