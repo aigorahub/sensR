@@ -1,7 +1,7 @@
 ---
 name: develop
 description: Autonomous development agent. Takes a plan, implements it, self-reviews using Command Center's review APIs, iterates until merge-ready, and sends Slack notification.
-argument-hint: <plan text or path to plan file>
+argument-hint: "--review-only <plan text or path to plan file>"
 ---
 
 # Autonomous Development Skill
@@ -9,6 +9,12 @@ argument-hint: <plan text or path to plan file>
 You are an autonomous development agent. You accept a plan, implement it fully, then self-review using Command Center's review APIs. You iterate on feedback until all gates pass, then notify via Slack.
 
 **IMPORTANT: You MUST keep going until all review gates pass. There is NO iteration limit — you are done when YOU decide the code is ready for human review (all 3 gates pass). Do NOT stop after receiving review feedback — fix the issues and re-review.**
+
+## Mode Detection
+
+Check if `$ARGUMENTS` starts with `--review-only`:
+- **If `--review-only` is present:** Strip the flag from arguments, then skip Phases 2 and 3. Go directly from Phase 1 to Phase 4 (Review Loop). You must already be on a feature branch with a PR open — detect the branch and PR number from git.
+- **Otherwise:** Run the full flow (Phases 1–5).
 
 ## Phase 1: Setup & Context Detection
 
@@ -32,48 +38,65 @@ You are an autonomous development agent. You accept a plan, implement it fully, 
    git remote get-url origin 2>/dev/null | sed 's|.*github.com[:/]||;s|\.git$||'
    ```
 
-3. Read the plan from `$ARGUMENTS`:
+3. Read the plan from `$ARGUMENTS` (after stripping `--review-only` if present):
    - If `$ARGUMENTS` looks like a file path (ends in `.md`, contains `/`, or starts with `.`), read the file contents and use that as the plan.
    - Otherwise, use `$ARGUMENTS` directly as the plan text.
    - If `$ARGUMENTS` is empty, tell the user to provide a plan and stop.
 
 4. Summarize the plan into a concise mission goal (2-3 sentences) for use in review API calls.
 
+5. **If `--review-only` mode:** Detect branch and PR number from the current checkout:
+   ```bash
+   git branch --show-current
+   gh pr view --json number -q .number
+   ```
+   If no PR exists, tell the user to open a PR first and stop. Then skip to Phase 4.
+
 ## Phase 2: Branch & PR Setup
+
+**You MUST complete ALL of these steps before starting any development work in Phase 3.**
 
 1. Create a feature branch from the current branch:
    ```bash
    git checkout -b feat/<descriptive-name-from-plan>
    ```
 
-2. Make an initial commit (can be empty or a small scaffold) and push:
+2. Create an initial empty commit and push the branch to the remote:
    ```bash
+   git commit --allow-empty -m "chore: initial commit for <descriptive-name>"
    git push -u origin HEAD
    ```
 
-3. Open a **draft PR** early so PR-dependent review checks can work:
+3. Open a **PR** immediately so PR-dependent review checks work from the start:
    ```bash
-   gh pr create --draft --title "<concise title from plan>" --body "<plan summary>"
+   gh pr create --title "<concise title from plan>" --body "<plan summary>"
    ```
 
-4. Capture the PR number:
+4. Capture the PR number — you will need it for review API calls later:
    ```bash
    gh pr view --json number -q .number
    ```
+
+**Checkpoint:** Before proceeding to Phase 3, confirm you have: a remote branch, a PR, and a PR number. If any of these are missing, fix it now.
 
 ## Phase 3: Development
 
 Implement the plan using your normal coding tools (Read, Edit, Write, Bash).
 
 - Work through each item in the plan systematically.
-- Commit and push after each meaningful chunk of work.
 - Use descriptive commit messages that reference what plan item is being addressed.
 - Run any available tests locally before pushing.
+- **IMPORTANT: After each meaningful chunk of work, commit AND push to the remote:**
+  ```bash
+  git add <specific-files>
+  git commit -m "feat: <description of changes>"
+  git push
+  ```
+  The review APIs check the latest commit on the remote branch — unpushed work is invisible to them.
 
-After all plan items are implemented, push all remaining changes:
+After all plan items are implemented, verify everything is pushed:
 ```bash
-git add <specific-files>
-git commit -m "feat: <description of changes>"
+git status
 git push
 ```
 
@@ -216,12 +239,7 @@ The review APIs analyze the full branch, not just your diff. This means they may
 
 ## Phase 5: Finalize & Notify
 
-1. Mark the PR as ready for review (remove draft status):
-   ```bash
-   gh pr ready
-   ```
-
-2. Send a Slack notification:
+1. Send a Slack notification:
    ```bash
    PR_URL=$(gh pr view --json url -q .url)
    curl -s -X POST "${APP_URL}/api/review/notify" \
@@ -230,7 +248,7 @@ The review APIs analyze the full branch, not just your diff. This means they may
      -d "{\"type\":\"ready_for_review\",\"repo\":\"REPO\",\"branch\":\"BRANCH\",\"data\":{\"prUrl\":\"${PR_URL}\",\"missionGoal\":\"MISSION_GOAL\"}}"
    ```
 
-3. Tell the user:
+2. Tell the user:
    > All review gates passed. PR is ready for human review.
    > **PR:** [PR_URL]
    > **Branch:** BRANCH
