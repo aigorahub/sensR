@@ -11,12 +11,12 @@ test_that("AUC works with negative d-primes", {
     x <- lapply(-1:1, AUC, se.d=.2)
     ## dput(x)
     xRes <- list(structure(list(value = 0.239750061093477, lower = 0.162487075575793,
-    upper = 0.333624729895317, CI.alpha = 0.05), .Names = c("value",
+    upper = 0.333624729895317, CI.alpha = 0.05), names = c("value",
 "lower", "upper", "CI.alpha"), class = "AUC"), structure(list(
     value = 0.5, lower = 0.390820654309087, upper = 0.609179345690913,
-    CI.alpha = 0.05), .Names = c("value", "lower", "upper", "CI.alpha"
+    CI.alpha = 0.05), names = c("value", "lower", "upper", "CI.alpha"
 ), class = "AUC"), structure(list(value = 0.760249938906523,
-    lower = 0.666375270104683, upper = 0.837512924424207, CI.alpha = 0.05), .Names = c("value",
+    lower = 0.666375270104683, upper = 0.837512924424207, CI.alpha = 0.05), names = c("value",
 "lower", "upper", "CI.alpha"), class = "AUC"))
 
     expect_equal(x, xRes, tolerance=1e-7)
