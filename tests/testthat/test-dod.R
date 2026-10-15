@@ -22,7 +22,7 @@ test_that("dod estimates are stable", {
     RES <-
         structure(c(0.951548109556325, 0.429492707467134, 0.905080420721259,
                     1.805555643669, -273.418937317776, 0.0477271183728321, 1.6673026663032
-                    ), .Names = c("d.prime", "tau1", "tau2", "tau3", "logLik", "p.value",
+                    ), names = c("d.prime", "tau1", "tau2", "tau3", "logLik", "p.value",
                        "stat.value"))
 
     expect_equal(res, RES, tol=TOL)
@@ -30,7 +30,7 @@ test_that("dod estimates are stable", {
     ## dput(coef(fm))
     coefExpect <-
         structure(c(0.951548109556325, 0.308805702582903, 0, 1.47386430866794),
-                  .Dim = c(1L, 4L), .Dimnames = list("d.prime", c("Estimates",
+                  dim = c(1L, 4L), dimnames = list("d.prime", c("Estimates",
                                     "Std. Error", "Lower", "Upper")))
 
     expect_equal(coef(fm), coefExpect, tol=TOL)

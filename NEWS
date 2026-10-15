@@ -246,3 +246,9 @@ February 10 2020 (version 1.5-2)
 
 October 2023 (version 1.5-3)
 - Fix incorrect usage of `all.equal` in examples
+
+October 2026 (version 1.5-4)
+- Maintainer changed to John Ennis <john.m.ennis@aigora.com> (previous
+  maintainer address bounced; see GitHub issue #13).
+- Replace deprecated special names (.Names, .Dim, .Dimnames) in structure()
+  calls in tests with names, dim, dimnames (r-devel CRAN check NOTE).
