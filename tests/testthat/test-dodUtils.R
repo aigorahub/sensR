@@ -19,8 +19,8 @@ test_that("dodSim returns data as expected", {
 
     ## dput(Data)
     RES <- structure(c(25L, 18L, 22L, 22L, 33L, 30L, 20L, 30L),
-                     .Dim = c(2L, 4L),
-                     .Dimnames = list(c("same-pairs", "diff-pairs"),
+                     dim = c(2L, 4L),
+                     dimnames = list(c("same-pairs", "diff-pairs"),
                      c("1", "2", "3", "4")))
     expect_equal(Data, RES)
 
@@ -48,7 +48,7 @@ test_that("data can be numeric vectors or factors", {
     ## dput(readdoddata(data[1, ], data[2, ]))
     RES <- structure(list(same = c(25L, 22L, 33L, 20L),
                           diff = c(18L, 22L, 30L, 30L)),
-                     .Names = c("same", "diff"))
+                     names = c("same", "diff"))
     ## Data as vectors:
     expect_equal(readdoddata(data[1, ], data[2, ]), RES)
     ## Data as factor:

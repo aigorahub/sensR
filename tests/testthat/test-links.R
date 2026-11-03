@@ -27,7 +27,7 @@ trimat.expect <-
                 1.36059355818558e-05, 2.00138505966741e-06, 2.49201402860651e-07,
                 2.62656346212414e-08, 2.34338097972049e-09, 1.76976453975268e-10,
                 1.13137261865862e-11, 6.12228333969946e-13, 2.80439234112079e-14,
-                0, 0, 0), .Dim = c(28L, 3L), .Dimnames = list(NULL, c("delta.lim",
+                0, 0, 0), dim = c(28L, 3L), dimnames = list(NULL, c("delta.lim",
                                              "tri.linkinv", "muEta")))
 trimat2.expect <-
     structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333333334333333,
@@ -35,7 +35,7 @@ trimat2.expect <-
                 1, 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0.0001220703125, 0.00101989522980266,
                 0.879114569369712, 1.46626281186262, 1.97560154484988, 2.50372333631553,
                 3.12859127911218, 4.02762596771379, 13.0460576380004, Inf, Inf,
-                Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc",
+                Inf, Inf), dim = c(20L, 2L), dimnames = list(NULL, c("pc",
                                               "")))
 
 test_that("Triangle linkfun, linkinv and deriv return what we expect", {
@@ -78,7 +78,7 @@ threeMat.expect <-
 0.290553761744979, 0.28931908430394, 0.164567688424708, 0.0529040173850969,
 0.00980405393282727, 0.0010666911724293, 6.9128491660797e-05,
 2.69395392971106e-06, 6.34564996659925e-08, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(28L, 3L), .Dimnames = list(
+0, 0, 0, 0, 0, 0, 0, 0), dim = c(28L, 3L), dimnames = list(
     NULL, c("delta.lim", "linkinv", "muEta")))
 threeMat2.expect <-
     structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333,
@@ -86,7 +86,7 @@ threeMat2.expect <-
 1, 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0.000354412995510282, 0.00353718447587665,
 0.228853730602745, 0.556523357673813, 0.885182389787633, 1.23795339238868,
 1.65241120055872, 2.23019992157, 7.53291713420153, Inf, Inf,
-Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc",
+Inf, Inf), dim = c(20L, 2L), dimnames = list(NULL, c("pc",
 "")))
 
 
@@ -142,7 +142,7 @@ tetradMat.expect <-
 0.0366533045258264, 0.278493758283903, 0.243163256289553, 0.0926857799809961,
 0.0185492303766036, 0.00208847744671707, 0.000137347787572007,
 5.46406146954242e-06, 1.25374155477369e-07, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(28L, 3L), .Dimnames = list(
+0, 0, 0, 0, 0, 0, 0, 0), dim = c(28L, 3L), dimnames = list(
     NULL, c("delta.lim", "linkinv", "muEta")))
 tetradMat2.expect <-
     structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333,
@@ -150,7 +150,7 @@ tetradMat2.expect <-
 1, 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0.0233423654546829, 0.073791381662713,
 0.618329709770766, 1.02212226454153, 1.36259707370522, 1.70450506671692,
 2.09460011556416, 2.63258173217749, 7.70657597572176, Inf, Inf,
-Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc",
+Inf, Inf), dim = c(20L, 2L), dimnames = list(NULL, c("pc",
 "")))
 
 test_that("Tetrad linkfun, linkinv and deriv return what we expect", {
@@ -224,15 +224,15 @@ duotrioMat.expect <-
 6.80296781148603e-06, 1.00069252989914e-06, 1.24600701430452e-07,
 1.31328173106209e-08, 1.17169048986025e-09, 8.84882269876348e-11,
 5.65686309329313e-12, 3.06114166984973e-13, 1.40219617056039e-14,
-5.43690457381535e-16, 4.36262916005144e-34, 0), .Dim = c(28L,
-3L), .Dimnames = list(NULL, c("delta.lim", "DT.linkinv", "DT.mu.eta"
+5.43690457381535e-16, 4.36262916005144e-34, 0), dim = c(28L,
+3L), dimnames = list(NULL, c("delta.lim", "DT.linkinv", "DT.mu.eta"
 )))
 duotrioMat2.expect <-
     structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.500000001,
 0.5000001, 0.6, 0.7, 0.8, 0.9, 0.999999999, 0.9999999999, 1,
 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0, 0.0001220703125, 0.00101652663801013,
 1.11520955683069, 1.71530153283467, 2.35486196368808, 3.26308047458777,
-14.6915420837302, Inf, Inf, Inf, Inf), .Dim = c(19L, 2L), .Dimnames = list(
+14.6915420837302, Inf, Inf, Inf, Inf), dim = c(19L, 2L), dimnames = list(
     NULL, c("pc", "")))
 
 test_that("Duo-trio linkfun, linkinv and deriv return what we expect", {
@@ -303,15 +303,15 @@ twoafcMat.expect <-
 6.54325309812312e-17, 1.26314500076565e-19, 1.47899073950077e-22,
 1.05034134452874e-25, 4.5242669921399e-29, 1.18200346721402e-32,
 1.87301835706147e-36, 1.80018888638499e-40, 1.04941405783859e-44,
-5.42171444080732e-99, 0), .Dim = c(28L, 3L), .Dimnames = list(
+5.42171444080732e-99, 0), dim = c(28L, 3L), dimnames = list(
     NULL, c("delta.lim", "DT.linkinv", "DT.mu.eta")))
 twoafcMat2.expect <-
     structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.500000001,
 0.5000001, 0.6, 0.7, 0.8, 0.9, 0.999999999, 0.9999999999, 1,
 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0, 3.5449076015542e-09, 3.54490769994519e-07,
 0.358286909242583, 0.741614317187116, 1.19023216289999, 1.81238760487365,
-8.48218003161719, 8.99629456108862, Inf, Inf, Inf), .Dim = c(19L,
-2L), .Dimnames = list(NULL, c("pc", "")))
+8.48218003161719, 8.99629456108862, Inf, Inf, Inf), dim = c(19L,
+2L), dimnames = list(NULL, c("pc", "")))
 
 test_that("2-AFC linkfun, linkinv and deriv return what we expect", {
     expect_equal(twoafcMat, twoafcMat.expect)
@@ -366,7 +366,7 @@ twofiveMat.expect <-
               0.0160439376647026, 0.0303146850800881, 0.20518076191, 0.27470131402, 
               0.210319797589999, 0.115388382039998, 0.0498410549499981, 0.0182495204599735, 
               0.00535523526997128, 0.0012066894399716, 0.000363007189989162, 0, 0, 0, 0, 0, 
-              0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(28L, 3L), .Dimnames = list(
+              0, 0, 0, 0, 0, 0, 0, 0), dim = c(28L, 3L), dimnames = list(
                 NULL, c("delta.lim", "linkinv", "muEta")))
 twofiveMat2.expect <-
   structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333, 
@@ -374,7 +374,7 @@ twofiveMat2.expect <-
               1, 2, Inf, 0, 0, 0, 0, 0.957403058573684, 1.39426754683237, 1.52299708814271, 
               1.52337648371465, 1.52678948089008, 1.77021597385117, 2.13463230604927, 
               2.51517099025998, 2.94156707479731, 3.46684035199777, 4.24359588167823, 
-              9.28, Inf, Inf, Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc", "")))
+              9.28, Inf, Inf, Inf, Inf), dim = c(20L, 2L), dimnames = list(NULL, c("pc", "")))
 
 test_that("Twofive linkfun, linkinv and deriv return what we expect", {
   expect_equal(twofiveMat, twofiveMat.expect)
@@ -432,13 +432,13 @@ twofiveFMat.expect <-
               0, 0, 0, 0.002248824591079, 0.00575869873662864, 0.0412242342558282, 
               0.292185373, 0.209416505, 0.0559823170000006, 0.00787465299998846, 
               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
-            .Dim = c(28L, 3L), .Dimnames = list(NULL, c("delta.lim", "linkinv", "muEta")))
+            dim = c(28L, 3L), dimnames = list(NULL, c("delta.lim", "linkinv", "muEta")))
 twofiveFMat2.expect <-
   structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333, 
               0.334333333333333, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.9999999, 0.99999999, 
               1, 2, Inf, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.729864546922193, 1.08785340036478, 
               1.42206556656007, 1.78981247157219, 2.28384664010161, 4.333, 
-              Inf, Inf, Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc", "")))
+              Inf, Inf, Inf, Inf), dim = c(20L, 2L), dimnames = list(NULL, c("pc", "")))
 
 test_that("twofiveF linkfun, linkinv and deriv return what we expect", {
   expect_equal(twofiveFMat, twofiveFMat.expect)
@@ -496,14 +496,14 @@ hexadMat.expect <-
               0, 0, 0, 0.0321121029051165, 0.033335925950264, 0.0490797938556163, 
               0.3092317417, 0.3520537998, 0.1689499573, 0.0362509917999989, 
               0.00575683289999063, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
-            .Dim = c(28L, 3L), .Dimnames = list(NULL, c("delta.lim", "linkinv", "muEta")))
+            dim = c(28L, 3L), dimnames = list(NULL, c("delta.lim", "linkinv", "muEta")))
 hexadMat2.expect <-
   structure(c(-Inf, -1, 0, 0.1, 0.2, 0.3, 0.333333333333333, 0.333433333333333, 
               0.334333333333333, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.9999999, 0.99999999, 
               1, 2, Inf, 0, 0, 0, 0, 0.774651186581047, 1.11407101060899, 1.21181120347948, 
               1.21209786250229, 1.21467624044908, 1.39674167184043, 1.66308754346337, 
               1.93329841163929, 2.22665668787166, 2.57416319260789, 3.06152074898156, 
-              5.368, Inf, Inf, Inf, Inf), .Dim = c(20L, 2L), .Dimnames = list(NULL, c("pc", "")))
+              5.368, Inf, Inf, Inf, Inf), dim = c(20L, 2L), dimnames = list(NULL, c("pc", "")))
 
 test_that("hexad linkfun, linkinv and deriv return what we expect", {
   expect_equal(hexadMat, hexadMat.expect)
